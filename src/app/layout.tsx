@@ -1,8 +1,22 @@
+
 import type { Metadata } from "next";
+import { Space_Grotesk, Manrope } from "next/font/google";
 import "./globals.css";
 
-import Navbar from "@/components/layout/navbar";
+import FloatingMenu from "@/components/layout/FloatingMenu";
 import Footer from "@/components/layout/footer";
+
+const headingFont = Space_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-heading",
+  display: "swap",
+});
+
+const bodyFont = Manrope({
+  subsets: ["latin"],
+  variable: "--font-body",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: {
@@ -34,10 +48,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
-        <Navbar />
-        <main>{children}</main>
-        <Footer />
+      <body
+        className={`${headingFont.variable} ${bodyFont.variable} antialiased`}
+      >
+        <FloatingMenu />
+
+        <div className="site-content">
+          <main>{children}</main>
+          <Footer />
+        </div>
       </body>
     </html>
   );

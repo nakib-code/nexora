@@ -1,15 +1,45 @@
 
 @import "tailwindcss";
 
+/* ==============================
+   1. Design Tokens
+============================== */
+
 :root {
+  color-scheme: light;
+
   --background: #ffffff;
-  --foreground: #111827;
-  --muted: #667085;
-  --primary: #315cfd;
-  --primary-hover: #2448df;
-  --surface: #f5f7fb;
-  --border: #e5e7eb;
+  --foreground: #19171f;
+  --muted: #696773;
+  --primary: #8057ef;
+  --primary-hover: #6e46df;
+  --accent: #d6ff63;
+  --surface: #f8f7fb;
+  --border: #eae8ef;
+  --dark: #19171f;
+
+  --sidebar-accent: #d6ff00;
+  --sidebar-border-light: rgb(0 0 0 / 14%);
+  --sidebar-border-dark: rgb(255 255 255 / 15%);
+
+  --container-width: 1600px;
+  --page-gutter: clamp(18px, 5vw, 88px);
+  --section-space: clamp(64px, 9vw, 144px);
+
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 24px;
+  --radius-full: 999px;
+
+  --shadow-sm: 0 4px 16px rgb(25 23 31 / 6%);
+  --shadow-md: 0 12px 32px rgb(25 23 31 / 10%);
+
+  --transition: 180ms ease;
 }
+
+/* ==============================
+   2. Tailwind Theme
+============================== */
 
 @theme inline {
   --color-background: var(--background);
@@ -18,23 +48,38 @@
   --color-muted: var(--muted);
   --color-surface: var(--surface);
   --color-border: var(--border);
+
+  --font-sans: var(--font-body);
+  --font-heading: var(--font-heading);
+  --font-body: var(--font-body);
 }
 
-* {
+/* ==============================
+   3. Reset & Base
+============================== */
+
+*,
+*::before,
+*::after {
   box-sizing: border-box;
 }
 
 html {
   scroll-behavior: smooth;
-  scroll-padding-top: 90px;
+  scroll-padding-top: 100px;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
+  min-width: 320px;
   margin: 0;
+  overflow-x: clip;
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
 button,
@@ -49,117 +94,488 @@ a {
   -webkit-tap-highlight-color: transparent;
 }
 
+button {
+  cursor: pointer;
+}
+
+button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
 a {
   color: inherit;
   text-decoration: none;
 }
 
-button {
-  cursor: pointer;
+img,
+picture,
+video,
+canvas,
+svg {
+  display: block;
+  max-width: 100%;
+}
+
+img,
+video {
+  height: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading), sans-serif;
 }
 
 ::selection {
-  background: #dbe4ff;
-  color: #1737b8;
+  background: #e7ddff;
+  color: #4e2ba8;
 }
 
+:focus-visible {
+  outline: 3px solid var(--primary);
+  outline-offset: 4px;
+}
+
+/* ==============================
+   4. Reusable Layout
+============================== */
+
 .container {
-  width: min(1160px, calc(100% - 40px));
+  width: min(
+    var(--container-width),
+    calc(100% - var(--page-gutter) * 2)
+  );
   margin-inline: auto;
 }
 
 .section-padding {
-  padding-block: 100px;
+  padding-block: var(--section-space);
+}
+
+.section-heading {
+  max-width: 760px;
+  margin-bottom: 36px;
 }
 
 .section-label {
   display: inline-flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   color: var(--primary);
   font-size: 12px;
   font-weight: 800;
-  letter-spacing: 0.13em;
+  letter-spacing: 0.14em;
+  line-height: 1.5;
   text-transform: uppercase;
 }
 
 .section-label::before {
-  width: 22px;
+  width: 24px;
   height: 2px;
+  flex: 0 0 auto;
   background: currentColor;
   content: "";
 }
 
 .section-title {
-  margin-top: 16px;
-  font-size: clamp(2rem, 4vw, 3.5rem);
-  font-weight: 750;
-  line-height: 1.08;
-  letter-spacing: -0.055em;
+  max-width: 1000px;
+  margin: 18px 0 0;
+  font-family: var(--font-heading), sans-serif;
+  font-size: clamp(2.4rem, 5.2vw, 5.5rem);
+  font-weight: 800;
+  line-height: 0.99;
+  letter-spacing: -0.065em;
+  text-wrap: balance;
 }
 
 .section-description {
-  max-width: 600px;
+  max-width: 640px;
+  margin-top: 20px;
   color: var(--muted);
-  font-size: 1rem;
-  line-height: 1.8;
+  font-family: var(--font-body), sans-serif;
+  font-size: clamp(1rem, 1.2vw, 1.125rem);
+  line-height: 1.85;
+  text-wrap: pretty;
 }
 
-.primary-button {
+/* ==============================
+   5. Reusable Buttons
+============================== */
+
+.btn {
   display: inline-flex;
+  min-height: 52px;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  min-height: 48px;
-  padding: 12px 19px;
-  border: 1px solid var(--primary);
-  border-radius: 8px;
-  background: var(--primary);
-  color: white;
+  padding: 14px 22px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-full);
+  font-family: var(--font-body), sans-serif;
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 750;
+  line-height: 1.2;
   transition:
-    background 180ms ease,
-    transform 180ms ease;
+    background-color var(--transition),
+    border-color var(--transition),
+    color var(--transition),
+    box-shadow var(--transition),
+    transform var(--transition);
 }
 
-.primary-button:hover {
+.btn:hover {
   transform: translateY(-2px);
+}
+
+.btn-primary {
+  border-color: var(--primary);
+  background: var(--primary);
+  color: #ffffff;
+}
+
+.btn-primary:hover {
+  border-color: var(--primary-hover);
   background: var(--primary-hover);
+  box-shadow: 0 10px 28px rgb(128 87 239 / 22%);
 }
 
-.secondary-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  min-height: 48px;
-  padding: 12px 19px;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: white;
+.btn-secondary {
+  border-color: var(--border);
+  background: var(--surface);
   color: var(--foreground);
-  font-size: 14px;
-  font-weight: 700;
-  transition:
-    border-color 180ms ease,
-    color 180ms ease;
 }
 
-.secondary-button:hover {
+.btn-secondary:hover {
   border-color: var(--primary);
   color: var(--primary);
 }
 
-@media (max-width: 768px) {
-  .section-padding {
-    padding-block: 72px;
+.btn-dark {
+  background: var(--dark);
+  color: #ffffff;
+}
+
+.btn-accent {
+  background: var(--accent);
+  color: var(--dark);
+}
+
+/* ==============================
+   6. Reusable Cards
+============================== */
+
+.card {
+  min-width: 0;
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  transition:
+    transform var(--transition),
+    border-color var(--transition),
+    box-shadow var(--transition);
+}
+
+.card-hover:hover {
+  transform: translateY(-5px);
+  border-color: var(--primary);
+  box-shadow: var(--shadow-sm);
+}
+
+.card-title {
+  margin: 0;
+  font-family: var(--font-heading), sans-serif;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.card-description {
+  margin-top: 10px;
+  color: var(--muted);
+  font-family: var(--font-body), sans-serif;
+  font-size: 14px;
+  line-height: 1.8;
+}
+
+/* ==============================
+   7. Reusable Grid
+============================== */
+
+.grid {
+  display: grid;
+  gap: 20px;
+}
+
+.grid-2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.grid-3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.grid-4 {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+/* ==============================
+   8. Reusable Flex Utilities
+============================== */
+
+.flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flex-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* ==============================
+   9. Reusable Text Utilities
+============================== */
+
+.text-muted {
+  color: var(--muted);
+}
+
+.text-primary {
+  color: var(--primary);
+}
+
+.text-accent {
+  color: var(--accent);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.font-bold {
+  font-weight: 700;
+}
+
+.font-extrabold {
+  font-weight: 800;
+}
+
+/* ==============================
+   10. Reusable Surfaces
+============================== */
+
+.surface {
+  background: var(--surface);
+}
+
+.surface-dark {
+  background: var(--dark);
+  color: #ffffff;
+}
+
+.rounded-sm {
+  border-radius: var(--radius-sm);
+}
+
+.rounded-md {
+  border-radius: var(--radius-md);
+}
+
+.rounded-lg {
+  border-radius: var(--radius-lg);
+}
+
+.rounded-full {
+  border-radius: var(--radius-full);
+}
+
+.border {
+  border: 1px solid var(--border);
+}
+
+/* ==============================
+   11. Animations
+============================== */
+
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
   }
 
-  .container {
-    width: calc(100% - 32px);
+  to {
+    opacity: 1;
+    transform: translateY(0);
   }
 }
+
+.animate-fade-up {
+  animation: fade-up 600ms ease both;
+}
+
+.reveal {
+  opacity: 0;
+  transform: translateY(18px);
+  transition:
+    opacity 650ms ease,
+    transform 650ms ease;
+}
+
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==============================
+   12. Sidebar & Site Layout
+============================== */
+
+.site-content {
+  width: 100%;
+  min-width: 0;
+  margin-left: 0;
+}
+
+.section-inner {
+  width: 100%;
+  min-width: 0;
+}
+
+@media (min-width: 768px) {
+  .section-inner {
+    padding-left: 70px;
+  }
+}
+
+.sidebar-border {
+  border-right: 1px solid var(--sidebar-border-light);
+  transition: border-color 300ms ease;
+}
+
+.sidebar-border[data-theme="dark"] {
+  border-right-color: var(--sidebar-border-dark);
+}
+
+.sidebar-accent {
+  color: var(--sidebar-accent);
+}
+
+.mobile-menu-toggle {
+  display: grid;
+  place-items: center;
+}
+
+@media (min-width: 1024px) {
+  .mobile-menu-toggle {
+    display: none !important;
+  }
+}
+
+/* ==============================
+   13. Responsive
+============================== */
+
+@media (min-width: 1600px) {
+  :root {
+    --page-gutter: 96px;
+  }
+}
+
+@media (max-width: 1024px) {
+  :root {
+    --page-gutter: 32px;
+    --section-space: 96px;
+  }
+
+  .grid-4,
+  .grid-3 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-gutter: 24px;
+    --section-space: 76px;
+  }
+
+  html {
+    scroll-padding-top: 82px;
+  }
+
+  .section-heading {
+    margin-bottom: 26px;
+  }
+
+  .section-title {
+    font-size: clamp(2.25rem, 7vw, 3.75rem);
+    letter-spacing: -0.055em;
+  }
+
+  .section-description {
+    margin-top: 16px;
+    font-size: 15px;
+    line-height: 1.8;
+  }
+
+  .grid {
+    gap: 14px;
+  }
+
+  .btn {
+    min-height: 48px;
+    padding: 13px 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  :root {
+    --page-gutter: 18px;
+    --section-space: 64px;
+  }
+
+  .section-label {
+    font-size: 10px;
+    letter-spacing: 0.12em;
+  }
+
+  .section-title {
+    font-size: clamp(2rem, 9vw, 2.8rem);
+  }
+
+  .section-description {
+    font-size: 14px;
+  }
+
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .card {
+    padding: 18px;
+  }
+}
+
+/* ==============================
+   14. Accessibility
+============================== */
 
 @media (prefers-reduced-motion: reduce) {
   *,
@@ -167,6 +583,12 @@ button {
   *::after {
     scroll-behavior: auto !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
   }
 }
