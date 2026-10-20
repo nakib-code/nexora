@@ -578,18 +578,21 @@ export default function Services({
 
         invalidateOnRefresh: true,
 
-        snap:
-          totalCards > 1
-            ? {
-                snapTo: 1 / Math.max(totalCards - 1, 1),
-                duration: {
-                  min: 0.25,
-                  max: 0.6,
-                },
-                delay: 0.04,
-                ease: "power2.inOut",
-              }
-            : false,
+  
+...(totalCards > 1
+  ? {
+      snap: {
+        snapTo: 1 / (totalCards - 1),
+        duration: {
+          min: 0.25,
+          max: 0.6,
+        },
+        delay: 0.04,
+        ease: "power2.inOut" as const,
+      },
+    }
+  : {}),
+
 
         onUpdate: (self) => {
           if (isAnimatingRef.current) return;
