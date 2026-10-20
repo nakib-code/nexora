@@ -12,7 +12,6 @@ export default function ExpertiseStrip() {
   const items = [...expertise, ...expertise];
 
   return (
-    <>
       <section
         data-sidebar-theme="dark"
         className="relative flex h-[120px] items-center overflow-hidden bg-[#C9F31E] text-[#050505]"
@@ -42,13 +41,5 @@ export default function ExpertiseStrip() {
           </motion.div>
         </div>
       </section>
-
-      {/* Next light section */}
-      <div
-        data-sidebar-theme="light"
-        aria-hidden="true"
-        className="h-10 bg-white sm:h-14"
-      />
-    </>
   );
 }
