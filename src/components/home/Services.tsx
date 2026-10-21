@@ -1,4 +1,3 @@
-
 "use client";
 
 import React, {
@@ -9,13 +8,12 @@ import React, {
 } from "react";
 
 import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ScrollToPlugin } from "gsap/ScrollToPlugin";
-import { useGSAP } from "@gsap/react";
+import ScrollTrigger from "gsap/ScrollTrigger";
 
 import {
   ArrowDown,
-  ArrowUpRight,
+  ArrowRight,
+  Check,
   Film,
   Gauge,
   Globe2,
@@ -23,633 +21,957 @@ import {
   Search,
 } from "lucide-react";
 
-gsap.registerPlugin(ScrollTrigger, ScrollToPlugin);
+/* ================================================================
+   GSAP
+================================================================ */
 
-/* =========================================================
-   TYPES
-========================================================= */
-
-type ServiceItem = {
-  number: string;
-  title: string;
-  shortTitle: string;
-  description: string;
-  icon: React.ElementType;
-  benefits: string[];
-};
-
-interface ServicesProps {
-  services?: ServiceItem[];
+if (typeof window !== "undefined") {
+  gsap.registerPlugin(ScrollTrigger);
 }
 
-/* =========================================================
-   SERVICES
-========================================================= */
+/* ================================================================
+   TYPES
+================================================================ */
 
-const DEFAULT_SERVICES: ServiceItem[] = [
+type Service = {
+  id: string;
+  title: string;
+  shortTitle: string;
+  subtitle: string;
+  description: string;
+  benefits: string[];
+  accent: string;
+  accentSoft: string;
+  icon: React.ElementType;
+};
+
+/* ================================================================
+   SERVICES
+================================================================ */
+
+const services: Service[] = [
   {
-    number: "01",
-    title: "FB Ads",
-    shortTitle: "Facebook Advertising",
+    id: "01",
+    title: "Facebook Advertising",
+    shortTitle: "FB Ads",
+    subtitle: "Facebook Advertising",
     description:
-      "High-converting Facebook advertising campaigns designed to reach the right audience, generate qualified leads, and scale your business rapidly.",
-    icon: Megaphone,
+      "Turn attention into predictable growth with strategic Facebook advertising built around your audience, creative, and conversion goals.",
     benefits: [
       "Audience targeting & research",
       "Creative & ad strategy",
       "Campaign setup & optimization",
       "Retargeting & LAL setup",
     ],
+    accent: "#7c3aed",
+    accentSoft: "#a855f7",
+    icon: Megaphone,
   },
+
   {
-    number: "02",
-    title: "Google Ads",
-    shortTitle: "Google Advertising",
+    id: "02",
+    title: "Google Advertising",
+    shortTitle: "Google Ads",
+    subtitle: "Google Advertising",
     description:
-      "Performance-focused Google Ads campaigns that put your business right in front of active buyers searching for your solutions.",
-    icon: Search,
+      "Capture high-intent demand with Google campaigns designed to put your business in front of people actively searching for what you offer.",
     benefits: [
       "Search & display campaigns",
       "High-intent keyword research",
       "Conversion-focused copy",
       "Continuous bid optimization",
     ],
+    accent: "#22c1dc",
+    accentSoft: "#06b6d4",
+    icon: Search,
   },
+
   {
-    number: "03",
+    id: "03",
     title: "Conversion Tracking",
-    shortTitle: "Track What Matters",
+    shortTitle: "Conversion Tracking",
+    subtitle: "Track What Matters",
     description:
-      "Accurate conversion tracking setup ensuring complete visibility into sales origins, ROI attribution, and budget efficiency.",
-    icon: Gauge,
+      "Build a reliable measurement system so every important click, lead, purchase, and customer journey can be understood and optimized.",
     benefits: [
       "Server-side GA4 setup",
       "Google Tag Manager",
       "CAPI & Meta Pixel",
       "Custom event funnels",
     ],
+    accent: "#fb9b63",
+    accentSoft: "#f97316",
+    icon: Gauge,
   },
+
   {
-    number: "04",
+    id: "04",
     title: "Video Editing",
-    shortTitle: "Content That Converts",
+    shortTitle: "Video Editing",
+    subtitle: "Content That Converts",
     description:
-      "Professional short-form and performance video editing tailored to stop the scroll, engage audiences, and spark immediate action.",
-    icon: Film,
+      "Create scroll-stopping video content with strong hooks, intentional pacing, polished motion, and sound designed to hold attention.",
     benefits: [
       "Short-form social hooks",
       "High-ROI ad creatives",
       "Sleek motion graphics",
       "Pacing & sound design",
     ],
+    accent: "#e879d8",
+    accentSoft: "#d946ef",
+    icon: Film,
   },
+
   {
-    number: "05",
+    id: "05",
     title: "Website Design & Development",
-    shortTitle: "Web Experiences",
+    shortTitle: "Website Design & Development",
+    subtitle: "Web Experiences",
     description:
-      "Modern, fast, conversion-focused web experiences engineered to build authority and transform casual visitors into high-value clients.",
-    icon: Globe2,
+      "Design and develop fast, modern websites that combine premium visual systems with technical performance and conversion-focused experiences.",
     benefits: [
       "Modern UI/UX architecture",
       "Ultra-responsive Next.js code",
       "Core Web Vitals optimization",
       "Conversion-optimized CTA design",
     ],
+    accent: "#4f8df7",
+    accentSoft: "#2563eb",
+    icon: Globe2,
   },
 ];
 
-/* =========================================================
+/* ================================================================
    COMPONENT
-========================================================= */
+================================================================ */
 
-export default function Services({
-  services = DEFAULT_SERVICES,
-}: ServicesProps) {
-  const sectionRef = useRef<HTMLElement | null>(null);
+export default function Services() {
+  const sectionRef =
+    useRef<HTMLElement | null>(null);
 
-  const cardsContainerRef = useRef<HTMLDivElement | null>(null);
+  const desktopCardsRef =
+    useRef<HTMLDivElement | null>(null);
 
-  const isAnimatingRef = useRef(false);
-  const activeIndexRef = useRef(0);
-  const wheelLockRef = useRef(false);
+  const mobileCardsRef =
+    useRef<HTMLDivElement | null>(null);
 
-  const [activeIndex, setActiveIndex] = useState(0);
+  const desktopTriggerRef =
+    useRef<ScrollTrigger | null>(null);
 
-  const totalCards = services.length;
+  const [activeIndex, setActiveIndex] =
+    useState(0);
 
-  /* =======================================================
-     ACTIVE INDEX
-  ======================================================= */
+  const activeIndexRef =
+    useRef(0);
 
-  const updateActiveIndex = useCallback(
-    (index: number) => {
-      const safeIndex = Math.max(
-        0,
-        Math.min(index, Math.max(totalCards - 1, 0))
-      );
+  const [isDesktop, setIsDesktop] =
+    useState(false);
 
-      activeIndexRef.current = safeIndex;
-      setActiveIndex(safeIndex);
-    },
-    [totalCards]
-  );
-
-  /* =======================================================
-     CARD ANIMATION
-  ======================================================= */
-
-  const animateCards = useCallback(
-    (
-      targetIndex: number,
-      direction: "next" | "prev",
-      immediate = false
-    ) => {
-      const container = cardsContainerRef.current;
-
-      if (!container) return;
-
-      const cards = Array.from(
-        container.querySelectorAll<HTMLElement>(
-          "[data-service-card]"
-        )
-      );
-
-      if (!cards.length) return;
-
-      const safeIndex = Math.max(
-        0,
-        Math.min(targetIndex, cards.length - 1)
-      );
-
-      cards.forEach((card, index) => {
-        const offset = index - safeIndex;
-
-        let x = 0;
-        let y = 0;
-        let z = 0;
-        let rotateY = 0;
-        let rotateX = 0;
-        let scale = 1;
-        let opacity = 1;
-
-        /* ACTIVE */
-
-        if (offset === 0) {
-          x = 0;
-          y = 0;
-          z = 0;
-          rotateY = 0;
-          rotateX = 0;
-          scale = 1;
-          opacity = 1;
-        }
-
-        /* NEXT */
-
-        else if (offset === 1) {
-          x = 30;
-          y = 18;
-          z = -85;
-          rotateY = 8;
-          rotateX = 1;
-          scale = 0.965;
-          opacity = 0.72;
-        }
-
-        /* THIRD */
-
-        else if (offset === 2) {
-          x = 56;
-          y = 34;
-          z = -155;
-          rotateY = 13;
-          rotateX = 2;
-          scale = 0.925;
-          opacity = 0.4;
-        }
-
-        /* BEHIND */
-
-        else if (offset > 2) {
-          x = 85;
-          y = 48;
-          z = -225;
-          rotateY = 18;
-          rotateX = 3;
-          scale = 0.88;
-          opacity = 0;
-        }
-
-        /* PREVIOUS */
-
-        else if (offset === -1) {
-          x = direction === "next" ? -60 : -38;
-          y = -8;
-          z = -45;
-          rotateY = direction === "next" ? -58 : -30;
-          rotateX = 0;
-          scale = 0.97;
-          opacity = 0;
-        }
-
-        /* OLD */
-
-        else {
-          x = -105;
-          y = -15;
-          z = -185;
-          rotateY = -68;
-          rotateX = 0;
-          scale = 0.88;
-          opacity = 0;
-        }
-
-        gsap.set(card, {
-          transformPerspective: 1400,
-          transformStyle: "preserve-3d",
-          backfaceVisibility: "hidden",
-          transformOrigin: "left center",
-
-          zIndex:
-            offset === 0
-              ? 50
-              : offset === 1
-                ? 40
-                : offset === 2
-                  ? 30
-                  : Math.max(1, 20 - Math.abs(offset)),
-        });
-
-        gsap.to(card, {
-          x,
-          y,
-          z,
-          rotateY,
-          rotateX,
-          scale,
-          opacity,
-          duration: immediate ? 0 : 0.65,
-          ease: "power3.inOut",
-          overwrite: true,
-        });
-      });
-    },
-    []
-  );
-
-  /* =======================================================
-     NAVIGATE TO CARD
-  ======================================================= */
-
-  const navigateToCard = useCallback(
-    (targetIndex: number) => {
-      if (totalCards <= 0 || isAnimatingRef.current) {
-        return;
-      }
-
-      const safeIndex = Math.max(
-        0,
-        Math.min(targetIndex, totalCards - 1)
-      );
-
-      const currentIndex = activeIndexRef.current;
-
-      if (safeIndex === currentIndex) return;
-
-      const direction =
-        safeIndex > currentIndex ? "next" : "prev";
-
-      isAnimatingRef.current = true;
-
-      updateActiveIndex(safeIndex);
-      animateCards(safeIndex, direction);
-
-      const trigger = ScrollTrigger.getById(
-        "services-pin-trigger"
-      );
-
-      if (!trigger) {
-        isAnimatingRef.current = false;
-        return;
-      }
-
-      const progress =
-        totalCards > 1
-          ? safeIndex / (totalCards - 1)
-          : 0;
-
-      const targetScroll =
-        trigger.start +
-        (trigger.end - trigger.start) * progress;
-
-      gsap.to(window, {
-        scrollTo: {
-          y: targetScroll,
-          autoKill: false,
-        },
-        duration: 0.7,
-        ease: "power3.inOut",
-        overwrite: true,
-        onComplete: () => {
-          isAnimatingRef.current = false;
-        },
-        onInterrupt: () => {
-          isAnimatingRef.current = false;
-        },
-      });
-    },
-    [animateCards, totalCards, updateActiveIndex]
-  );
-
-  /* =======================================================
-     SCROLL TO PROJECTS
-  ======================================================= */
-
-  const scrollToProjects = useCallback(() => {
-    const projectsSection = document.querySelector("#projects");
-
-    if (!projectsSection) return;
-
-    projectsSection.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
-  }, []);
-
-  /* =======================================================
-     WHEEL NAVIGATION
-  ======================================================= */
+  /* ================================================================
+     RESPONSIVE
+  ================================================================= */
 
   useEffect(() => {
-    const handleWheel = (event: WheelEvent) => {
-      if (isAnimatingRef.current) {
-        event.preventDefault();
-        return;
-      }
+    const media = window.matchMedia(
+      "(min-width: 1024px)"
+    );
 
-      const trigger = ScrollTrigger.getById(
-        "services-pin-trigger"
-      );
-
-      if (!trigger || !trigger.isActive) {
-        return;
-      }
-
-      const delta = event.deltaY;
-
-      if (Math.abs(delta) < 8) return;
-
-      const currentIndex = activeIndexRef.current;
-      const goingDown = delta > 0;
-      const goingUp = delta < 0;
-
-      /* LAST CARD */
-
-      if (goingDown && currentIndex === totalCards - 1) {
-        return;
-      }
-
-      /* FIRST CARD */
-
-      if (goingUp && currentIndex === 0) {
-        return;
-      }
-
-      if (wheelLockRef.current) {
-        event.preventDefault();
-        return;
-      }
-
-      event.preventDefault();
-      wheelLockRef.current = true;
-
-      const nextIndex = goingDown
-        ? currentIndex + 1
-        : currentIndex - 1;
-
-      const safeIndex = Math.max(
-        0,
-        Math.min(nextIndex, totalCards - 1)
-      );
-
-      if (safeIndex !== currentIndex) {
-        navigateToCard(safeIndex);
-      }
-
-      window.setTimeout(() => {
-        wheelLockRef.current = false;
-      }, 720);
+    const handleChange = () => {
+      setIsDesktop(media.matches);
     };
 
-    window.addEventListener("wheel", handleWheel, {
-      passive: false,
-    });
+    handleChange();
+
+    media.addEventListener(
+      "change",
+      handleChange
+    );
 
     return () => {
-      window.removeEventListener("wheel", handleWheel);
+      media.removeEventListener(
+        "change",
+        handleChange
+      );
     };
-  }, [navigateToCard, totalCards]);
+  }, []);
 
-  /* =======================================================
-     GSAP SCROLL TRIGGER
-  ======================================================= */
+  /* ================================================================
+     ACTIVE INDEX
+  ================================================================= */
 
-  useGSAP(
-    () => {
-      const section = sectionRef.current;
-      const container = cardsContainerRef.current;
-
-      if (!section || !container) return;
-
-      const cards = Array.from(
-        container.querySelectorAll<HTMLElement>(
-          "[data-service-card]"
+  const updateActiveIndex =
+    useCallback((index: number) => {
+      const safeIndex = Math.max(
+        0,
+        Math.min(
+          index,
+          services.length - 1
         )
       );
 
-      if (!cards.length) return;
+      activeIndexRef.current =
+        safeIndex;
 
-      /* INITIAL POSITIONS */
+      setActiveIndex(safeIndex);
+    }, []);
 
-      cards.forEach((card, index) => {
-        const offset = index;
+  /* ================================================================
+     DESKTOP CARD STACK
+  ================================================================= */
 
-        gsap.set(card, {
-          position: "absolute",
-          inset: 0,
+  const updateDesktopCards =
+    useCallback((progress: number) => {
+      const cards =
+        desktopCardsRef.current?.querySelectorAll<HTMLElement>(
+          "[data-service-card]"
+        );
 
-          transformPerspective: 1400,
-          transformStyle: "preserve-3d",
-          backfaceVisibility: "hidden",
-          transformOrigin: "left center",
+      if (!cards?.length) {
+        return;
+      }
 
-          x:
-            offset === 0
-              ? 0
-              : offset === 1
-                ? 30
-                : offset === 2
-                  ? 56
-                  : 85,
+      const total =
+        services.length;
 
-          y:
-            offset === 0
-              ? 0
-              : offset === 1
-                ? 18
-                : offset === 2
-                  ? 34
-                  : 48,
+      const exactIndex =
+        progress * (total - 1);
 
-          z:
-            offset === 0
-              ? 0
-              : offset === 1
-                ? -85
-                : offset === 2
-                  ? -155
-                  : -225,
+      const currentIndex =
+        Math.round(exactIndex);
 
-          rotateY:
-            offset === 0
-              ? 0
-              : offset === 1
-                ? 8
-                : offset === 2
-                  ? 13
-                  : 18,
+      if (
+        currentIndex !==
+        activeIndexRef.current
+      ) {
+        activeIndexRef.current =
+          currentIndex;
 
-          rotateX:
-            offset === 0
-              ? 0
-              : offset === 1
-                ? 1
-                : offset === 2
-                  ? 2
-                  : 3,
+        setActiveIndex(
+          currentIndex
+        );
+      }
 
-          scale:
-            offset === 0
-              ? 1
-              : offset === 1
-                ? 0.965
-                : offset === 2
-                  ? 0.925
-                  : 0.88,
+      cards.forEach(
+        (card, index) => {
+          const distance =
+            index - exactIndex;
 
-          opacity:
-            offset === 0
-              ? 1
-              : offset === 1
-                ? 0.72
-                : offset === 2
-                  ? 0.4
-                  : 0,
+          const absDistance =
+            Math.abs(distance);
 
-          zIndex:
-            offset === 0
-              ? 50
-              : offset === 1
-                ? 40
-                : offset === 2
-                  ? 30
-                  : Math.max(1, 20 - offset),
-        });
-      });
+          let x = 0;
+          let y = 0;
+          let scale = 1;
+          let opacity = 1;
+          let rotate = 0;
+          let rotateY = 0;
+          let zIndex = 10;
 
-      /* SCROLL DISTANCE */
+          /* --------------------------------------------------------
+             ACTIVE CARD
+          --------------------------------------------------------- */
 
-      const scrollDistance =
-        Math.max(totalCards - 1, 1) *
-        window.innerHeight;
+          if (
+            absDistance < 0.55
+          ) {
+            const t =
+              Math.min(
+                absDistance /
+                  0.55,
+                1
+              );
 
-      const trigger = ScrollTrigger.create({
-        id: "services-pin-trigger",
+            x =
+              distance * -10;
 
-        trigger: section,
-        start: "top top",
-        end: `+=${scrollDistance}`,
+            y =
+              absDistance * 3;
 
-        pin: true,
-        pinSpacing: true,
-        anticipatePin: 1,
-        scrub: 0.4,
+            scale =
+              1 - t * 0.02;
 
-        invalidateOnRefresh: true,
+            opacity =
+              1 - t * 0.05;
 
-  
-...(totalCards > 1
-  ? {
-      snap: {
-        snapTo: 1 / (totalCards - 1),
-        duration: {
-          min: 0.25,
-          max: 0.6,
-        },
-        delay: 0.04,
-        ease: "power2.inOut" as const,
-      },
-    }
-  : {}),
+            rotate =
+              distance * -0.5;
 
+            rotateY =
+              distance * -2;
 
-        onUpdate: (self) => {
-          if (isAnimatingRef.current) return;
-
-          if (totalCards <= 1) {
-            updateActiveIndex(0);
-            return;
+            zIndex = 100;
           }
 
-          const rawIndex =
-            self.progress * (totalCards - 1);
+          /* --------------------------------------------------------
+             NEXT CARDS
+          --------------------------------------------------------- */
 
-          const nextIndex = Math.round(rawIndex);
+          else if (
+            distance > 0
+          ) {
+            const t =
+              Math.min(
+                (distance -
+                  0.55) /
+                  1.25,
+                1
+              );
 
-          const safeIndex = Math.max(
-            0,
-            Math.min(nextIndex, totalCards - 1)
+            x =
+              28 - t * 15;
+
+            y =
+              14 + t * 15;
+
+            scale =
+              0.965 - t * 0.05;
+
+            opacity =
+              0.55 - t * 0.4;
+
+            rotate =
+              1 + t * 1.5;
+
+            rotateY =
+              3 + t * 5;
+
+            zIndex =
+              80 - index;
+          }
+
+          /* --------------------------------------------------------
+             PREVIOUS CARDS
+          --------------------------------------------------------- */
+
+          else {
+            const t =
+              Math.min(
+                (-distance -
+                  0.55) /
+                  1.25,
+                1
+              );
+
+            x =
+              -28 - t * 18;
+
+            y =
+              15 + t * 18;
+
+            scale =
+              0.96 - t * 0.06;
+
+            opacity =
+              0.25 - t * 0.2;
+
+            rotate =
+              -1 - t * 2;
+
+            rotateY =
+              -4 - t * 5;
+
+            zIndex =
+              70 - index;
+          }
+
+          gsap.set(card, {
+            xPercent: x,
+            yPercent: y,
+            scale,
+            opacity,
+            rotate,
+            rotateY,
+            zIndex,
+            transformPerspective: 1400,
+            transformOrigin:
+              "center center",
+          });
+        }
+      );
+    }, []);
+
+  /* ================================================================
+     DESKTOP PIN
+  ================================================================= */
+
+  useEffect(() => {
+    if (!isDesktop) {
+      return;
+    }
+
+    const section =
+      sectionRef.current;
+
+    if (!section) {
+      return;
+    }
+
+    const ctx =
+      gsap.context(() => {
+        gsap.registerPlugin(
+          ScrollTrigger
+        );
+
+        updateDesktopCards(0);
+
+        desktopTriggerRef.current =
+          ScrollTrigger.create({
+            id: "services-pin-trigger",
+
+            trigger: section,
+
+            start: "top top",
+
+            end: () =>
+              `+=${window.innerHeight * 4}`,
+
+            pin: true,
+
+            pinSpacing: true,
+
+            anticipatePin: 1,
+
+            scrub: 0.35,
+
+            invalidateOnRefresh:
+              true,
+
+            onUpdate: (self) => {
+              updateDesktopCards(
+                self.progress
+              );
+            },
+          });
+
+        ScrollTrigger.refresh();
+      }, section);
+
+    return () => {
+      desktopTriggerRef.current?.kill();
+
+      desktopTriggerRef.current =
+        null;
+
+      ctx.revert();
+    };
+  }, [
+    isDesktop,
+    updateDesktopCards,
+  ]);
+
+  /* ================================================================
+     MOBILE FLYING CARD ANIMATION
+  ================================================================= */
+
+  useEffect(() => {
+    if (isDesktop) {
+      return;
+    }
+
+    const container =
+      mobileCardsRef.current;
+
+    if (!container) {
+      return;
+    }
+
+    const ctx =
+      gsap.context(() => {
+        const cards =
+          container.querySelectorAll<HTMLElement>(
+            "[data-mobile-card]"
           );
 
-          if (safeIndex !== activeIndexRef.current) {
-            const direction =
-              safeIndex > activeIndexRef.current
-                ? "next"
-                : "prev";
+        cards.forEach(
+          (card, index) => {
+            const fromLeft =
+              index % 2 === 0;
 
-            updateActiveIndex(safeIndex);
-            animateCards(safeIndex, direction);
+            gsap.fromTo(
+              card,
+              {
+                x: fromLeft
+                  ? -90
+                  : 90,
+
+                y: 35,
+
+                rotate: fromLeft
+                  ? -4
+                  : 4,
+
+                scale: 0.94,
+
+                opacity: 0,
+
+                transformOrigin:
+                  fromLeft
+                    ? "left center"
+                    : "right center",
+              },
+              {
+                x: 0,
+                y: 0,
+                rotate: 0,
+                scale: 1,
+                opacity: 1,
+
+                duration: 0.85,
+
+                ease:
+                  "power3.out",
+
+                scrollTrigger: {
+                  trigger: card,
+
+                  start:
+                    "top 88%",
+
+                  end:
+                    "top 52%",
+
+                  scrub: 0.75,
+
+                  invalidateOnRefresh:
+                    true,
+                },
+              }
+            );
           }
-        },
-      });
+        );
+      }, container);
 
-      updateActiveIndex(0);
-      animateCards(0, "next", true);
+    return () => {
+      ctx.revert();
+    };
+  }, [isDesktop]);
 
-      requestAnimationFrame(() => {
-        ScrollTrigger.refresh();
-      });
+  /* ================================================================
+     DESKTOP NAVIGATION
+  ================================================================= */
 
-      return () => {
-        trigger.kill();
-      };
-    },
-    {
-      scope: sectionRef,
-      dependencies: [
-        services,
-        totalCards,
-        animateCards,
+  const goToService =
+    useCallback(
+      (index: number) => {
+        const safeIndex =
+          Math.max(
+            0,
+            Math.min(
+              index,
+              services.length - 1
+            )
+          );
+
+        if (!isDesktop) {
+          const card =
+            document.querySelector(
+              `[data-mobile-service="${safeIndex}"]`
+            );
+
+          card?.scrollIntoView({
+            behavior:
+              "smooth",
+            block: "center",
+          });
+
+          return;
+        }
+
+        const trigger =
+          desktopTriggerRef.current;
+
+        if (!trigger) {
+          updateActiveIndex(
+            safeIndex
+          );
+
+          return;
+        }
+
+        const progress =
+          safeIndex /
+          (services.length - 1);
+
+        const targetY =
+          trigger.start +
+          (trigger.end -
+            trigger.start) *
+            progress;
+
+        window.scrollTo({
+          top: targetY,
+          behavior:
+            "smooth",
+        });
+      },
+      [
+        isDesktop,
         updateActiveIndex,
-      ],
-      revertOnUpdate: true,
-    }
-  );
+      ]
+    );
 
-  /* =======================================================
-     RENDER
-  ======================================================= */
+  /* ================================================================
+     RESIZE
+  ================================================================= */
+
+  useEffect(() => {
+    if (!isDesktop) {
+      return;
+    }
+
+    const handleResize =
+      () => {
+        ScrollTrigger.refresh();
+      };
+
+    window.addEventListener(
+      "resize",
+      handleResize
+    );
+
+    return () => {
+      window.removeEventListener(
+        "resize",
+        handleResize
+      );
+    };
+  }, [isDesktop]);
+
+  /* ================================================================
+     SERVICE CARD
+  ================================================================= */
+
+  const renderServiceCard =
+    (
+      service: Service,
+      index: number,
+      mobile = false
+    ) => {
+      const Icon =
+        service.icon;
+
+      return (
+        <article
+          key={service.id}
+          data-service-card={
+            !mobile
+              ? true
+              : undefined
+          }
+          data-mobile-card={
+            mobile
+              ? true
+              : undefined
+          }
+          data-mobile-service={
+            mobile
+              ? index
+              : undefined
+          }
+          className={
+            mobile
+              ? `
+                relative
+                w-full
+                overflow-hidden
+                rounded-[28px]
+                border
+                border-[#e6e7ef]
+                bg-white
+                p-5
+                shadow-[0_18px_55px_rgba(50,45,90,.08)]
+                sm:rounded-[32px]
+                sm:p-7
+              `
+              : `
+                absolute
+                left-0
+                top-1/2
+                h-[clamp(420px,58vh,525px)]
+                w-full
+                -translate-y-1/2
+                overflow-hidden
+                rounded-[32px]
+                border
+                border-[#e3e4ec]
+                bg-white
+                p-7
+                shadow-[0_30px_90px_rgba(55,45,100,.12)]
+                xl:p-8
+              `
+          }
+          style={{
+            borderTopColor:
+              `${service.accent}70`,
+            borderTopWidth:
+              "3px",
+          }}
+        >
+          {/* =======================================================
+              CARD HEADER
+          ======================================================== */}
+
+          <div className="relative z-10 flex items-start justify-between">
+            <div className="flex items-center gap-4">
+              <div
+                className="
+                  flex
+                  h-[54px]
+                  w-[54px]
+                  shrink-0
+                  items-center
+                  justify-center
+                  rounded-[17px]
+                  text-white
+                  shadow-lg
+                "
+                style={{
+                  background:
+                    `linear-gradient(135deg, #17122c, ${service.accent})`,
+
+                  boxShadow:
+                    `0 10px 25px ${service.accent}30`,
+                }}
+              >
+                <Icon
+                  size={
+                    mobile
+                      ? 24
+                      : 25
+                  }
+                  strokeWidth={
+                    1.8
+                  }
+                />
+              </div>
+
+              <div>
+                <div
+                  className="
+                    text-[10px]
+                    font-bold
+                    uppercase
+                    tracking-[0.18em]
+                  "
+                  style={{
+                    color:
+                      service.accent,
+                  }}
+                >
+                  Service
+                </div>
+
+                <div className="mt-1 text-[12px] text-[#7b89a4]">
+                  Nexora Digital
+                </div>
+              </div>
+            </div>
+
+            <div
+              className="
+                select-none
+                text-[62px]
+                font-bold
+                leading-[0.7]
+                tracking-[-0.08em]
+                sm:text-[72px]
+              "
+              style={{
+                color:
+                  `${service.accent}13`,
+              }}
+            >
+              {service.id}
+            </div>
+          </div>
+
+          {/* =======================================================
+              CONTENT
+          ======================================================== */}
+
+          <div
+            className={
+              mobile
+                ? "relative z-10 mt-8"
+                : "relative z-10 mt-7"
+            }
+          >
+            <div
+              className="
+                text-[10px]
+                font-bold
+                uppercase
+                tracking-[0.16em]
+              "
+              style={{
+                color:
+                  service.accent,
+              }}
+            >
+              {service.shortTitle}
+            </div>
+
+            <h3
+              className={
+                mobile
+                  ? `
+                    mt-2
+                    max-w-[560px]
+                    text-[clamp(2.2rem,10vw,3.5rem)]
+                    font-bold
+                    leading-[0.95]
+                    tracking-[-0.055em]
+                    text-[#171936]
+                  `
+                  : `
+                    mt-2
+                    max-w-[680px]
+                    text-[clamp(2.6rem,3.8vw,4rem)]
+                    font-bold
+                    leading-[0.94]
+                    tracking-[-0.06em]
+                    text-[#171936]
+                  `
+              }
+            >
+              {service.title}
+            </h3>
+
+            <p
+              className={
+                mobile
+                  ? `
+                    mt-5
+                    max-w-[650px]
+                    text-[14px]
+                    leading-6
+                    text-[#6d7d9d]
+                    sm:text-[15px]
+                    sm:leading-7
+                  `
+                  : `
+                    mt-4
+                    max-w-[680px]
+                    text-[14px]
+                    leading-6
+                    text-[#6d7d9d]
+                    xl:text-[15px]
+                    xl:leading-7
+                  `
+              }
+            >
+              {service.description}
+            </p>
+          </div>
+
+          {/* =======================================================
+              DIVIDER
+          ======================================================== */}
+
+          <div
+            className={
+              mobile
+                ? "relative z-10 my-6 h-px w-full"
+                : "relative z-10 my-5 h-px w-full"
+            }
+            style={{
+              background:
+                "#e8e9ef",
+            }}
+          />
+
+          {/* =======================================================
+              BENEFITS
+          ======================================================== */}
+
+          <div className="relative z-10">
+            <h4
+              className={
+                mobile
+                  ? "text-[14px] font-bold text-[#20233f]"
+                  : "text-[14px] font-bold text-[#20233f]"
+              }
+            >
+              Key Benefits
+            </h4>
+
+            <div
+              className={
+                mobile
+                  ? "mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2"
+                  : "mt-3 grid grid-cols-2 gap-x-7 gap-y-3"
+              }
+            >
+              {service.benefits.map(
+                (benefit) => (
+                  <div
+                    key={benefit}
+                    className="
+                      flex
+                      items-start
+                      gap-3
+                      text-[12px]
+                      leading-5
+                      text-[#71819f]
+                      sm:text-[13px]
+                    "
+                  >
+                    <span
+                      className="
+                        mt-0.5
+                        flex
+                        h-4
+                        w-4
+                        shrink-0
+                        items-center
+                        justify-center
+                        rounded-full
+                        text-white
+                      "
+                      style={{
+                        background:
+                          service.accent,
+                      }}
+                    >
+                      <Check
+                        size={10}
+                        strokeWidth={3}
+                      />
+                    </span>
+
+                    <span>
+                      {benefit}
+                    </span>
+                  </div>
+                )
+              )}
+            </div>
+          </div>
+
+          {/* =======================================================
+              BOTTOM ACCENT
+          ======================================================== */}
+
+          <div
+            className="
+              absolute
+              bottom-0
+              left-0
+              h-[3px]
+              w-full
+            "
+            style={{
+              background:
+                service.accent,
+            }}
+          />
+        </article>
+      );
+    };
+
+  /* ================================================================
+     RETURN
+  ================================================================= */
 
   return (
     <section
@@ -658,958 +980,397 @@ export default function Services({
       data-sidebar-theme="light"
       className="
         relative
-        isolate
-
-        h-[100svh]
-        min-h-0
-
-        w-full
         overflow-hidden
-
-        bg-[#f7f7f5]
-        text-zinc-950
-
-        md:h-auto
-        md:min-h-screen
-        md:pl-[70px]
+        bg-[#f8f8fa]
+        text-[#171936]
+        section-with-left-nav
       "
     >
-      {/* MAIN CONTAINER */}
+      {/* ==============================================================
+          DESKTOP
+      =============================================================== */}
 
       <div
         className="
           relative
-          mx-auto
-
-          flex
-          h-full
-          min-h-0
-
-          w-full
-          max-w-[1900px]
-
-          flex-col
-          justify-start
-
-          px-4
-          pt-7
-          pb-6
-
-          max-[380px]:px-[18px]
-          max-[380px]:pt-5
-          max-[380px]:pb-4
-
-          sm:px-7
-          sm:pt-9
-          sm:pb-8
-
-          md:h-auto
-          md:min-h-screen
-
-          lg:justify-center
-          lg:px-14
-          lg:py-16
+          hidden
+          h-[100svh]
+          min-h-[680px]
+          overflow-hidden
+          lg:block
         "
       >
-        {/* HEADER */}
-
         <div
           className="
-            mb-4
-
+            relative
+            z-10
+            mx-auto
             flex
+            h-full
             w-full
+            max-w-[1750px]
             flex-col
-            gap-3
-
-            max-[380px]:mb-3
-
-            sm:mb-6
-            sm:gap-4
-
-            lg:mb-10
-            lg:flex-row
-            lg:items-end
-            lg:justify-between
+            px-8
+            py-8
+            xl:px-10
+            xl:py-9
           "
         >
-          {/* LEFT */}
+          {/* ========================================================
+              HEADER
+          ========================================================= */}
 
-          <div className="min-w-0 max-w-[930px]">
-            {/* EYEBROW */}
+          <div className="grid grid-cols-[1fr_0.65fr] gap-10">
+            <div>
+              <div className="mb-4 flex items-center gap-3">
+                <span className="h-2.5 w-2.5 rounded-full bg-violet-600" />
 
-            <div
-              className="
-                mb-2
+                <span className="text-[12px] font-bold uppercase tracking-[0.25em] text-violet-600">
+                  What We Do
+                </span>
+              </div>
 
-                flex
-                items-center
-                gap-2
-
-                text-[9px]
-                font-bold
-                uppercase
-                tracking-[0.22em]
-
-                text-purple-600
-
-                sm:mb-3
-                sm:text-[10px]
-              "
-            >
-              <span className="h-1.5 w-1.5 rounded-full bg-purple-600 sm:h-2 sm:w-2" />
-
-              <span>What We Do</span>
+ <h2 className="max-w-[780px] text-[clamp(3.2rem,4.7vw,5.4rem)] font-bold leading-[0.93] tracking-[-0.065em]">
+  Built for attention.
+  <br />
+  <span className="bg-gradient-to-r from-[#9b4dff] via-[#7436f2] to-[#6b21ff] bg-clip-text text-transparent">
+    Designed for growth.
+  </span>
+</h2>
             </div>
-
-            {/* HEADING */}
-
-            <h2
-              className="
-                max-w-[930px]
-
-                text-[31px]
-                font-semibold
-                leading-[1.02]
-                tracking-[-0.055em]
-
-                text-zinc-950
-
-                max-[380px]:text-[28px]
-
-                sm:text-4xl
-                md:text-5xl
-                lg:text-[54px]
-                xl:text-[58px]
-              "
-            >
-              Services built to{" "}
-              <span className="text-purple-600">
-                move your business forward.
-              </span>
-            </h2>
           </div>
 
-          {/* DESKTOP DESCRIPTION */}
+          {/* ========================================================
+              MAIN
+              
+              CARD = WIDER
+              BUTTONS = NARROWER
+          ========================================================= */}
 
           <div
             className="
-              hidden
-              max-w-[390px]
-              shrink-0
-
-              text-sm
-              leading-6
-              text-zinc-500
-
-              lg:mb-1
-              lg:block
-            "
-          >
-            From paid advertising to high-converting websites,
-            we build the systems that turn attention into
-            measurable growth.
-          </div>
-        </div>
-
-        {/* SERVICE AREA */}
-
-        <div
-          className="
-            flex
-            min-h-0
-            w-full
-            flex-1
-            flex-col
-
-            gap-1
-
-            lg:grid
-            lg:flex-none
-            lg:grid-cols-[minmax(0,1fr)_300px]
-            lg:gap-12
-
-            xl:grid-cols-[minmax(0,1fr)_320px]
-            xl:gap-14
-          "
-        >
-          {/* CARD AREA */}
-
-          <div
-            className="
-              relative
+              mt-5
+              grid
               min-h-0
-              min-w-0
-              w-full
               flex-1
-
-              lg:flex-none
+              grid-cols-[minmax(0,1.5fr)_minmax(280px,.58fr)]
+              gap-10
+              xl:grid-cols-[minmax(0,1.6fr)_minmax(300px,.55fr)]
+              xl:gap-14
             "
           >
-            {/* REDUCED MOBILE CARD HEIGHT */}
+            {/* ======================================================
+                LEFT CARD
+            ======================================================= */}
 
             <div
-              ref={cardsContainerRef}
+              ref={desktopCardsRef}
               className="
                 relative
-                h-[345px]
                 min-h-0
-                w-full
-
-                max-[380px]:h-[330px]
-
-                sm:h-[380px]
-
-                lg:h-[425px]
-
-                xl:h-[440px]
+                overflow-visible
               "
               style={{
-                perspective: "1400px",
+                perspective:
+                  "1400px",
               }}
             >
-              {services.map((service, index) => {
-                const Icon = service.icon;
-                const isActive = activeIndex === index;
+              {services.map(
+                (
+                  service,
+                  index
+                ) =>
+                  renderServiceCard(
+                    service,
+                    index,
+                    false
+                  )
+              )}
+            </div>
 
-                return (
-                  <article
-                    key={`${service.number}-${service.title}`}
-                    data-service-card
-                    className="
-                      absolute
-                      inset-0
-                      overflow-hidden
+            {/* ======================================================
+                RIGHT NAV
+            ======================================================= */}
 
-                      rounded-[24px]
+            <div className="flex min-h-0 items-center justify-end">
+              <div className="w-full max-w-[370px] space-y-2.5">
+                {services.map(
+                  (
+                    service,
+                    index
+                  ) => {
+                    const Icon =
+                      service.icon;
 
-                      border
-                      border-zinc-200/80
+                    const isActive =
+                      activeIndex ===
+                      index;
 
-                      bg-white
-
-                      shadow-[0_20px_60px_rgba(0,0,0,0.07)]
-
-                      sm:rounded-[30px]
-
-                      lg:rounded-[34px]
-                    "
-                    aria-hidden={!isActive}
-                  >
-                    {/* PURPLE GLOW */}
-
-                    <div
-                      className="
-                        pointer-events-none
-                        absolute
-
-                        -right-24
-                        -top-24
-
-                        h-48
-                        w-48
-
-                        rounded-full
-
-                        bg-purple-500/[0.07]
-
-                        blur-3xl
-
-                        sm:-right-32
-                        sm:-top-32
-                        sm:h-80
-                        sm:w-80
-                      "
-                    />
-
-                    <div
-                      className="
-                        pointer-events-none
-                        absolute
-
-                        -bottom-24
-                        -left-24
-
-                        h-44
-                        w-44
-
-                        rounded-full
-
-                        bg-purple-400/[0.04]
-
-                        blur-3xl
-
-                        sm:-bottom-36
-                        sm:h-72
-                        sm:w-72
-                      "
-                    />
-
-                    {/* CARD INNER */}
-
-                    <div
-                      className="
-                        relative
-
-                        flex
-                        h-full
-                        flex-col
-
-                        p-4
-
-                        max-[380px]:p-3.5
-
-                        sm:p-7
-
-                        lg:p-9
-
-                        xl:p-10
-                      "
-                    >
-                      {/* TOP */}
-
-                      <div className="flex items-center justify-between">
-                        {/* ICON + LABEL */}
-
-                        <div className="flex min-w-0 items-center gap-2.5 sm:gap-3">
-                          {/* ICON */}
-
-                          <div
-                            className="
-                              flex
-                              h-10
-                              w-10
-                              shrink-0
-
-                              items-center
-                              justify-center
-
-                              rounded-[13px]
-
-                              bg-zinc-950
-                              text-white
-
-                              shadow-[0_8px_20px_rgba(0,0,0,0.14)]
-
-                              sm:h-14
-                              sm:w-14
-                              sm:rounded-2xl
-                            "
-                          >
-                            <Icon
-                              size={19}
-                              strokeWidth={1.7}
-                              className="sm:h-[21px] sm:w-[21px]"
-                            />
-                          </div>
-
-                          {/* LABEL */}
-
-                          <div className="min-w-0">
-                            <div
-                              className="
-                                max-w-[155px]
-                                truncate
-
-                                text-[8px]
-                                font-bold
-                                uppercase
-                                tracking-[0.14em]
-
-                                text-purple-600
-
-                                max-[380px]:max-w-[135px]
-
-                                sm:max-w-none
-                                sm:text-[9px]
-                                sm:tracking-[0.18em]
-                              "
-                            >
-                              {service.shortTitle}
-                            </div>
-
-                            <div className="mt-1 text-[10px] font-medium text-zinc-400 sm:text-xs">
-                              Digital Service
-                            </div>
-                          </div>
-                        </div>
-
-                        {/* NUMBER */}
-
-                        <div
-                          className="
-                            select-none
-
-                            text-[36px]
-                            font-semibold
-                            leading-none
-
-                            tracking-[-0.07em]
-
-                            text-zinc-100
-
-                            max-[380px]:text-[33px]
-
-                            sm:text-6xl
-
-                            lg:text-7xl
-                          "
-                        >
-                          {service.number}
-                        </div>
-                      </div>
-
-                      {/* MAIN CONTENT */}
-
-                      <div
+                    return (
+                      <button
+                        key={
+                          service.id
+                        }
+                        type="button"
+                        onClick={() =>
+                          goToService(
+                            index
+                          )
+                        }
                         className="
-                          my-auto
-
-                          py-5
-
-                          max-[380px]:py-4
-
-                          sm:py-10
-
-                          lg:py-0
-                        "
-                      >
-                        {/* SMALL LABEL */}
-
-                        <div
-                          className="
-                            mb-2.5
-
-                            flex
-                            items-center
-                            gap-2
-
-                            text-[8px]
-                            font-bold
-                            uppercase
-                            tracking-[0.2em]
-
-                            text-zinc-400
-
-                            sm:mb-3
-                            sm:text-[9px]
-                          "
-                        >
-                          <span className="h-1 w-1 rounded-full bg-purple-600 sm:h-1.5 sm:w-1.5" />
-
-                          What we deliver
-                        </div>
-
-                        {/* TITLE */}
-
-                        <h3
-                          className="
-                            max-w-[720px]
-
-                            text-[27px]
-                            font-semibold
-
-                            leading-[1.03]
-
-                            tracking-[-0.05em]
-
-                            text-zinc-950
-
-                            max-[380px]:text-[24px]
-
-                            sm:text-4xl
-
-                            lg:text-[40px]
-
-                            xl:text-[44px]
-                          "
-                        >
-                          {service.title}
-                        </h3>
-
-                        {/* DESCRIPTION */}
-
-                        <p
-                          className="
-                            mt-3
-
-                            max-w-[620px]
-
-                            text-[11.5px]
-
-                            leading-[1.55]
-
-                            text-zinc-500
-
-                            max-[380px]:mt-2.5
-                            max-[380px]:text-[10.5px]
-                            max-[380px]:leading-[1.5]
-
-                            sm:mt-4
-                            sm:text-[15px]
-                            sm:leading-6
-
-                            lg:text-[16px]
-                          "
-                        >
-                          {service.description}
-                        </p>
-                      </div>
-
-                      {/* FOOTER */}
-
-                      <div
-                        className="
+                          group
+                          relative
                           flex
+                          w-full
                           items-center
-                          justify-between
-
-                          border-t
-                          border-zinc-100
-
-                          pt-3
-
-                          max-[380px]:pt-2.5
-
-                          sm:pt-5
+                          gap-3
+                          overflow-hidden
+                          rounded-[19px]
+                          border
+                          p-2.5
+                          text-left
+                          transition-all
+                          duration-500
                         "
-                      >
-                        {/* BRAND */}
+                        style={{
+                          borderColor:
+                            isActive
+                              ? `${service.accent}65`
+                              : "#e3e4eb",
 
-                        <div
+                          background:
+                            isActive
+                              ? "#ffffff"
+                              : "rgba(255,255,255,.72)",
+
+                          boxShadow:
+                            isActive
+                              ? `0 14px 40px ${service.accent}18`
+                              : "0 7px 24px rgba(40,40,80,.035)",
+                        }}
+                      >
+                        {/* Active line */}
+
+                        <span
+                          className="
+                            absolute
+                            left-0
+                            top-1/2
+                            h-7
+                            w-[3px]
+                            -translate-y-1/2
+                            rounded-r-full
+                            transition-all
+                            duration-500
+                          "
+                          style={{
+                            background:
+                              isActive
+                                ? service.accent
+                                : "transparent",
+                          }}
+                        />
+
+                        {/* Icon */}
+
+                        <span
                           className="
                             flex
+                            h-14
+                            w-14
+                            shrink-0
                             items-center
-                            gap-1.5
-
-                            text-[7px]
-                            font-semibold
-                            uppercase
-                            tracking-[0.13em]
-
-                            text-zinc-400
-
-                            sm:gap-2
-                            sm:text-[9px]
-                            sm:tracking-[0.16em]
+                            justify-center
+                            rounded-[16px]
+                            transition-all
+                            duration-500
                           "
+                          style={{
+                            background:
+                              isActive
+                                ? `linear-gradient(135deg, ${service.accent}, ${service.accentSoft})`
+                                : "#f3f4f8",
+
+                            color:
+                              isActive
+                                ? "#ffffff"
+                                : service.accent,
+
+                            boxShadow:
+                              isActive
+                                ? `0 10px 24px ${service.accent}35`
+                                : "none",
+                          }}
                         >
-                          <span
+                          <Icon
+                            size={22}
+                            strokeWidth={1.9}
+                          />
+                        </span>
+
+                        {/* Text */}
+
+                        <span className="min-w-0 flex-1">
+                          <span className="block truncate text-[14px] font-bold tracking-[-0.015em] text-[#20233f]">
+                            {
+                              service.shortTitle
+                            }
+                          </span>
+
+                          <span className="mt-0.5 block truncate text-[11px] text-[#7b8ba8]">
+                            {
+                              service.subtitle
+                            }
+                          </span>
+                        </span>
+
+                        {/* Number */}
+
+                        <span
+                          className="
+                            hidden
+                            text-[11px]
+                            font-bold
+                            tracking-[0.08em]
+                            sm:block
+                          "
+                          style={{
+                            color:
+                              isActive
+                                ? service.accent
+                                : "#a4aabd",
+                          }}
+                        >
+                          {
+                            service.id
+                          }
+                        </span>
+
+                        {/* Arrow */}
+
+                        <span
+                          className="
+                            flex
+                            h-9
+                            w-9
+                            shrink-0
+                            items-center
+                            justify-center
+                            rounded-full
+                            transition-all
+                            duration-500
+                          "
+                          style={{
+                            background:
+                              isActive
+                                ? service.accent
+                                : "#f1f2f6",
+
+                            color:
+                              isActive
+                                ? "#ffffff"
+                                : "#8b94aa",
+                          }}
+                        >
+                          <ArrowRight
+                            size={15}
                             className="
-                              h-1.5
-                              w-1.5
-
-                              rounded-full
-
-                              bg-purple-500
-
-                              shadow-[0_0_10px_rgba(147,51,234,0.5)]
+                              transition-transform
+                              duration-300
+                              group-hover:translate-x-0.5
                             "
                           />
-
-                          Nexora Digital
-                        </div>
-
-                        {/* NEXT */}
-
-                        {activeIndex < totalCards - 1 && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              navigateToCard(activeIndex + 1)
-                            }
-                            className="
-                              group
-
-                              flex
-                              items-center
-                              gap-1.5
-
-                              rounded-full
-
-                              bg-zinc-950
-
-                              px-3
-                              py-2
-
-                              text-[8px]
-                              font-bold
-                              uppercase
-                              tracking-[0.12em]
-
-                              text-white
-
-                              shadow-[0_8px_20px_rgba(0,0,0,0.12)]
-
-                              transition-all
-                              duration-300
-
-                              hover:-translate-y-0.5
-                              hover:bg-purple-600
-
-                              hover:shadow-[0_10px_25px_rgba(147,51,234,0.25)]
-
-                              max-[380px]:px-2.5
-                              max-[380px]:py-1.5
-
-                              sm:gap-2
-                              sm:px-5
-                              sm:py-3
-                              sm:text-[10px]
-                            "
-                          >
-                            <span>Next</span>
-
-                            <ArrowDown
-                              size={12}
-                              strokeWidth={2}
-                              className="
-                                transition-transform
-                                duration-300
-
-                                group-hover:translate-y-1
-
-                                sm:h-[13px]
-                                sm:w-[13px]
-                              "
-                            />
-                          </button>
-                        )}
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
+                        </span>
+                      </button>
+                    );
+                  }
+                )}
+              </div>
             </div>
           </div>
 
-          {/* DESKTOP SERVICE NAV */}
-
-          <aside className="hidden w-full justify-self-end lg:block">
-            <div className="border-l border-zinc-200 pl-6 xl:pl-7">
-              <div
-                className="
-                  mb-5
-
-                  text-[9px]
-                  font-bold
-                  uppercase
-                  tracking-[0.2em]
-
-                  text-zinc-400
-                "
-              >
-                Our Services
-              </div>
-
-              <div className="space-y-1">
-                {services.map((service, index) => {
-                  const Icon = service.icon;
-                  const isActive = activeIndex === index;
-
-                  return (
-                    <button
-                      key={service.number}
-                      type="button"
-                      onClick={() => navigateToCard(index)}
-                      className={`
-                        group
-                        relative
-
-                        flex
-                        w-full
-                        items-center
-                        gap-3
-
-                        rounded-2xl
-
-                        px-3
-                        py-3
-
-                        text-left
-
-                        transition-all
-                        duration-300
-
-                        ${
-                          isActive
-                            ? "bg-white shadow-[0_12px_35px_rgba(0,0,0,0.07)]"
-                            : "bg-transparent hover:bg-white/70"
-                        }
-                      `}
-                    >
-                      {/* ACTIVE LINE */}
-
-                      <span
-                        className={`
-                          absolute
-
-                          -left-[25px]
-                          top-1/2
-
-                          h-8
-                          w-[2px]
-
-                          -translate-y-1/2
-
-                          rounded-full
-
-                          transition-all
-                          duration-300
-
-                          ${
-                            isActive
-                              ? "bg-purple-600 shadow-[0_0_15px_rgba(147,51,234,0.8)]"
-                              : "bg-transparent"
-                          }
-                        `}
-                      />
-
-                      {/* ICON */}
-
-                      <span
-                        className={`
-                          flex
-
-                          h-9
-                          w-9
-
-                          shrink-0
-
-                          items-center
-                          justify-center
-
-                          rounded-full
-
-                          transition-all
-                          duration-300
-
-                          ${
-                            isActive
-                              ? "bg-purple-600 text-white shadow-[0_8px_25px_rgba(147,51,234,0.28)]"
-                              : "bg-zinc-100 text-zinc-400 group-hover:bg-zinc-200 group-hover:text-zinc-600"
-                          }
-                        `}
-                      >
-                        <Icon size={14} strokeWidth={1.8} />
-                      </span>
-
-                      {/* TEXT */}
-
-                      <span className="min-w-0 flex-1">
-                        <span
-                          className={`
-                            block
-
-                            text-[10px]
-                            font-bold
-                            uppercase
-                            tracking-[0.1em]
-
-                            transition-colors
-                            duration-300
-
-                            ${
-                              isActive
-                                ? "text-zinc-950"
-                                : "text-zinc-400 group-hover:text-zinc-700"
-                            }
-                          `}
-                        >
-                          {service.title}
-                        </span>
-
-                        <span
-                          className={`
-                            mt-0.5
-                            block
-                            truncate
-
-                            text-[9px]
-
-                            transition-colors
-                            duration-300
-
-                            ${
-                              isActive
-                                ? "text-zinc-500"
-                                : "text-zinc-400"
-                            }
-                          `}
-                        >
-                          {service.shortTitle}
-                        </span>
-                      </span>
-
-                      {/* ARROW */}
-
-                      <ArrowUpRight
-                        size={13}
-                        className={`
-                          shrink-0
-
-                          transition-all
-                          duration-300
-
-                          ${
-                            isActive
-                              ? "translate-x-0 text-purple-600 opacity-100"
-                              : "-translate-x-1 text-zinc-300 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
-                          }
-                        `}
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          </aside>
-        </div>
-
-        {/* MOBILE NEXT ARROW */}
-
-        <div
-          className="
-            mt-1
-
-            flex
-            w-full
-            justify-center
-
-            sm:mt-3
-
-            lg:hidden
-          "
-        >
-          {activeIndex < totalCards - 1 && (
-            <button
-              type="button"
-              onClick={() => navigateToCard(activeIndex + 1)}
-              aria-label="Next service"
-              className="
-                group
-
-                flex
-                h-9
-                w-9
-
-                items-center
-                justify-center
-
-                rounded-full
-
-                border
-                border-zinc-200
-
-                bg-white
-
-                text-zinc-900
-
-                shadow-[0_10px_30px_rgba(0,0,0,0.08)]
-
-                transition-all
-                duration-300
-
-                hover:-translate-y-1
-                hover:border-purple-500
-                hover:bg-purple-600
-                hover:text-white
-
-                hover:shadow-[0_15px_35px_rgba(147,51,234,0.22)]
-
-                sm:h-12
-                sm:w-12
-              "
-            >
-              <ArrowDown
-                size={16}
-                strokeWidth={2}
-                className="
-                  transition-transform
-                  duration-300
-
-                  group-hover:translate-y-1
-
-                  sm:h-[19px]
-                  sm:w-[19px]
-                "
-              />
-            </button>
-          )}
+          {/* ========================================================
+              DESKTOP FOOTER
+              
+              Explore Projects REMOVED
+          ========================================================= */}
         </div>
       </div>
 
-      {/* FLOATING SCROLL TO PROJECTS */}
+      {/* ==============================================================
+          MOBILE
+          
+          NORMAL SCROLL
+          NO PIN
+          FLYING SIDE ANIMATION
+          NO EXPLORE BUTTON
+      =============================================================== */}
 
-      <button
-        type="button"
-        onClick={scrollToProjects}
-        aria-label="Scroll to Projects"
-        className="
-          group
+      <div className="block lg:hidden">
+        <div className="px-5 pb-16 pt-12 sm:px-7 sm:pt-16">
+          {/* ========================================================
+              MOBILE HEADER
+          ========================================================= */}
 
-          absolute
+          <div>
+            <div className="mb-4 flex items-center gap-2.5">
+              <span className="h-2 w-2 rounded-full bg-violet-600" />
 
-          bottom-3
-          right-4
+              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-violet-600">
+                What We Do
+              </span>
+            </div>
 
-          z-[80]
+            <h2 className="max-w-[650px] text-[clamp(2.65rem,11vw,4.2rem)] font-bold leading-[0.93] tracking-[-0.065em]">
+              Services built to
+              <br />
 
-          flex
-          h-10
-          w-10
+              <span className="bg-gradient-to-r from-[#9b4dff] via-[#7436f2] to-[#6b21ff] bg-clip-text text-transparent">
+                move your business
+                forward.
+              </span>
+            </h2>
 
-          items-center
-          justify-center
+            <p className="mt-5 max-w-[620px] text-[14px] leading-6 text-[#7182a1] sm:text-[15px] sm:leading-7">
+              From paid advertising
+              to high-converting
+              websites, we build
+              the systems that turn
+              attention into
+              measurable growth.
+            </p>
+          </div>
 
-          rounded-full
+          {/* ========================================================
+              MOBILE CARDS
+              
+              SIDE → CENTER FLYING ANIMATION
+          ========================================================= */}
 
-          border
-          border-zinc-200
-
-          bg-white/95
-
-          text-zinc-900
-
-          shadow-[0_14px_40px_rgba(0,0,0,0.10)]
-
-          backdrop-blur-md
-
-          transition-all
-          duration-300
-
-          hover:-translate-y-1
-          hover:border-purple-500
-          hover:bg-purple-600
-          hover:text-white
-
-          hover:shadow-[0_18px_45px_rgba(147,51,234,0.25)]
-
-          md:bottom-6
-          md:right-8
-          md:h-14
-          md:w-14
-
-          lg:bottom-7
-          lg:right-8
-
-          xl:right-10
-        "
-      >
-        <ArrowDown
-          size={17}
-          strokeWidth={2}
-          className="
-            transition-transform
-            duration-300
-
-            group-hover:translate-y-1
-
-            md:h-[21px]
-            md:w-[21px]
-          "
-        />
-      </button>
+          <div
+            ref={mobileCardsRef}
+            className="
+              mt-8
+              space-y-5
+              overflow-visible
+              sm:mt-10
+              sm:space-y-7
+            "
+          >
+            {services.map(
+              (
+                service,
+                index
+              ) =>
+                renderServiceCard(
+                  service,
+                  index,
+                  true
+                )
+            )}
+          </div>
+        </div>
+      </div>
     </section>
   );
 }

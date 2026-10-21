@@ -1,3 +1,4 @@
+"use client";
 
 import Link from "next/link";
 import {
@@ -8,6 +9,11 @@ import {
   Play,
   Search,
 } from "lucide-react";
+import {
+  motion,
+  useReducedMotion,
+  type Variants,
+} from "framer-motion";
 
 const services = [
   {
@@ -78,54 +84,144 @@ const services = [
 ];
 
 export default function ServicesPage() {
-  return (
-    <>
-      <section className="bg-surface">
-        <div className="container section-padding">
-          <p className="section-label">OUR SERVICES</p>
+  const reduceMotion = useReducedMotion();
 
-          <h1 className="mt-4 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-7xl">
+  const reveal: Variants = {
+    hidden: {
+      opacity: 0,
+      y: reduceMotion ? 0 : 26,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: reduceMotion ? 0 : 0.65,
+        ease: [0.22, 1, 0.36, 1],
+      },
+    },
+  };
+
+  const stagger: Variants = {
+    hidden: {},
+    visible: {
+      transition: {
+        staggerChildren: reduceMotion ? 0 : 0.1,
+      },
+    },
+  };
+
+  return (
+    <main>
+      {/* Services Hero */}
+      <section
+        id="services"
+        data-sidebar-theme="light"
+        className="section-with-left-nav overflow-hidden bg-surface"
+      >
+        <motion.div
+          className="container section-padding"
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <motion.p variants={reveal} className="section-label">
+            OUR SERVICES
+          </motion.p>
+
+          <motion.h1
+            variants={reveal}
+            className="mt-4 max-w-4xl text-4xl font-bold tracking-tight sm:text-5xl lg:text-7xl"
+          >
             The right digital strategy.
             <span className="text-primary"> Real business goals.</span>
-          </h1>
+          </motion.h1>
 
-          <p className="section-description mt-6 max-w-2xl">
+          <motion.p
+            variants={reveal}
+            className="section-description mt-6 max-w-2xl"
+          >
             From performance marketing to website development, we bring
             the essential digital services together to help your business
             move forward.
-          </p>
+          </motion.p>
 
-          <Link href="/contact" className="primary-button mt-8">
-            Discuss Your Project <ArrowRight size={18} />
-          </Link>
-        </div>
+          <motion.div variants={reveal}>
+            <Link
+              href="/contact"
+              className="primary-button mt-8 inline-flex items-center gap-2 transition-transform duration-300 hover:-translate-y-1"
+            >
+              Discuss Your Project
+              <ArrowRight size={18} />
+            </Link>
+          </motion.div>
+        </motion.div>
       </section>
 
-      <section className="container section-padding">
-        <div className="mb-12 max-w-2xl">
-          <p className="section-label">WHAT WE DO</p>
-          <h2 className="section-title mt-3">
+      {/* Services Grid */}
+      <section
+        id="services-list"
+        data-sidebar-theme="light"
+        className="section-with-left-nav container section-padding"
+      >
+        <motion.div
+          className="mb-12 max-w-2xl"
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.2 }}
+        >
+          <motion.p variants={reveal} className="section-label">
+            WHAT WE DO
+          </motion.p>
+
+          <motion.h2 variants={reveal} className="section-title mt-3">
             Services built around your needs.
-          </h2>
-          <p className="section-description mt-4">
+          </motion.h2>
+
+          <motion.p
+            variants={reveal}
+            className="section-description mt-4"
+          >
             Choose a service or combine several into a solution that
             fits your business.
-          </p>
-        </div>
+          </motion.p>
+        </motion.div>
 
-        <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+        <motion.div
+          className="grid gap-5 md:grid-cols-2 lg:grid-cols-3"
+          variants={stagger}
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, amount: 0.08 }}
+        >
           {services.map((service) => {
             const Icon = service.icon;
 
             return (
-              <article
+              <motion.article
                 key={service.number}
-                className="group flex flex-col rounded-2xl border border-border bg-background p-6 transition-all duration-300 hover:-translate-y-1 hover:border-primary/50 hover:shadow-lg sm:p-8"
+                variants={reveal}
+                whileHover={
+                  reduceMotion
+                    ? undefined
+                    : {
+                        y: -6,
+                        transition: { duration: 0.25 },
+                      }
+                }
+                className="group flex flex-col rounded-2xl border border-border bg-background p-6 transition-[border-color,box-shadow] duration-300 hover:border-primary/50 hover:shadow-lg sm:p-8"
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+                  <motion.div
+                    whileHover={
+                      reduceMotion ? undefined : { scale: 1.08, rotate: -4 }
+                    }
+                    transition={{ duration: 0.25 }}
+                    className="flex size-12 items-center justify-center rounded-xl bg-primary/10 text-primary"
+                  >
                     <Icon size={24} />
-                  </div>
+                  </motion.div>
 
                   <span className="text-sm font-semibold text-muted">
                     {service.number}
@@ -146,7 +242,10 @@ export default function ServicesPage() {
                       key={feature}
                       className="flex items-start gap-3 text-sm"
                     >
-                      <span className="mt-0.5 font-bold text-primary">
+                      <span
+                        aria-hidden="true"
+                        className="mt-0.5 font-bold text-primary"
+                      >
                         ✓
                       </span>
                       <span>{feature}</span>
@@ -161,17 +260,34 @@ export default function ServicesPage() {
                   Discuss this service
                   <ArrowRight
                     size={16}
-                    className="transition-transform group-hover:translate-x-1"
+                    className="transition-transform duration-300 group-hover:translate-x-1"
                   />
                 </Link>
-              </article>
+              </motion.article>
             );
           })}
-        </div>
+        </motion.div>
       </section>
 
-      <section className="container pb-20 sm:pb-28">
-        <div className="rounded-2xl bg-primary px-6 py-12 text-white sm:px-12 sm:py-16">
+      {/* CTA */}
+      <section
+        id="services-cta"
+        data-sidebar-theme="dark"
+        className="section-with-left-nav container pb-20 sm:pb-28"
+      >
+        <motion.div
+          initial={{
+            opacity: 0,
+            y: reduceMotion ? 0 : 24,
+          }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.2 }}
+          transition={{
+            duration: reduceMotion ? 0 : 0.7,
+            ease: [0.22, 1, 0.36, 1],
+          }}
+          className="rounded-2xl bg-primary px-6 py-12 text-white sm:px-12 sm:py-16"
+        >
           <p className="text-sm font-semibold uppercase tracking-widest text-white/75">
             LET&apos;S WORK TOGETHER
           </p>
@@ -187,12 +303,13 @@ export default function ServicesPage() {
 
           <Link
             href="/contact"
-            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 font-semibold text-primary transition hover:bg-white/90"
+            className="mt-8 inline-flex items-center gap-2 rounded-lg bg-white px-5 py-3 font-semibold text-primary transition duration-300 hover:-translate-y-1 hover:bg-white/90"
           >
-            Let&apos;s Talk <ArrowRight size={18} />
+            Let&apos;s Talk
+            <ArrowRight size={18} />
           </Link>
-        </div>
+        </motion.div>
       </section>
-    </>
+    </main>
   );
 }

@@ -36,15 +36,25 @@ function TypingText({
 
     if (!deleting && text.length < phrase.length) {
       timeout = setTimeout(() => {
-        setText(phrase.slice(0, text.length + 1));
+        setText(
+          phrase.slice(0, text.length + 1),
+        );
       }, 130);
-    } else if (!deleting && text.length === phrase.length) {
+    } else if (
+      !deleting &&
+      text.length === phrase.length
+    ) {
       timeout = setTimeout(() => {
         setDeleting(true);
       }, 1600);
-    } else if (deleting && text.length > 0) {
+    } else if (
+      deleting &&
+      text.length > 0
+    ) {
       timeout = setTimeout(() => {
-        setText(phrase.slice(0, text.length - 1));
+        setText(
+          phrase.slice(0, text.length - 1),
+        );
       }, 65);
     } else {
       timeout = setTimeout(() => {
@@ -91,13 +101,17 @@ function TypingText({
 
 export default function MobileHero() {
   const prefersReducedMotion = useReducedMotion();
-  const reduceMotion = Boolean(prefersReducedMotion);
+  const reduceMotion = Boolean(
+    prefersReducedMotion,
+  );
 
   const reveal = {
     hidden: {
       opacity: 0,
       y: reduceMotion ? 0 : 24,
-      filter: reduceMotion ? "blur(0px)" : "blur(7px)",
+      filter: reduceMotion
+        ? "blur(0px)"
+        : "blur(7px)",
     },
 
     visible: {
@@ -156,15 +170,23 @@ export default function MobileHero() {
         {/* Base */}
         <div className="absolute inset-0 bg-[#030303]" />
 
-        {/* World Map */}
+        {/* =====================================================
+            MOBILE WORLD MAP
+
+            IMPORTANT:
+            Mobile ONLY uses:
+
+            /world-map-bg-m.png
+
+            This must exist inside:
+            public/world-map-bg-m.png
+        ====================================================== */}
+
         <motion.div
           className="
             absolute
             inset-0
-            bg-[url('/world-map-bg.png')]
-            bg-center
-            bg-no-repeat
-            bg-[length:210%_auto]
+            overflow-hidden
             opacity-[0.48]
             mix-blend-screen
           "
@@ -173,7 +195,7 @@ export default function MobileHero() {
               ? undefined
               : {
                   scale: [1, 1.025, 1],
-                  opacity: [0.4, 0.52, 0.4],
+                  opacity: [0.42, 0.52, 0.42],
                 }
           }
           transition={{
@@ -181,22 +203,35 @@ export default function MobileHero() {
             repeat: Infinity,
             ease: "easeInOut",
           }}
-        />
+        >
+          <img
+            src="/world-map-bg-m.png"
+            alt=""
+            aria-hidden="true"
+            className="
+              absolute
+              inset-0
+              h-full
+              w-full
+              object-cover
+              object-center
+            "
+            draggable={false}
+          />
+        </motion.div>
 
         {/* Map glow */}
+
         <div
           className="
             absolute
             inset-0
-            bg-[radial-gradient(
-              ellipse_at_60%_42%,
-              rgba(214,255,0,0.13),
-              transparent 50%
-            )]
+            bg-[radial-gradient(ellipse_at_60%_42%,rgba(214,255,0,0.13),transparent_50%)]
           "
         />
 
         {/* Center glow */}
+
         <motion.div
           className="
             absolute
@@ -226,6 +261,7 @@ export default function MobileHero() {
         />
 
         {/* Top right */}
+
         <motion.div
           className="
             absolute
@@ -254,6 +290,7 @@ export default function MobileHero() {
         />
 
         {/* Left glow */}
+
         <motion.div
           className="
             absolute
@@ -281,9 +318,11 @@ export default function MobileHero() {
         />
 
         {/* Readability */}
+
         <div className="absolute inset-0 bg-black/25" />
 
         {/* Cinematic gradient */}
+
         <div
           className="
             absolute
@@ -296,51 +335,41 @@ export default function MobileHero() {
         />
 
         {/* Vignette */}
+
         <div
           className="
             absolute
             inset-0
-            bg-[radial-gradient(
-              ellipse_at_center,
-              transparent 18%,
-              rgba(0,0,0,0.74) 100%
-            )]
+            bg-[radial-gradient(ellipse_at_center,transparent_18%,rgba(0,0,0,0.74)_100%)]
           "
         />
 
         {/* Dots */}
+
         <div
           className="
             absolute
             inset-0
-            bg-[radial-gradient(
-              rgba(255,255,255,0.18)_0.65px,
-              transparent_0.65px
-            )]
+            bg-[radial-gradient(rgba(255,255,255,0.18)_0.65px,transparent_0.65px)]
             [background-size:20px_20px]
             opacity-[0.07]
           "
         />
 
         {/* Scan lines */}
+
         <div
           className="
             absolute
             inset-0
-            bg-[linear-gradient(
-              to_bottom,
-              transparent 0%,
-              transparent 49.8%,
-              rgba(255,255,255,0.025) 50%,
-              transparent 50.2%,
-              transparent 100%
-            )]
-            bg-[length:100%_130px]
+            bg-[linear-gradient(to_bottom,transparent_0%,transparent_49.8%,rgba(255,255,255,0.025)_50%,transparent_50.2%,transparent_100%)]
+            [background-size:100%_130px]
             opacity-40
           "
         />
 
         {/* Bottom fade */}
+
         <div
           className="
             absolute
@@ -456,9 +485,7 @@ export default function MobileHero() {
             pt-9
           "
         >
-          {/* =====================================================
-              HEADING
-          ===================================================== */}
+          {/* Heading */}
 
           <motion.div
             variants={reveal}
@@ -501,9 +528,7 @@ export default function MobileHero() {
             </span>
           </motion.div>
 
-          {/* =====================================================
-              STUDIO
-          ===================================================== */}
+          {/* Studio */}
 
           <motion.div
             variants={reveal}
@@ -520,13 +545,13 @@ export default function MobileHero() {
                 text-[#d6ff00]
               "
             >
-              <TypingText reduceMotion={reduceMotion} />
+              <TypingText
+                reduceMotion={reduceMotion}
+              />
             </h2>
           </motion.div>
 
-          {/* =====================================================
-              DESCRIPTION
-          ===================================================== */}
+          {/* Description */}
 
           <motion.div
             variants={reveal}
@@ -548,9 +573,7 @@ export default function MobileHero() {
             </p>
           </motion.div>
 
-          {/* =====================================================
-              CTA
-          ===================================================== */}
+          {/* CTA */}
 
           <motion.div
             variants={reveal}
@@ -601,10 +624,7 @@ export default function MobileHero() {
             </Link>
           </motion.div>
 
-          {/* =====================================================
-              NEW MIDDLE AREA
-              Fills the empty space
-          ===================================================== */}
+          {/* Middle Area */}
 
           <motion.div
             variants={reveal}
@@ -614,8 +634,6 @@ export default function MobileHero() {
               flex-col
             "
           >
-            {/* Small label */}
-
             <div
               className="
                 mb-4
@@ -648,8 +666,6 @@ export default function MobileHero() {
               </span>
             </div>
 
-            {/* Capabilities box */}
-
             <div
               className="
                 relative
@@ -661,8 +677,6 @@ export default function MobileHero() {
                 backdrop-blur-[2px]
               "
             >
-              {/* Glow */}
-
               <div
                 className="
                   pointer-events-none
@@ -678,178 +692,58 @@ export default function MobileHero() {
                 "
               />
 
-              {/* Strategy */}
+              {[
+                ["01", "Strategy"],
+                ["02", "Design"],
+                ["03", "Development"],
+                ["04", "Growth"],
+              ].map(([number, title], index) => (
+                <div
+                  key={number}
+                  className={`
+                    group
+                    relative
+                    flex
+                    items-center
+                    justify-between
+                    px-4
+                    py-4
+                    ${
+                      index !== 3
+                        ? "border-b border-white/10"
+                        : ""
+                    }
+                  `}
+                >
+                  <div className="flex items-center gap-3">
+                    <span
+                      className="
+                        text-[9px]
+                        font-mono
+                        text-[#d6ff00]/60
+                      "
+                    >
+                      {number}
+                    </span>
 
-              <div
-                className="
-                  group
-                  relative
-                  flex
-                  items-center
-                  justify-between
-                  border-b
-                  border-white/10
-                  px-4
-                  py-4
-                "
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="
-                      text-[9px]
-                      font-mono
-                      text-[#d6ff00]/60
-                    "
-                  >
-                    01
-                  </span>
+                    <span
+                      className="
+                        text-[13px]
+                        font-medium
+                        text-white/80
+                      "
+                    >
+                      {title}
+                    </span>
+                  </div>
 
-                  <span
-                    className="
-                      text-[13px]
-                      font-medium
-                      text-white/80
-                    "
-                  >
-                    Strategy
-                  </span>
+                  <Plus
+                    size={14}
+                    className="text-white/30"
+                  />
                 </div>
-
-                <Plus
-                  size={14}
-                  className="text-white/30"
-                />
-              </div>
-
-              {/* Design */}
-
-              <div
-                className="
-                  group
-                  relative
-                  flex
-                  items-center
-                  justify-between
-                  border-b
-                  border-white/10
-                  px-4
-                  py-4
-                "
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="
-                      text-[9px]
-                      font-mono
-                      text-[#d6ff00]/60
-                    "
-                  >
-                    02
-                  </span>
-
-                  <span
-                    className="
-                      text-[13px]
-                      font-medium
-                      text-white/80
-                    "
-                  >
-                    Design
-                  </span>
-                </div>
-
-                <Plus
-                  size={14}
-                  className="text-white/30"
-                />
-              </div>
-
-              {/* Development */}
-
-              <div
-                className="
-                  group
-                  relative
-                  flex
-                  items-center
-                  justify-between
-                  border-b
-                  border-white/10
-                  px-4
-                  py-4
-                "
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="
-                      text-[9px]
-                      font-mono
-                      text-[#d6ff00]/60
-                    "
-                  >
-                    03
-                  </span>
-
-                  <span
-                    className="
-                      text-[13px]
-                      font-medium
-                      text-white/80
-                    "
-                  >
-                    Development
-                  </span>
-                </div>
-
-                <Plus
-                  size={14}
-                  className="text-white/30"
-                />
-              </div>
-
-              {/* Growth */}
-
-              <div
-                className="
-                  group
-                  relative
-                  flex
-                  items-center
-                  justify-between
-                  px-4
-                  py-4
-                "
-              >
-                <div className="flex items-center gap-3">
-                  <span
-                    className="
-                      text-[9px]
-                      font-mono
-                      text-[#d6ff00]/60
-                    "
-                  >
-                    04
-                  </span>
-
-                  <span
-                    className="
-                      text-[13px]
-                      font-medium
-                      text-white/80
-                    "
-                  >
-                    Growth
-                  </span>
-                </div>
-
-                <Plus
-                  size={14}
-                  className="text-white/30"
-                />
-              </div>
+              ))}
             </div>
-
-            {/* Small visual line */}
 
             <div
               className="
@@ -875,9 +769,7 @@ export default function MobileHero() {
             </div>
           </motion.div>
 
-          {/* =====================================================
-              BOTTOM
-          ===================================================== */}
+          {/* Bottom */}
 
           <motion.div
             initial={{
@@ -903,8 +795,6 @@ export default function MobileHero() {
               pt-2
             "
           >
-            {/* Scroll */}
-
             <a
               href="#about"
               aria-label="Scroll to explore"
@@ -936,8 +826,6 @@ export default function MobileHero() {
                 "
               />
             </a>
-
-            {/* Counter */}
 
             <div
               className="
@@ -988,9 +876,7 @@ export default function MobileHero() {
             </div>
           </motion.div>
 
-          {/* =====================================================
-              ANIMATED LINE
-          ===================================================== */}
+          {/* Animated line */}
 
           <div
             className="

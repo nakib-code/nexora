@@ -1,6 +1,5 @@
-
-
 "use client";
+
 import Link from "next/link";
 import {
   useLayoutEffect,
@@ -11,11 +10,124 @@ import {
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-import { projects, type Project } from "@/data/projects";
-
 gsap.registerPlugin(ScrollTrigger);
 
 const PURPLE = "#854FEE";
+
+type ProjectCategory =
+  | "Facebook Advertising"
+  | "Google Advertising"
+  | "Conversion Tracking"
+  | "Video Editing"
+  | "Website Design & Development";
+
+type Project = {
+  id: string;
+  category: ProjectCategory;
+  title: string;
+  description: string;
+  technologies: string[];
+  metric: string;
+  metricLabel: string;
+  visualType: "meta" | "google" | "tracking" | "video" | "website";
+  liveUrl?: string;
+  caseStudyUrl?: string;
+};
+
+/* ============================================================
+   PROJECT DATA
+============================================================ */
+
+const projects: Project[] = [
+  {
+    id: "meta-growth-campaign",
+    category: "Facebook Advertising",
+    title: "Meta Growth Campaign",
+    description:
+      "A performance-focused Facebook advertising system built around audience research, creative testing, retargeting, and continuous campaign optimization.",
+    technologies: [
+      "Meta Ads",
+      "Audience Research",
+      "Creative Strategy",
+      "Retargeting",
+    ],
+    metric: "+184%",
+    metricLabel: "ROAS improvement",
+    visualType: "meta",
+  },
+
+  {
+    id: "google-search-system",
+    category: "Google Advertising",
+    title: "Search Growth System",
+    description:
+      "A high-intent Google Ads system designed to capture demand, improve search visibility, and turn qualified traffic into measurable conversions.",
+    technologies: [
+      "Google Ads",
+      "Keyword Research",
+      "Search Campaigns",
+      "Bid Optimization",
+    ],
+    metric: "3.8×",
+    metricLabel: "Return on ad spend",
+    visualType: "google",
+  },
+
+  {
+    id: "analytics-attribution",
+    category: "Conversion Tracking",
+    title: "Analytics & Attribution",
+    description:
+      "A complete conversion tracking architecture connecting GA4, Google Tag Manager, Meta Pixel, server-side events, and custom conversion funnels.",
+    technologies: [
+      "GA4",
+      "GTM",
+      "Meta CAPI",
+      "Event Tracking",
+    ],
+    metric: "97%",
+    metricLabel: "Event accuracy",
+    visualType: "tracking",
+  },
+
+  {
+    id: "performance-creative",
+    category: "Video Editing",
+    title: "Performance Creative Studio",
+    description:
+      "Short-form performance creatives built around strong hooks, fast pacing, motion graphics, sound design, and conversion-focused storytelling.",
+    technologies: [
+      "Short-form Video",
+      "Motion Graphics",
+      "Ad Creatives",
+      "Sound Design",
+    ],
+    metric: "2.6×",
+    metricLabel: "Higher engagement",
+    visualType: "video",
+  },
+
+  {
+    id: "conversion-website",
+    category: "Website Design & Development",
+    title: "Conversion Website",
+    description:
+      "A modern responsive website engineered around clean UI, conversion-focused journeys, strong performance, and a scalable Next.js architecture.",
+    technologies: [
+      "Next.js",
+      "UI / UX",
+      "Core Web Vitals",
+      "Conversion Design",
+    ],
+    metric: "+62%",
+    metricLabel: "Conversion rate",
+    visualType: "website",
+  },
+];
+
+/* ============================================================
+   ICON
+============================================================ */
 
 function ArrowUpRight({
   size = 17,
@@ -39,6 +151,7 @@ function ArrowUpRight({
         strokeLinecap="round"
         strokeLinejoin="round"
       />
+
       <path
         d="M8 7H17V16"
         stroke="currentColor"
@@ -50,6 +163,342 @@ function ArrowUpRight({
   );
 }
 
+/* ============================================================
+   META VISUAL
+============================================================ */
+
+function MetaVisual() {
+  return (
+    <div className="relative h-full min-h-[330px] overflow-hidden bg-[#17131f]">
+      <div className="absolute -right-20 -top-20 h-72 w-72 rounded-full bg-[#854FEE]/30 blur-[90px]" />
+
+      <div className="absolute left-6 top-6 text-[9px] font-bold uppercase tracking-[0.2em] text-white/35">
+        META PERFORMANCE
+      </div>
+
+      <div className="absolute left-6 right-6 top-16">
+        <div className="grid grid-cols-3 gap-3">
+          {[
+            ["ROAS", "4.82×"],
+            ["CTR", "6.7%"],
+            ["CPA", "-38%"],
+          ].map(([label, value]) => (
+            <div
+              key={label}
+              className="border border-white/10 bg-white/[0.045] p-4 backdrop-blur-md"
+            >
+              <p className="text-[8px] font-bold uppercase tracking-[0.16em] text-white/35">
+                {label}
+              </p>
+
+              <p className="mt-2 text-xl font-bold tracking-[-0.05em] text-white">
+                {value}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      <div className="absolute bottom-7 left-6 right-6">
+        <div className="flex h-28 items-end gap-2">
+          {[32, 48, 40, 62, 55, 76, 68, 91, 82, 100].map(
+            (height, index) => (
+              <div
+                key={index}
+                className="flex-1 bg-white/[0.12]"
+                style={{ height: `${height}%` }}
+              >
+                <div
+                  className="h-full w-full bg-[#854FEE]/70"
+                  style={{
+                    transform: `scaleY(${0.5 + index * 0.045})`,
+                    transformOrigin: "bottom",
+                  }}
+                />
+              </div>
+            ),
+          )}
+        </div>
+      </div>
+
+      <div className="absolute bottom-6 right-6 text-[8px] font-bold uppercase tracking-[0.18em] text-white/25">
+        DEMO CAMPAIGN
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   GOOGLE VISUAL
+============================================================ */
+
+function GoogleVisual() {
+  return (
+    <div className="relative h-full min-h-[330px] overflow-hidden bg-[#15131b]">
+      <div className="absolute -right-16 -top-20 h-64 w-64 rounded-full bg-[#854FEE]/15 blur-3xl" />
+
+      <div className="relative p-6 sm:p-8">
+        <div className="flex items-center justify-between">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/35">
+            GOOGLE ADS
+          </span>
+
+          <span className="text-[9px] font-bold text-[#a987ff]">
+            LIVE
+          </span>
+        </div>
+
+        <div className="mt-10">
+          <p className="text-[10px] font-bold uppercase tracking-[0.16em] text-white/30">
+            Search performance
+          </p>
+
+          <p className="mt-2 text-5xl font-bold tracking-[-0.08em] text-white sm:text-6xl">
+            3.8×
+          </p>
+
+          <p className="mt-2 text-xs font-medium text-white/40">
+            Return on ad spend
+          </p>
+        </div>
+
+        <div className="mt-10 space-y-3">
+          {[
+            ["High Intent", "84%"],
+            ["Quality Score", "92%"],
+            ["Conversion", "76%"],
+          ].map(([label, value], index) => (
+            <div key={label}>
+              <div className="mb-1.5 flex justify-between text-[9px] font-bold uppercase tracking-[0.12em]">
+                <span className="text-white/35">{label}</span>
+                <span className="text-white/55">{value}</span>
+              </div>
+
+              <div className="h-1 bg-white/[0.08]">
+                <div
+                  className="h-full bg-[#854FEE]"
+                  style={{
+                    width: `${[84, 92, 76][index]}%`,
+                  }}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   TRACKING VISUAL
+============================================================ */
+
+function TrackingVisual() {
+  return (
+    <div className="relative h-full min-h-[330px] overflow-hidden bg-[#0d0d0d]">
+      <div className="absolute inset-0 opacity-30">
+        <div
+          className="h-full w-full"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(133,79,238,.14) 1px, transparent 1px), linear-gradient(90deg, rgba(133,79,238,.14) 1px, transparent 1px)",
+            backgroundSize: "42px 42px",
+          }}
+        />
+      </div>
+
+      <div className="relative p-6 sm:p-8">
+        <div className="flex items-center justify-between">
+          <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-white/35">
+            CONVERSION TRACKING
+          </span>
+
+          <span className="h-2 w-2 rounded-full bg-[#854FEE]" />
+        </div>
+
+        <div className="relative mx-auto mt-12 max-w-[470px]">
+          <div className="grid grid-cols-3 gap-3">
+            {["Traffic", "Event", "Revenue"].map((item, index) => (
+              <div
+                key={item}
+                className={[
+                  "border p-4 text-center",
+                  index === 1
+                    ? "border-[#854FEE]/50 bg-[#854FEE]/15"
+                    : "border-white/10 bg-white/[0.035]",
+                ].join(" ")}
+              >
+                <div className="mx-auto h-2 w-2 rounded-full bg-[#854FEE]" />
+
+                <p className="mt-3 text-[8px] font-bold uppercase tracking-[0.14em] text-white/40">
+                  {item}
+                </p>
+              </div>
+            ))}
+          </div>
+
+          <div className="mx-auto h-10 w-px bg-[#854FEE]/40" />
+
+          <div className="mx-auto max-w-[180px] border border-[#854FEE]/50 bg-[#854FEE]/10 p-5 text-center">
+            <p className="text-[8px] font-bold uppercase tracking-[0.15em] text-[#c9b4ff]">
+              Conversion
+            </p>
+
+            <p className="mt-2 text-3xl font-bold tracking-[-0.07em] text-white">
+              97%
+            </p>
+
+            <p className="mt-1 text-[8px] text-white/35">
+              event accuracy
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   VIDEO VISUAL
+============================================================ */
+
+function VideoVisual() {
+  return (
+    <div className="relative h-full min-h-[330px] overflow-hidden bg-[#15131b]">
+      <div className="absolute left-1/2 top-1/2 h-[230px] w-[170px] -translate-x-1/2 -translate-y-1/2 rotate-[-7deg] border border-white/10 bg-black shadow-2xl">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#854FEE]/50 via-black to-black" />
+
+        <div className="absolute left-5 right-5 top-6">
+          <p className="text-[7px] font-bold uppercase tracking-[0.18em] text-white/40">
+            PERFORMANCE CREATIVE
+          </p>
+
+          <p className="mt-4 text-3xl font-bold leading-[0.9] tracking-[-0.07em] text-white">
+            MAKE
+            <br />
+            IT
+            <br />
+            MOVE.
+          </p>
+        </div>
+
+        <div className="absolute bottom-5 left-5 right-5">
+          <div className="flex gap-1">
+            {[1, 2, 3, 4, 5, 6, 7].map((item, index) => (
+              <div
+                key={item}
+                className="h-1 flex-1 bg-white/20"
+                style={{
+                  opacity: index % 2 === 0 ? 1 : 0.4,
+                }}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-7 left-7 text-[9px] font-bold uppercase tracking-[0.2em] text-white/30">
+        SHORT FORM / MOTION
+      </div>
+
+      <div className="absolute right-7 top-7 text-5xl font-black tracking-[-0.08em] text-white/[0.05]">
+        04
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   WEBSITE VISUAL
+============================================================ */
+
+function WebsiteVisual() {
+  return (
+    <div className="relative h-full min-h-[330px] overflow-hidden bg-[#16131c]">
+      <div className="absolute -left-20 -top-20 h-64 w-64 rounded-full bg-[#854FEE]/25 blur-3xl" />
+
+      <div className="relative p-5 sm:p-7">
+        <div className="mb-4 flex items-center justify-between">
+          <span className="text-[8px] font-bold uppercase tracking-[0.2em] text-white/35">
+            DIGITAL EXPERIENCE
+          </span>
+
+          <div className="flex gap-1.5">
+            <span className="h-2 w-2 rounded-full bg-white/20" />
+            <span className="h-2 w-2 rounded-full bg-white/20" />
+            <span className="h-2 w-2 rounded-full bg-[#854FEE]" />
+          </div>
+        </div>
+
+        <div className="overflow-hidden border border-white/10 bg-white/[0.045]">
+          <div className="border-b border-white/10 px-5 py-4">
+            <div className="h-1.5 w-16 bg-white/15" />
+          </div>
+
+          <div className="grid min-h-[245px] grid-cols-[1.2fr_.8fr]">
+            <div className="flex flex-col justify-center p-5">
+              <p className="text-[8px] font-bold uppercase tracking-[0.18em] text-[#a987ff]">
+                DIGITAL AGENCY
+              </p>
+
+              <h4 className="mt-3 text-3xl font-bold leading-[0.9] tracking-[-0.07em] text-white">
+                BUILD
+                <br />
+                BETTER.
+              </h4>
+
+              <div className="mt-6 h-7 w-20 bg-[#854FEE]" />
+            </div>
+
+            <div className="bg-[#854FEE]/20">
+              <div className="m-5 h-full border border-white/10 bg-white/[0.03]" />
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="absolute bottom-6 right-7 text-[8px] font-bold uppercase tracking-[0.18em] text-white/25">
+        NEXT.JS / UI / UX
+      </div>
+    </div>
+  );
+}
+
+/* ============================================================
+   PROJECT VISUAL
+============================================================ */
+
+function ProjectVisual({
+  project,
+}: {
+  project: Project;
+}) {
+  switch (project.visualType) {
+    case "meta":
+      return <MetaVisual />;
+
+    case "google":
+      return <GoogleVisual />;
+
+    case "tracking":
+      return <TrackingVisual />;
+
+    case "video":
+      return <VideoVisual />;
+
+    case "website":
+      return <WebsiteVisual />;
+
+    default:
+      return null;
+  }
+}
+
+/* ============================================================
+   PROJECT IMAGE
+============================================================ */
+
 function ProjectImage({
   project,
   index,
@@ -57,179 +506,28 @@ function ProjectImage({
   project: Project;
   index: number;
 }) {
-  const imageRef = useRef<HTMLDivElement | null>(null);
-
   const isRightImage = index % 2 === 0;
 
   return (
     <div
-      ref={imageRef}
       className={[
         "project-image-wrap",
         "relative w-full overflow-hidden",
-        "border border-black/[0.07]",
-        "bg-[#efefec]",
-        "shadow-[0_20px_70px_rgba(15,15,20,0.07)]",
-        isRightImage
-          ? "lg:order-2"
-          : "lg:order-1",
+        "border border-white/[0.08]",
+        "bg-[#111111]",
+        "shadow-[0_25px_80px_rgba(0,0,0,0.3)]",
+        "lg:aspect-[4/3]",
+        isRightImage ? "lg:order-2" : "lg:order-1",
       ].join(" ")}
     >
-      {project.image.type === "image" ? (
-        <div
-          className={[
-            "relative overflow-hidden",
-            project.image.aspect === "portrait"
-              ? "aspect-[4/5]"
-              : project.image.aspect === "wide"
-                ? "aspect-[16/9]"
-                : "aspect-[4/3]",
-          ].join(" ")}
-        >
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={project.image.src}
-            alt={project.image.alt}
-            className="
-              project-image
-              h-full
-              w-full
-              object-cover
-              transition-transform
-              duration-700
-              ease-[cubic-bezier(.22,1,.36,1)]
-              will-change-transform
-              hover:scale-[1.025]
-            "
-            loading={index === 0 ? "eager" : "lazy"}
-            decoding="async"
-          />
-
-          <div
-            aria-hidden="true"
-            className="
-              pointer-events-none
-              absolute
-              inset-0
-              bg-gradient-to-t
-              from-black/[0.08]
-              via-transparent
-              to-transparent
-              opacity-60
-            "
-          />
-
-          <div
-            aria-hidden="true"
-            className="
-              pointer-events-none
-              absolute
-              inset-0
-              ring-1
-              ring-inset
-              ring-white/10
-            "
-          />
-        </div>
-      ) : (
-        <div
-          className="
-            project-fallback
-            relative
-            flex
-            aspect-[4/3]
-            min-h-[280px]
-            flex-col
-            justify-between
-            overflow-hidden
-            bg-[#f3f1f7]
-            p-6
-            sm:min-h-[380px]
-            sm:p-8
-            lg:min-h-[500px]
-          "
-        >
-          <div
-            aria-hidden="true"
-            className="
-              absolute
-              -right-20
-              -top-20
-              h-64
-              w-64
-              rounded-full
-              bg-[#854FEE]/[0.08]
-              blur-3xl
-            "
-          />
-
-          <div className="relative flex items-center justify-between">
-            <span
-              className="
-                text-[9px]
-                font-bold
-                uppercase
-                tracking-[0.2em]
-                text-black/40
-              "
-            >
-              Selected work
-            </span>
-
-            <span
-              className="
-                text-4xl
-                font-black
-                tracking-[-0.08em]
-                text-black/[0.06]
-                sm:text-6xl
-              "
-            >
-              {String(index + 1).padStart(2, "0")}
-            </span>
-          </div>
-
-          <div className="relative">
-            <div
-              className="
-                mb-4
-                h-px
-                w-full
-                bg-black/[0.08]
-              "
-            />
-
-            <p
-              className="
-                max-w-[420px]
-                text-sm
-                font-medium
-                leading-6
-                text-black/45
-              "
-            >
-              {project.title}
-            </p>
-
-            <span
-              className="
-                mt-2
-                block
-                text-[9px]
-                font-bold
-                uppercase
-                tracking-[0.16em]
-                text-[#854FEE]
-              "
-            >
-              Project visual unavailable
-            </span>
-          </div>
-        </div>
-      )}
+      <ProjectVisual project={project} />
     </div>
   );
 }
+
+/* ============================================================
+   PROJECT META
+============================================================ */
 
 function ProjectMeta({
   project,
@@ -245,56 +543,39 @@ function ProjectMeta({
       className={[
         "project-content",
         "flex flex-col justify-center",
-        "lg:min-h-[420px]",
-        isRightContent
-          ? "lg:order-1"
-          : "lg:order-2",
+        "lg:min-h-[360px]",
+        isRightContent ? "lg:order-1" : "lg:order-2",
       ].join(" ")}
     >
       <div
         className="
-          mb-7
+          mb-6
           flex
           items-center
           justify-between
           border-b
-          border-black/[0.08]
+          border-white/[0.10]
           pb-4
-          sm:mb-9
+          sm:mb-7
         "
       >
-        <span
-          className="
-            text-[10px]
-            font-bold
-            uppercase
-            tracking-[0.18em]
-            text-[#854FEE]
-          "
-        >
+        <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-[#a987ff]">
           {project.category}
         </span>
 
-        <span
-          className="
-            text-[10px]
-            font-bold
-            tracking-[0.12em]
-            text-black/25
-          "
-        >
+        <span className="text-[10px] font-bold tracking-[0.12em] text-white/25">
           {String(index + 1).padStart(2, "0")}
         </span>
       </div>
 
       <h3
         className="
-          max-w-[650px]
-          text-[clamp(2.25rem,5vw,5.2rem)]
+          max-w-[620px]
+          text-[clamp(2.2rem,4.7vw,4.8rem)]
           font-bold
-          leading-[0.92]
+          leading-[0.91]
           tracking-[-0.065em]
-          text-[#111111]
+          text-white
         "
       >
         {project.title}
@@ -302,138 +583,79 @@ function ProjectMeta({
 
       <p
         className="
-          mt-6
-          max-w-[540px]
+          mt-5
+          max-w-[520px]
           text-[13px]
           font-medium
           leading-6
-          text-black/50
-          sm:mt-7
-          sm:text-[15px]
+          text-white/45
+          sm:mt-6
+          sm:text-[14px]
           sm:leading-7
         "
       >
         {project.description}
       </p>
 
-      {project.technologies.length > 0 && (
-        <div className="mt-7 sm:mt-8">
-          <p
-            className="
-              mb-3
-              text-[9px]
-              font-bold
-              uppercase
-              tracking-[0.18em]
-              text-black/30
-            "
-          >
-            Technologies / Services
+      <div className="mt-6 grid grid-cols-2 gap-5 sm:mt-7 sm:max-w-[390px]">
+        <div>
+          <p className="text-[9px] font-bold uppercase tracking-[0.17em] text-white/30">
+            Demo Result
           </p>
 
-          <div className="flex flex-wrap gap-x-5 gap-y-2">
-            {project.technologies.map((technology) => (
-              <span
-                key={technology}
-                className="
-                  text-[11px]
-                  font-semibold
-                  text-black/60
-                "
-              >
-                {technology}
-              </span>
-            ))}
-          </div>
+          <p className="mt-1 text-2xl font-bold tracking-[-0.06em] text-white">
+            {project.metric}
+          </p>
+
+          <p className="mt-0.5 text-[10px] font-medium text-white/40">
+            {project.metricLabel}
+          </p>
         </div>
-      )}
 
-      {(project.liveUrl || project.caseStudyUrl) && (
-        <div className="mt-8 flex flex-wrap items-center gap-x-7 gap-y-4 sm:mt-10">
-          {project.liveUrl && (
-            <a
-              href={project.liveUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={`View ${project.title} live project`}
-              className="
-                project-link
-                group
-                inline-flex
-                min-h-11
-                items-center
-                gap-3
-                border-b
-                border-black/20
-                pb-2
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-[0.16em]
-                text-black
-                transition-colors
-                hover:border-[#854FEE]
-                hover:text-[#854FEE]
-              "
-            >
-              <span>View Project</span>
+        <div>
+          <p className="text-[9px] font-bold uppercase tracking-[0.17em] text-white/30">
+            Service
+          </p>
 
-              <span
-                className="
-                  transition-transform
-                  duration-300
-                  group-hover:translate-x-0.5
-                  group-hover:-translate-y-0.5
-                "
-              >
-                <ArrowUpRight size={15} />
-              </span>
-            </a>
-          )}
-
-          {project.caseStudyUrl && (
-            <Link
-              href={project.caseStudyUrl}
-              aria-label={`View ${project.title} case study`}
-              className="
-                project-link
-                group
-                inline-flex
-                min-h-11
-                items-center
-                gap-3
-                border-b
-                border-black/10
-                pb-2
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-[0.16em]
-                text-black/55
-                transition-colors
-                hover:border-[#854FEE]
-                hover:text-[#854FEE]
-              "
-            >
-              <span>View Case Study</span>
-
-              <span
-                className="
-                  transition-transform
-                  duration-300
-                  group-hover:translate-x-0.5
-                  group-hover:-translate-y-0.5
-                "
-              >
-                <ArrowUpRight size={15} />
-              </span>
-            </Link>
-          )}
+          <p className="mt-2 text-[11px] font-semibold leading-4 text-white/60">
+            {project.category}
+          </p>
         </div>
-      )}
+      </div>
+
+      <div className="mt-6 sm:mt-7">
+        <p className="mb-2.5 text-[9px] font-bold uppercase tracking-[0.18em] text-white/30">
+          Technologies / Services
+        </p>
+
+        <div className="flex flex-wrap gap-x-4 gap-y-1.5">
+          {project.technologies.map((technology) => (
+            <span
+              key={technology}
+              className="text-[10px] font-semibold text-white/55"
+            >
+              {technology}
+            </span>
+          ))}
+        </div>
+      </div>
+
+      <div className="mt-7 flex items-center gap-6 sm:mt-8">
+        <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-white/25">
+          Demo Case Study
+        </span>
+
+        <span className="inline-flex h-9 w-9 items-center justify-center border border-white/10 text-white/50">
+          <ArrowUpRight size={15} />
+        </span>
+      </div>
     </div>
   );
 }
+
+/* ============================================================
+   PROJECT ROW
+============================================================ */
 
 function ProjectRow({
   project,
@@ -449,18 +671,28 @@ function ProjectRow({
         grid
         grid-cols-1
         gap-8
-        lg:grid-cols-[minmax(0,1.08fr)_minmax(340px,0.92fr)]
+        lg:grid-cols-[minmax(0,1.08fr)_minmax(320px,0.92fr)]
         lg:items-center
-        lg:gap-14
-        xl:gap-20
+        lg:gap-12
+        xl:gap-16
       "
     >
-      <ProjectImage project={project} index={index} />
+      <ProjectImage
+        project={project}
+        index={index}
+      />
 
-      <ProjectMeta project={project} index={index} />
+      <ProjectMeta
+        project={project}
+        index={index}
+      />
     </article>
   );
 }
+
+/* ============================================================
+   CTA
+============================================================ */
 
 function ClosingCTA() {
   return (
@@ -471,12 +703,12 @@ function ClosingCTA() {
         mt-24
         overflow-hidden
         border-y
-        border-black/[0.08]
+        border-white/[0.08]
         py-16
-        sm:mt-32
+        sm:mt-28
         sm:py-20
-        lg:mt-40
-        lg:py-28
+        lg:mt-36
+        lg:py-24
       "
     >
       <div
@@ -490,7 +722,7 @@ function ClosingCTA() {
           w-[420px]
           -translate-y-1/2
           rounded-full
-          bg-[#854FEE]/[0.07]
+          bg-[#854FEE]/[0.10]
           blur-[100px]
         "
       />
@@ -513,7 +745,7 @@ function ClosingCTA() {
               font-bold
               uppercase
               tracking-[0.2em]
-              text-[#854FEE]
+              text-[#a987ff]
               sm:text-[10px]
             "
           >
@@ -529,10 +761,12 @@ function ClosingCTA() {
               font-bold
               leading-[0.9]
               tracking-[-0.07em]
-              text-[#111111]
+              text-white
             "
           >
-            Your Next Big Idea Could Be Here.
+            Your Next Big Idea
+            <br />
+            Could Be Here.
           </h3>
 
           <p
@@ -543,7 +777,7 @@ function ClosingCTA() {
               text-[13px]
               font-medium
               leading-6
-              text-black/45
+              text-white/45
               sm:mt-7
               sm:text-[15px]
               sm:leading-7
@@ -553,68 +787,75 @@ function ClosingCTA() {
             memorable, and built for your goals.
           </p>
         </div>
+<Link
+  href="#contact"
+  className="
+    projects-cta-button
+    group
+    inline-flex
+    min-h-14
+    w-full
+    items-center
+    justify-between
+    gap-8
+    border
+    border-white/20
+    bg-white
+    px-5
+    text-[11px]
+    font-bold
+    uppercase
+    tracking-[0.14em]
+    !text-black
+    transition-all
+    duration-300
+    hover:border-[#854FEE]
+    hover:bg-[#854FEE]
+    hover:!text-white
+    sm:w-auto
+    sm:min-w-[230px]
+    sm:px-6
+  "
+>
+  <span>Start a Project</span>
 
-        <Link
-          href="#contact"
-          className="
-            projects-cta-button
-            group
-            inline-flex
-            min-h-14
-            w-full
-            items-center
-            justify-between
-            gap-8
-            border
-            border-black
-            bg-black
-            px-5
-            text-[11px]
-            font-bold
-            uppercase
-            tracking-[0.14em]
-            text-white
-            transition-all
-            duration-300
-            hover:border-[#854FEE]
-            hover:bg-[#854FEE]
-            sm:w-auto
-            sm:min-w-[230px]
-            sm:px-6
-          "
-        >
-          <span>Start a Project</span>
-
-          <span
-            className="
-              transition-transform
-              duration-300
-              group-hover:translate-x-1
-              group-hover:-translate-y-1
-            "
-          >
-            <ArrowUpRight size={17} />
-          </span>
-        </Link>
+  <span
+    className="
+      transition-transform
+      duration-300
+      group-hover:translate-x-1
+      group-hover:-translate-y-1
+    "
+  >
+    <ArrowUpRight size={17} />
+  </span>
+</Link>
       </div>
     </div>
   );
 }
 
+/* ============================================================
+   MAIN PROJECTS
+============================================================ */
+
 export default function Projects() {
   const sectionRef = useRef<HTMLElement | null>(null);
+
   const [activeCategory, setActiveCategory] =
-    useState<"All" | Project["category"]>("All");
+    useState<"All" | ProjectCategory>("All");
 
-  const categories = useMemo(() => {
-    const unique = Array.from(
-      new Set(projects.map((project) => project.category)),
-    );
-
-    return unique;
-  }, []);
-
-  const hasEnoughProjectsForFilter = categories.length > 1;
+  const categories = useMemo(
+    () =>
+      [
+        "Facebook Advertising",
+        "Google Advertising",
+        "Conversion Tracking",
+        "Video Editing",
+        "Website Design & Development",
+      ] as ProjectCategory[],
+    [],
+  );
 
   const filteredProjects = useMemo(() => {
     if (activeCategory === "All") {
@@ -675,6 +916,8 @@ export default function Projects() {
         return;
       }
 
+      /* HEADER */
+
       gsap.fromTo(
         headerItems,
         {
@@ -695,24 +938,27 @@ export default function Projects() {
         },
       );
 
+      /* PROJECT ROWS */
+
       projectRows.forEach((row, index) => {
         const image = imageWrappers[index];
         const content = contentBlocks[index];
 
-        const direction = index % 2 === 0 ? 28 : -28;
+        const direction =
+          index % 2 === 0 ? 28 : -28;
 
         gsap.fromTo(
           image,
           {
             opacity: 0,
-            y: 36,
-            clipPath: "inset(10% 0% 10% 0%)",
+            y: 32,
+            clipPath: "inset(8% 0% 8% 0%)",
           },
           {
             opacity: 1,
             y: 0,
             clipPath: "inset(0% 0% 0% 0%)",
-            duration: 1,
+            duration: 0.9,
             ease: "power3.out",
             scrollTrigger: {
               trigger: row,
@@ -731,8 +977,8 @@ export default function Projects() {
           {
             opacity: 1,
             x: 0,
-            duration: 0.8,
-            delay: 0.08,
+            duration: 0.75,
+            delay: 0.06,
             ease: "power3.out",
             scrollTrigger: {
               trigger: row,
@@ -742,30 +988,29 @@ export default function Projects() {
           },
         );
 
-        if (window.innerWidth >= 1024) {
-          const imageElement =
-            image.querySelector<HTMLElement>(".project-image");
+        /* DESKTOP IMAGE PARALLAX */
 
-          if (imageElement) {
-            gsap.fromTo(
-              imageElement,
-              {
-                yPercent: -2,
+        if (window.innerWidth >= 1024) {
+          gsap.fromTo(
+            image,
+            {
+              yPercent: -1.5,
+            },
+            {
+              yPercent: 1.5,
+              ease: "none",
+              scrollTrigger: {
+                trigger: row,
+                start: "top bottom",
+                end: "bottom top",
+                scrub: 1.2,
               },
-              {
-                yPercent: 2,
-                ease: "none",
-                scrollTrigger: {
-                  trigger: row,
-                  start: "top bottom",
-                  end: "bottom top",
-                  scrub: 1.2,
-                },
-              },
-            );
-          }
+            },
+          );
         }
       });
+
+      /* CTA */
 
       gsap.fromTo(
         ctaItems,
@@ -797,12 +1042,14 @@ export default function Projects() {
     <section
       ref={sectionRef}
       id="projects"
+      data-sidebar-theme="dark"
       className="
+        section-with-left-nav
         relative
         scroll-mt-20
         overflow-hidden
-        bg-[#f7f7f5]
-        text-[#111111]
+        bg-[#050505]
+        text-white
       "
     >
       <div
@@ -813,27 +1060,27 @@ export default function Projects() {
           px-5
           py-20
           sm:px-8
-          sm:py-28
+          sm:py-24
           lg:px-12
-          lg:py-36
+          lg:py-32
           xl:px-16
         "
       >
-        {/* =====================================================
+        {/* ==================================================
             HEADER
-        ====================================================== */}
+        =================================================== */}
 
         <header
           className="
             grid
             gap-10
             border-b
-            border-black/[0.08]
-            pb-12
+            border-white/[0.08]
+            pb-10
             lg:grid-cols-[minmax(0,1fr)_minmax(280px,0.42fr)]
             lg:items-end
             lg:gap-16
-            lg:pb-16
+            lg:pb-14
           "
         >
           <div>
@@ -862,7 +1109,7 @@ export default function Projects() {
                   font-bold
                   uppercase
                   tracking-[0.2em]
-                  text-[#854FEE]
+                  text-[#a987ff]
                   sm:text-[10px]
                 "
               >
@@ -873,19 +1120,19 @@ export default function Projects() {
             <h2
               className="
                 projects-header-item
-                max-w-[1000px]
-                text-[clamp(2.8rem,6.8vw,7rem)]
+                max-w-[900px]
+                text-[clamp(2.8rem,6.5vw,6.7rem)]
                 font-bold
                 leading-[0.88]
                 tracking-[-0.075em]
-                text-[#111111]
+                text-white
               "
             >
               Selected Projects.
               <br />
 
               <span className="text-[#854FEE]">
-                Real Digital Experiences.
+                Built Around Growth.
               </span>
             </h2>
           </div>
@@ -898,14 +1145,15 @@ export default function Projects() {
                 text-[13px]
                 font-medium
                 leading-6
-                text-black/45
+                text-white/45
                 sm:text-[15px]
                 sm:leading-7
               "
             >
-              A closer look at the digital experiences we
-              design and build, combining thoughtful design,
-              modern technology, and purposeful execution.
+              A selection of demo projects built around our
+              five core services — advertising, tracking,
+              creative production, and high-converting digital
+              experiences.
             </p>
 
             <div
@@ -916,9 +1164,8 @@ export default function Projects() {
                 items-end
                 justify-between
                 border-t
-                border-black/[0.08]
+                border-white/[0.08]
                 pt-4
-                sm:mt-10
               "
             >
               <span
@@ -927,10 +1174,10 @@ export default function Projects() {
                   font-bold
                   uppercase
                   tracking-[0.16em]
-                  text-black/30
+                  text-white/30
                 "
               >
-                Selected projects
+                Service projects
               </span>
 
               <span
@@ -938,45 +1185,46 @@ export default function Projects() {
                   text-[12px]
                   font-bold
                   tracking-[0.1em]
-                  text-black/70
+                  text-white/70
                 "
               >
                 {String(projectCount).padStart(2, "0")}
-                {" — "}
-                {String(projectCount).padStart(2, "0")}
-                {" "}
-                <span className="text-black/25">
-                  SELECTED PROJECTS
+                {" / "}
+                <span className="text-white/20">
+                  05 SERVICES
                 </span>
               </span>
             </div>
           </div>
         </header>
 
-        {/* =====================================================
+        {/* ==================================================
             FILTER
-        ====================================================== */}
+        =================================================== */}
 
-        {hasEnoughProjectsForFilter && (
-          <div
-            className="
-              mt-8
-              flex
-              flex-wrap
-              items-center
-              gap-2
-              sm:mt-10
-            "
-            aria-label="Project categories"
-          >
-            {(["All", ...categories] as const).map((category) => {
-              const active = activeCategory === category;
+        <div
+          className="
+            mt-8
+            flex
+            flex-wrap
+            items-center
+            gap-2
+            sm:mt-10
+          "
+          aria-label="Project categories"
+        >
+          {(["All", ...categories] as const).map(
+            (category) => {
+              const active =
+                activeCategory === category;
 
               return (
                 <button
                   key={category}
                   type="button"
-                  onClick={() => setActiveCategory(category)}
+                  onClick={() =>
+                    setActiveCategory(category)
+                  }
                   aria-pressed={active}
                   className={[
                     "min-h-10",
@@ -985,33 +1233,33 @@ export default function Projects() {
                     "text-[9px]",
                     "font-bold",
                     "uppercase",
-                    "tracking-[0.14em]",
+                    "tracking-[0.12em]",
                     "transition-all",
                     "duration-300",
                     active
-                      ? "border-black bg-black text-white"
-                      : "border-black/10 bg-transparent text-black/45 hover:border-black/30 hover:text-black",
+                      ? "border-white bg-white text-black"
+                      : "border-white/10 bg-transparent text-white/40 hover:border-white/30 hover:text-white",
                   ].join(" ")}
                 >
                   {category}
                 </button>
               );
-            })}
-          </div>
-        )}
+            },
+          )}
+        </div>
 
-        {/* =====================================================
+        {/* ==================================================
             PROJECTS
-        ====================================================== */}
+        =================================================== */}
 
-        {filteredProjects.length > 0 ? (
-          <div className="mt-16 sm:mt-24 lg:mt-32">
-            {filteredProjects.map((project, index) => (
+        <div className="mt-14 sm:mt-20 lg:mt-28">
+          {filteredProjects.map(
+            (project, index) => (
               <div
                 key={project.id}
                 className={[
                   index > 0
-                    ? "mt-24 border-t border-black/[0.08] pt-24 sm:mt-32 sm:pt-32 lg:mt-40 lg:pt-40"
+                    ? "mt-24 border-t border-white/[0.08] pt-24 sm:mt-28 sm:pt-28 lg:mt-36 lg:pt-36"
                     : "",
                 ].join(" ")}
               >
@@ -1020,100 +1268,13 @@ export default function Projects() {
                   index={index}
                 />
               </div>
-            ))}
-          </div>
-        ) : (
-          /* ===================================================
-             HONEST EMPTY STATE
-          ==================================================== */
+            ),
+          )}
+        </div>
 
-          <div
-            className="
-              projects-empty
-              mt-16
-              border-y
-              border-black/[0.08]
-              py-16
-              sm:mt-24
-              sm:py-24
-              lg:mt-32
-              lg:py-32
-            "
-          >
-            <div
-              className="
-                grid
-                gap-8
-                lg:grid-cols-[120px_1fr]
-                lg:gap-16
-              "
-            >
-              <span
-                className="
-                  text-6xl
-                  font-black
-                  leading-none
-                  tracking-[-0.08em]
-                  text-black/[0.06]
-                  sm:text-8xl
-                "
-              >
-                00
-              </span>
-
-              <div>
-                <p
-                  className="
-                    text-[9px]
-                    font-bold
-                    uppercase
-                    tracking-[0.2em]
-                    text-[#854FEE]
-                  "
-                >
-                  PORTFOLIO
-                </p>
-
-                <h3
-                  className="
-                    mt-4
-                    max-w-[760px]
-                    text-[clamp(2rem,4vw,4.5rem)]
-                    font-bold
-                    leading-[0.94]
-                    tracking-[-0.065em]
-                  "
-                >
-                  Real work goes here.
-                </h3>
-
-                <p
-                  className="
-                    mt-5
-                    max-w-[580px]
-                    text-[13px]
-                    font-medium
-                    leading-6
-                    text-black/45
-                    sm:mt-6
-                    sm:text-[15px]
-                    sm:leading-7
-                  "
-                >
-                  No portfolio project has been added to the
-                  verified project data yet. Once real project
-                  information and screenshots are connected,
-                  this section will automatically render the
-                  full editorial showcase.
-                </p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* =====================================================
+        {/* ==================================================
             CTA
-        ====================================================== */}
+        =================================================== */}
 
         <ClosingCTA />
       </div>

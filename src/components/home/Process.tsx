@@ -2,7 +2,6 @@
 
 import {
   useCallback,
-  useEffect,
   useLayoutEffect,
   useRef,
   useState,
@@ -13,16 +12,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 gsap.registerPlugin(ScrollTrigger);
 
-/* =========================================================
-   TYPES
-========================================================= */
-
-type ProcessIcon =
-  | "search"
-  | "layers"
-  | "layout"
-  | "chart"
-  | "check";
+type ProcessIcon = "search" | "layers" | "layout" | "chart" | "check";
 
 type ProcessStep = {
   number: string;
@@ -31,10 +21,6 @@ type ProcessStep = {
   icon: ProcessIcon;
   tags: string[];
 };
-
-/* =========================================================
-   DATA
-========================================================= */
 
 const processSteps: ProcessStep[] = [
   {
@@ -65,7 +51,7 @@ const processSteps: ProcessStep[] = [
     number: "04",
     title: "Launch, Track & Optimize",
     description:
-      "We launch campaigns, configure appropriate conversion tracking, and use available performance data to identify opportunities for improvement.",
+      "We launch campaigns, configure conversion tracking, and use performance data to identify opportunities for improvement.",
     icon: "chart",
     tags: ["Meta Ads", "Google Ads", "Tracking"],
   },
@@ -73,15 +59,11 @@ const processSteps: ProcessStep[] = [
     number: "05",
     title: "Deliver & Improve",
     description:
-      "We review the delivered work, share relevant insights, and identify practical next steps to support continued improvement.",
+      "We review the delivered work, share relevant insights, and identify practical next steps for continued improvement.",
     icon: "check",
     tags: ["Delivery", "Insights", "Next Steps"],
   },
 ];
-
-/* =========================================================
-   ICONS
-========================================================= */
 
 function ProcessIconSvg({
   type,
@@ -99,126 +81,84 @@ function ProcessIconSvg({
     strokeWidth: 1.7,
     strokeLinecap: "round" as const,
     strokeLinejoin: "round" as const,
-    "aria-hidden": true,
+    "aria-hidden": true as const,
   };
 
-  if (type === "search") {
-    return (
-      <svg {...common}>
-        <circle cx="11" cy="11" r="6.5" />
-        <path d="m16 16 4.2 4.2" />
-        <path d="M11 7.8v6.4M7.8 11h6.4" opacity=".45" />
-      </svg>
-    );
-  }
+  switch (type) {
+    case "search":
+      return (
+        <svg {...common}>
+          <circle cx="11" cy="11" r="6.5" />
+          <path d="m16 16 4.2 4.2" />
+          <path d="M11 7.8v6.4M7.8 11h6.4" opacity=".45" />
+        </svg>
+      );
 
-  if (type === "layers") {
-    return (
-      <svg {...common}>
-        <path d="m12 3.5 8 4.2-8 4.2-8-4.2 8-4.2Z" />
-        <path d="m4 12 8 4.2 8-4.2" />
-        <path d="m4 16.3 8 4.2 8-4.2" />
-      </svg>
-    );
-  }
+    case "layers":
+      return (
+        <svg {...common}>
+          <path d="m12 3.5 8 4.2-8 4.2-8-4.2 8-4.2Z" />
+          <path d="m4 12 8 4.2 8-4.2" />
+          <path d="m4 16.3 8 4.2 8-4.2" />
+        </svg>
+      );
 
-  if (type === "layout") {
-    return (
-      <svg {...common}>
-        <rect x="3.5" y="4" width="17" height="16" rx="2" />
-        <path d="M3.5 9h17" />
-        <path d="M8.5 9v11" />
-        <path d="M11.5 13h6M11.5 16h4.5" opacity=".6" />
-      </svg>
-    );
-  }
+    case "layout":
+      return (
+        <svg {...common}>
+          <rect x="3.5" y="4" width="17" height="16" rx="2" />
+          <path d="M3.5 9h17M8.5 9v11M11.5 13h6M11.5 16h4.5" />
+        </svg>
+      );
 
-  if (type === "chart") {
-    return (
-      <svg {...common}>
-        <path d="M4 19.5V14" />
-        <path d="M9.3 19.5V10" />
-        <path d="M14.6 19.5V6.5" />
-        <path d="M19.8 19.5V3.5" />
-        <path d="m4 10.5 5-4 5.2 2.5 5.6-5" />
-      </svg>
-    );
-  }
+    case "chart":
+      return (
+        <svg {...common}>
+          <path d="M4 19.5V14M9.3 19.5V10M14.6 19.5V6.5M19.8 19.5V3.5" />
+          <path d="m4 10.5 5-4 5.2 2.5 5.6-5" />
+        </svg>
+      );
 
-  return (
-    <svg {...common}>
-      <circle cx="12" cy="12" r="8.5" />
-      <path d="m8 12.2 2.7 2.7 5.6-6" />
-    </svg>
-  );
+    default:
+      return (
+        <svg {...common}>
+          <circle cx="12" cy="12" r="8.5" />
+          <path d="m8 12.2 2.7 2.7 5.6-6" />
+        </svg>
+      );
+  }
 }
-
-/* =========================================================
-   STEP VISUAL
-========================================================= */
 
 function StepVisual({
   step,
   index,
-  active,
 }: {
   step: ProcessStep;
   index: number;
-  active: boolean;
 }) {
   return (
-    <div
-      className={`
-        process-visual
-        relative
-        min-h-[330px]
-        overflow-hidden
-        rounded-[28px]
-        border
-        border-black/[0.08]
-        bg-white
-        shadow-[0_24px_70px_rgba(24,18,40,0.07)]
-        transition-all
-        duration-500
-        sm:min-h-[390px]
-        lg:min-h-[450px]
-        ${active ? "border-[#854fee]/25" : ""}
-      `}
-    >
-      {/* soft editorial background */}
+    <div className="process-visual relative min-h-[310px] overflow-hidden rounded-[26px] border border-black/[0.08] bg-white shadow-[0_24px_70px_rgba(24,18,40,0.07)] sm:min-h-[390px] lg:min-h-[450px]">
       <div className="pointer-events-none absolute inset-0">
         <div className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[#854fee]/[0.07] blur-3xl" />
         <div className="absolute -bottom-24 -left-24 h-64 w-64 rounded-full bg-[#854fee]/[0.045] blur-3xl" />
-
-        <div
-          className="
-            absolute
-            inset-0
-            opacity-[0.28]
-            [background-image:linear-gradient(to_right,rgba(20,16,30,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,16,30,0.05)_1px,transparent_1px)]
-            [background-size:42px_42px]
-          "
-        />
+        <div className="absolute inset-0 opacity-[0.28] [background-image:linear-gradient(to_right,rgba(20,16,30,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,16,30,0.05)_1px,transparent_1px)] [background-size:42px_42px]" />
       </div>
 
-      {/* top meta */}
       <div className="absolute left-5 right-5 top-5 z-10 flex items-center justify-between sm:left-7 sm:right-7 sm:top-7">
         <div className="flex items-center gap-2">
           <span className="grid h-9 w-9 place-items-center rounded-full bg-[#854fee] text-white">
             <ProcessIconSvg type={step.icon} size={17} />
           </span>
-
-          <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/35">
+          <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-black/35">
             Process / {step.number}
           </span>
         </div>
 
-        <span className="text-[10px] font-semibold uppercase tracking-[0.14em] text-black/25">
+        <span className="text-[10px] font-semibold tracking-[0.12em] text-black/25">
           {String(index + 1).padStart(2, "0")} / 05
         </span>
       </div>
 
-      {/* central visual */}
       <div className="absolute inset-x-5 bottom-5 top-24 sm:inset-x-8 sm:bottom-8 sm:top-28">
         {index === 0 && (
           <div className="relative h-full">
@@ -227,7 +167,6 @@ function StepVisual({
                 <span className="h-2 w-2 rounded-full bg-[#854fee]" />
                 <span className="h-2 w-16 rounded-full bg-black/10" />
               </div>
-
               <div className="space-y-3">
                 <div className="h-3 w-[78%] rounded-full bg-black/[0.08]" />
                 <div className="h-3 w-[58%] rounded-full bg-black/[0.06]" />
@@ -250,7 +189,7 @@ function StepVisual({
 
         {index === 1 && (
           <div className="relative h-full">
-            <div className="absolute left-[5%] top-[8%] h-[72%] w-[48%] rotate-[-4deg] rounded-2xl border border-black/[0.08] bg-white p-4 shadow-lg">
+            <div className="absolute left-[5%] top-[8%] h-[72%] w-[48%] -rotate-3 rounded-2xl border border-black/[0.08] bg-white p-4 shadow-lg">
               <div className="mb-5 h-2 w-20 rounded-full bg-black/10" />
               <div className="space-y-3">
                 <div className="h-16 rounded-xl bg-[#854fee]/10" />
@@ -259,7 +198,7 @@ function StepVisual({
               </div>
             </div>
 
-            <div className="absolute bottom-[4%] right-[5%] h-[70%] w-[48%] rotate-[5deg] rounded-2xl border border-black/[0.08] bg-[#f8f7fa] p-4 shadow-lg">
+            <div className="absolute bottom-[4%] right-[5%] h-[70%] w-[48%] rotate-3 rounded-2xl border border-black/[0.08] bg-[#f8f7fa] p-4 shadow-lg">
               <div className="grid grid-cols-2 gap-2">
                 <div className="h-16 rounded-xl bg-black/[0.04]" />
                 <div className="h-16 rounded-xl bg-[#854fee]/15" />
@@ -267,7 +206,7 @@ function StepVisual({
               </div>
             </div>
 
-            <div className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#854fee] text-white shadow-[0_12px_35px_rgba(133,79,238,0.28)]">
+            <div className="absolute left-1/2 top-1/2 grid h-14 w-14 -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-[#854fee] text-white shadow-lg">
               <ProcessIconSvg type="layers" size={24} />
             </div>
           </div>
@@ -282,7 +221,7 @@ function StepVisual({
                 <span className="h-2 w-2 rounded-full bg-white/20" />
               </div>
 
-              <div className="grid min-h-[200px] grid-cols-[0.65fr_1fr] gap-3 p-4 sm:min-h-[240px]">
+              <div className="grid min-h-[180px] grid-cols-[0.65fr_1fr] gap-3 p-4 sm:min-h-[240px]">
                 <div className="rounded-xl bg-white/[0.06] p-3">
                   <div className="mb-4 h-2 w-14 rounded-full bg-white/15" />
                   <div className="space-y-2">
@@ -300,11 +239,11 @@ function StepVisual({
               </div>
             </div>
 
-            <div className="absolute -bottom-1 left-[8%] rounded-full border border-black/[0.08] bg-white px-4 py-2 text-[9px] font-bold uppercase tracking-[0.14em] shadow-md">
+            <div className="absolute bottom-0 left-[8%] rounded-full border border-black/[0.08] bg-white px-4 py-2 text-[9px] font-bold uppercase tracking-[0.14em] shadow-md">
               Build
             </div>
 
-            <div className="absolute -right-1 top-[12%] rounded-full border border-[#854fee]/20 bg-[#854fee]/[0.07] px-4 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#854fee]">
+            <div className="absolute right-0 top-[12%] rounded-full border border-[#854fee]/20 bg-[#854fee]/[0.07] px-4 py-2 text-[9px] font-bold uppercase tracking-[0.14em] text-[#854fee]">
               Design
             </div>
           </div>
@@ -312,7 +251,7 @@ function StepVisual({
 
         {index === 3 && (
           <div className="relative h-full">
-            <div className="absolute left-[8%] top-[12%] w-[84%] rounded-2xl border border-black/[0.08] bg-white p-4 shadow-lg sm:p-5">
+            <div className="absolute left-[5%] top-[10%] w-[90%] rounded-2xl border border-black/[0.08] bg-white p-3 shadow-lg sm:left-[8%] sm:w-[84%] sm:p-5">
               <div className="mb-5 flex items-center justify-between">
                 <span className="text-[9px] font-bold uppercase tracking-[0.15em] text-black/35">
                   Tracking overview
@@ -323,23 +262,21 @@ function StepVisual({
               </div>
 
               <div className="grid grid-cols-3 gap-2">
-                <div className="rounded-xl bg-black/[0.035] p-3">
+                <div className="rounded-xl bg-black/[0.035] p-2 sm:p-3">
                   <div className="h-2 w-8 rounded-full bg-black/10" />
-                  <div className="mt-4 h-7 w-12 rounded bg-black/10" />
+                  <div className="mt-4 h-6 w-10 rounded bg-black/10 sm:h-7 sm:w-12" />
                 </div>
-
-                <div className="rounded-xl bg-[#854fee]/[0.07] p-3">
-                  <div className="h-2 w-10 rounded-full bg-[#854fee]/25" />
-                  <div className="mt-4 h-7 w-16 rounded bg-[#854fee]/25" />
+                <div className="rounded-xl bg-[#854fee]/[0.07] p-2 sm:p-3">
+                  <div className="h-2 w-8 rounded-full bg-[#854fee]/25" />
+                  <div className="mt-4 h-6 w-10 rounded bg-[#854fee]/25 sm:h-7 sm:w-12" />
                 </div>
-
-                <div className="rounded-xl bg-black/[0.035] p-3">
+                <div className="rounded-xl bg-black/[0.035] p-2 sm:p-3">
                   <div className="h-2 w-8 rounded-full bg-black/10" />
-                  <div className="mt-4 h-7 w-10 rounded bg-black/10" />
+                  <div className="mt-4 h-6 w-10 rounded bg-black/10 sm:h-7 sm:w-12" />
                 </div>
               </div>
 
-              <div className="mt-5 h-24 rounded-xl bg-[#f7f6f9] p-3">
+              <div className="mt-5 h-20 rounded-xl bg-[#f7f6f9] p-3 sm:h-24">
                 <svg
                   viewBox="0 0 400 100"
                   className="h-full w-full"
@@ -357,14 +294,14 @@ function StepVisual({
               </div>
             </div>
 
-            <div className="absolute bottom-[7%] left-[12%] flex items-center gap-2 rounded-full border border-black/[0.07] bg-white px-3 py-2 shadow-sm">
+            <div className="absolute bottom-[7%] left-[8%] flex items-center gap-2 rounded-full border border-black/[0.07] bg-white px-3 py-2 shadow-sm sm:left-[12%]">
               <span className="h-2 w-2 rounded-full bg-[#854fee]" />
               <span className="text-[8px] font-bold uppercase tracking-[0.12em] text-black/45">
                 Meta
               </span>
             </div>
 
-            <div className="absolute bottom-[7%] right-[12%] flex items-center gap-2 rounded-full border border-black/[0.07] bg-white px-3 py-2 shadow-sm">
+            <div className="absolute bottom-[7%] right-[8%] flex items-center gap-2 rounded-full border border-black/[0.07] bg-white px-3 py-2 shadow-sm sm:right-[12%]">
               <span className="h-2 w-2 rounded-full bg-black/20" />
               <span className="text-[8px] font-bold uppercase tracking-[0.12em] text-black/45">
                 Google
@@ -375,8 +312,8 @@ function StepVisual({
 
         {index === 4 && (
           <div className="relative flex h-full items-center justify-center">
-            <div className="relative w-[78%] rounded-[24px] border border-black/[0.08] bg-white p-6 shadow-[0_25px_60px_rgba(24,18,40,0.09)] sm:w-[70%]">
-              <div className="mx-auto grid h-20 w-20 place-items-center rounded-full bg-[#854fee]/10 text-[#854fee]">
+            <div className="relative w-[90%] rounded-[24px] border border-black/[0.08] bg-white p-5 shadow-[0_25px_60px_rgba(24,18,40,0.09)] sm:w-[70%] sm:p-6">
+              <div className="mx-auto grid h-16 w-16 place-items-center rounded-full bg-[#854fee]/10 text-[#854fee] sm:h-20 sm:w-20">
                 <ProcessIconSvg type="check" size={36} />
               </div>
 
@@ -406,406 +343,557 @@ function StepVisual({
   );
 }
 
-/* =========================================================
-   MAIN COMPONENT
-========================================================= */
-
 export default function Process() {
   const sectionRef = useRef<HTMLElement | null>(null);
-  const timelineRef = useRef<SVGSVGElement | null>(null);
+  const pinShellRef = useRef<HTMLDivElement | null>(null);
+  const journeyRef = useRef<HTMLDivElement | null>(null);
   const progressPathRef = useRef<SVGPathElement | null>(null);
   const activeVisualRef = useRef<HTMLDivElement | null>(null);
   const activeContentRef = useRef<HTMLDivElement | null>(null);
 
   const [activeIndex, setActiveIndex] = useState(0);
-
   const totalSteps = processSteps.length;
 
-  const updateActiveStep = useCallback((index: number) => {
-    const safeIndex = Math.max(0, Math.min(totalSteps - 1, index));
+  const updateActiveStep = useCallback(
+    (index: number) => {
+      const safeIndex = Math.max(
+        0,
+        Math.min(totalSteps - 1, index),
+      );
 
-    setActiveIndex((current) =>
-      current === safeIndex ? current : safeIndex,
-    );
-  }, [totalSteps]);
+      setActiveIndex((current) =>
+        current === safeIndex ? current : safeIndex,
+      );
+    },
+    [totalSteps],
+  );
 
   /* =======================================================
-     GSAP SETUP
+     GSAP PIN — DESKTOP ONLY
+     One master ScrollTrigger controls the entire journey.
   ======================================================= */
 
   useLayoutEffect(() => {
     const section = sectionRef.current;
+    const pinShell = pinShellRef.current;
+    const journey = journeyRef.current;
+    const progressPath = progressPathRef.current;
 
-    if (!section) return;
+    if (!section || !pinShell || !journey || !progressPath) {
+      return;
+    }
 
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
+    const mm = gsap.matchMedia();
 
-    const ctx = gsap.context(() => {
-      const headerItems = gsap.utils.toArray<HTMLElement>(
-        ".process-header-item",
-      );
+    mm.add(
+      {
+        desktop: "(min-width: 1024px)",
+        mobile: "(max-width: 1023px)",
+        reducedMotion: "(prefers-reduced-motion: reduce)",
+      },
+      (context) => {
+        const conditions = context.conditions as {
+          desktop: boolean;
+          mobile: boolean;
+          reducedMotion: boolean;
+        };
 
-      const steps = gsap.utils.toArray<HTMLElement>(
-        ".process-step",
-      );
+        const steps = gsap.utils.toArray<HTMLElement>(
+          ".process-step",
+          section,
+        );
 
-      const visual = activeVisualRef.current;
-      const content = activeContentRef.current;
+        const headerItems = gsap.utils.toArray<HTMLElement>(
+          ".process-header-item",
+          section,
+        );
 
-      /* -----------------------------------------------
-         INITIAL STATES
-      ------------------------------------------------ */
+        const visual = activeVisualRef.current;
+        const content = activeContentRef.current;
 
-      if (!reduceMotion) {
-        gsap.set(headerItems, {
-          opacity: 0,
-          y: 28,
-        });
+        if (!visual || !content) return;
 
-        gsap.set(steps, {
-          opacity: 0.32,
-          y: 30,
-        });
+        gsap.set(
+          [...headerItems, ...steps, visual, content],
+          { clearProps: "all" },
+        );
 
-        if (visual) {
-          gsap.set(visual, {
-            opacity: 0,
-            y: 25,
-            scale: 0.985,
-          });
-        }
-
-        if (content) {
-          gsap.set(content, {
-            opacity: 0,
-            y: 20,
-          });
-        }
-      }
-
-      /* -----------------------------------------------
-         HEADER REVEAL
-      ------------------------------------------------ */
-
-      if (reduceMotion) {
-        gsap.set(headerItems, {
-          clearProps: "all",
-        });
-
-        gsap.set(steps, {
-          clearProps: "all",
-        });
-
-        gsap.set(visual, {
-          clearProps: "all",
-        });
-
-        gsap.set(content, {
-          clearProps: "all",
-        });
-      } else {
-        gsap.to(headerItems, {
-          opacity: 1,
-          y: 0,
-          duration: 0.85,
-          stagger: 0.1,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: section,
-            start: "top 78%",
-            once: true,
-          },
-        });
-
-        gsap.to(steps, {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          stagger: 0.08,
-          ease: "power3.out",
-          scrollTrigger: {
-            trigger: ".process-journey",
-            start: "top 78%",
-            once: true,
-          },
-        });
-
-        if (visual) {
-          gsap.to(visual, {
-            opacity: 1,
-            y: 0,
-            scale: 1,
-            duration: 1,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".process-journey",
-              start: "top 72%",
-              once: true,
-            },
-          });
-        }
-
-        if (content) {
-          gsap.to(content, {
-            opacity: 1,
-            y: 0,
-            duration: 0.9,
-            delay: 0.08,
-            ease: "power3.out",
-            scrollTrigger: {
-              trigger: ".process-journey",
-              start: "top 72%",
-              once: true,
-            },
-          });
-        }
-      }
-
-      /* -----------------------------------------------
-         SVG TIMELINE DRAW
-      ------------------------------------------------ */
-
-      const progressPath = progressPathRef.current;
-
-      if (progressPath) {
-        const length = progressPath.getTotalLength();
-
-        gsap.set(progressPath, {
-          strokeDasharray: length,
-          strokeDashoffset: reduceMotion ? 0 : length,
-        });
+        const reduceMotion = conditions.reducedMotion;
+        const desktop = conditions.desktop && !reduceMotion;
 
         if (!reduceMotion) {
-          gsap.to(progressPath, {
-            strokeDashoffset: 0,
-            ease: "none",
-            scrollTrigger: {
-              trigger: ".process-journey",
-              start: "top 70%",
-              end: "bottom 72%",
-              scrub: 0.8,
+          gsap.fromTo(
+            headerItems,
+            { opacity: 0, y: 18 },
+            {
+              opacity: 1,
+              y: 0,
+              duration: 0.65,
+              stagger: 0.08,
+              ease: "power3.out",
             },
-          });
+          );
+
+          gsap.fromTo(
+            visual,
+            { opacity: 0, y: 16, scale: 0.985 },
+            {
+              opacity: 1,
+              y: 0,
+              scale: 1,
+              duration: 0.75,
+              ease: "power3.out",
+            },
+          );
         }
-      }
 
-      /* -----------------------------------------------
-         DESKTOP STEP DETECTION
-      ------------------------------------------------ */
+        /*
+         * MOBILE / REDUCED MOTION
+         * No pin and no scroll interception.
+         */
+        if (!desktop) {
+          steps.forEach((step, index) => {
+            const title = step.querySelector<HTMLElement>(
+              ".process-step-title",
+            );
+            const description = step.querySelector<HTMLElement>(
+              ".process-step-description",
+            );
+            const tags = step.querySelector<HTMLElement>(
+              ".process-step-tags",
+            );
+            const icon = step.querySelector<HTMLElement>(
+              ".process-step-icon",
+            );
 
-      if (!reduceMotion) {
-        steps.forEach((step, index) => {
-          ScrollTrigger.create({
-            trigger: step,
-            start: "top 55%",
-            end: "bottom 55%",
-            onEnter: () => updateActiveStep(index),
-            onEnterBack: () => updateActiveStep(index),
+            gsap.set(step, {
+              clearProps: "opacity,transform",
+            });
+
+            if (title) {
+              gsap.set(title, {
+                color:
+                  index === 0
+                    ? "#15131a"
+                    : "rgba(21,19,26,0.5)",
+              });
+            }
+
+            if (description) {
+              gsap.set(description, {
+                opacity: 1,
+                maxHeight: "none",
+              });
+            }
+
+            if (tags) {
+              gsap.set(tags, {
+                opacity: 1,
+                maxHeight: "none",
+              });
+            }
+
+            if (icon) {
+              gsap.set(icon, {
+                backgroundColor:
+                  index === 0 ? "#854fee" : "#ffffff",
+                color:
+                  index === 0
+                    ? "#ffffff"
+                    : "rgba(21,19,26,0.4)",
+              });
+            }
           });
+
+          gsap.set(progressPath, {
+            strokeDasharray: 1,
+            strokeDashoffset: 0,
+          });
+
+          return;
+        }
+
+        /*
+         * DESKTOP INITIAL STATES
+         */
+        steps.forEach((step, index) => {
+          const title = step.querySelector<HTMLElement>(
+            ".process-step-title",
+          );
+          const description = step.querySelector<HTMLElement>(
+            ".process-step-description",
+          );
+          const tags = step.querySelector<HTMLElement>(
+            ".process-step-tags",
+          );
+          const icon = step.querySelector<HTMLElement>(
+            ".process-step-icon",
+          );
+
+          gsap.set(step, {
+            opacity: index === 0 ? 1 : 0.34,
+            x: 0,
+          });
+
+          if (title) {
+            gsap.set(title, {
+              color:
+                index === 0
+                  ? "#15131a"
+                  : "rgba(21,19,26,0.35)",
+            });
+          }
+
+          if (description) {
+            gsap.set(description, {
+              opacity: index === 0 ? 1 : 0,
+              maxHeight: index === 0 ? 150 : 0,
+            });
+          }
+
+          if (tags) {
+            gsap.set(tags, {
+              opacity: index === 0 ? 1 : 0,
+              maxHeight: index === 0 ? 100 : 0,
+            });
+          }
+
+          if (icon) {
+            gsap.set(icon, {
+              backgroundColor:
+                index === 0 ? "#854fee" : "#ffffff",
+              color:
+                index === 0
+                  ? "#ffffff"
+                  : "rgba(21,19,26,0.4)",
+            });
+          }
         });
-      }
 
-      /* -----------------------------------------------
-         SUBTLE TIMELINE PARALLAX
-      ------------------------------------------------ */
+        /*
+         * SVG PROGRESS INITIALIZATION
+         */
+        const pathLength = progressPath.getTotalLength();
 
-      if (!reduceMotion && timelineRef.current) {
-        gsap.to(timelineRef.current, {
-          yPercent: 2,
-          ease: "none",
+        gsap.set(progressPath, {
+          strokeDasharray: pathLength,
+          strokeDashoffset: pathLength,
+        });
+
+        /*
+         * MASTER TIMELINE + PIN
+         *
+         * Removed refreshPriority: 1.
+         * ScrollTrigger should refresh in document order,
+         * accounting for pin spacing from preceding sections.
+         */
+        const master = gsap.timeline({
+          defaults: { ease: "none" },
           scrollTrigger: {
-            trigger: ".process-journey",
-            start: "top bottom",
-            end: "bottom top",
-            scrub: true,
+            trigger: pinShell,
+            pin: pinShell,
+            pinSpacing: true,
+            start: "top top",
+            end: () =>
+              `+=${window.innerHeight * (totalSteps - 1)}`,
+            scrub: 0.6,
+            anticipatePin: 1,
+            invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              const nextIndex = Math.min(
+                totalSteps - 1,
+                Math.floor(
+                  self.progress * totalSteps,
+                ),
+              );
+
+              updateActiveStep(nextIndex);
+            },
           },
         });
-      }
 
-      ScrollTrigger.refresh();
-    }, section);
+        master.to(
+          progressPath,
+          {
+            strokeDashoffset: 0,
+            duration: 1,
+          },
+          0,
+        );
+
+        steps.forEach((step, index) => {
+          const start = index / totalSteps;
+          const end = (index + 1) / totalSteps;
+
+          const title = step.querySelector<HTMLElement>(
+            ".process-step-title",
+          );
+          const description = step.querySelector<HTMLElement>(
+            ".process-step-description",
+          );
+          const tags = step.querySelector<HTMLElement>(
+            ".process-step-tags",
+          );
+          const icon = step.querySelector<HTMLElement>(
+            ".process-step-icon",
+          );
+
+          master.to(
+            step,
+            {
+              opacity: 1,
+              x: 0,
+              duration: 0.14,
+            },
+            start,
+          );
+
+          if (title) {
+            master.to(
+              title,
+              {
+                color: "#15131a",
+                duration: 0.12,
+              },
+              start,
+            );
+          }
+
+          if (description) {
+            master.to(
+              description,
+              {
+                opacity: 1,
+                maxHeight: 150,
+                duration: 0.12,
+              },
+              start,
+            );
+          }
+
+          if (tags) {
+            master.to(
+              tags,
+              {
+                opacity: 1,
+                maxHeight: 100,
+                duration: 0.12,
+              },
+              start,
+            );
+          }
+
+          if (icon) {
+            master.to(
+              icon,
+              {
+                backgroundColor: "#854fee",
+                color: "#ffffff",
+                scale: 1.04,
+                duration: 0.12,
+              },
+              start,
+            );
+          }
+
+          if (index < totalSteps - 1) {
+            const fadeAt = end - 0.025;
+
+            master.to(
+              step,
+              {
+                opacity: 0.34,
+                x: -3,
+                duration: 0.08,
+              },
+              fadeAt,
+            );
+
+            if (title) {
+              master.to(
+                title,
+                {
+                  color: "rgba(21,19,26,0.35)",
+                  duration: 0.08,
+                },
+                fadeAt,
+              );
+            }
+
+            if (description) {
+              master.to(
+                description,
+                {
+                  opacity: 0,
+                  maxHeight: 0,
+                  duration: 0.08,
+                },
+                fadeAt,
+              );
+            }
+
+            if (tags) {
+              master.to(
+                tags,
+                {
+                  opacity: 0,
+                  maxHeight: 0,
+                  duration: 0.08,
+                },
+                fadeAt,
+              );
+            }
+
+            if (icon) {
+              master.to(
+                icon,
+                {
+                  backgroundColor: "#ffffff",
+                  color: "rgba(21,19,26,0.4)",
+                  scale: 1,
+                  duration: 0.08,
+                },
+                fadeAt,
+              );
+            }
+          }
+        });
+
+        master.to(
+          visual,
+          { y: -5, duration: 0.25 },
+          0.15,
+        );
+
+        master.to(
+          visual,
+          { y: 5, duration: 0.25 },
+          0.5,
+        );
+
+        master.to(
+          visual,
+          { y: 0, duration: 0.25 },
+          0.8,
+        );
+
+        master.to(
+          content,
+          { opacity: 1, y: 0, duration: 0.2 },
+          0,
+        );
+
+        /*
+         * FIXED REFRESH
+         *
+         * Refresh after layout has settled. This helps prevent
+         * the Process pin from starting too early when a previous
+         * section is also pinned.
+         */
+        let frameOne = 0;
+        let frameTwo = 0;
+
+        const refreshProcess = () => {
+          ScrollTrigger.sort();
+          ScrollTrigger.refresh(true);
+        };
+
+        frameOne = requestAnimationFrame(() => {
+          frameTwo = requestAnimationFrame(() => {
+            refreshProcess();
+          });
+        });
+
+        window.addEventListener("load", refreshProcess);
+
+        return () => {
+          cancelAnimationFrame(frameOne);
+          cancelAnimationFrame(frameTwo);
+
+          window.removeEventListener(
+            "load",
+            refreshProcess,
+          );
+
+          master.scrollTrigger?.kill();
+          master.kill();
+        };
+      },
+    );
 
     return () => {
-      ctx.revert();
+      mm.revert();
     };
-  }, [updateActiveStep]);
+  }, [totalSteps, updateActiveStep]);
 
-  /* =======================================================
-     ACTIVE VISUAL / CONTENT TRANSITION
-  ======================================================= */
+  /*
+   * Animate the visual when React switches the active step.
+   */
+  useLayoutEffect(() => {
+    const visual = activeVisualRef.current;
+    const content = activeContentRef.current;
 
-  useEffect(() => {
+    if (!visual || !content) return;
+
     const reduceMotion = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
     if (reduceMotion) return;
 
-    const visual = activeVisualRef.current;
-    const content = activeContentRef.current;
-
-    if (!visual || !content) return;
-
     const ctx = gsap.context(() => {
       gsap.fromTo(
-        visual,
-        {
-          opacity: 0.35,
-          y: 12,
-          scale: 0.99,
-        },
+        visual.querySelector(".process-visual"),
+        { opacity: 0.65, y: 8, scale: 0.99 },
         {
           opacity: 1,
           y: 0,
           scale: 1,
-          duration: 0.55,
-          ease: "power3.out",
+          duration: 0.35,
+          ease: "power2.out",
+          overwrite: true,
         },
       );
 
       gsap.fromTo(
         content,
-        {
-          opacity: 0.25,
-          y: 14,
-        },
+        { opacity: 0.65, y: 5 },
         {
           opacity: 1,
           y: 0,
-          duration: 0.5,
-          delay: 0.04,
-          ease: "power3.out",
+          duration: 0.3,
+          ease: "power2.out",
+          overwrite: true,
         },
       );
-    });
+    }, visual);
 
     return () => ctx.revert();
   }, [activeIndex]);
-
-  /* =======================================================
-     KEYBOARD NAVIGATION
-  ======================================================= */
-
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (!sectionRef.current) return;
-
-      const rect = sectionRef.current.getBoundingClientRect();
-
-      const visible =
-        rect.top < window.innerHeight &&
-        rect.bottom > 0;
-
-      if (!visible) return;
-
-      if (event.key === "ArrowDown" || event.key === "ArrowRight") {
-        event.preventDefault();
-
-        updateActiveStep(
-          Math.min(activeIndex + 1, totalSteps - 1),
-        );
-      }
-
-      if (event.key === "ArrowUp" || event.key === "ArrowLeft") {
-        event.preventDefault();
-
-        updateActiveStep(
-          Math.max(activeIndex - 1, 0),
-        );
-      }
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-
-    return () => {
-      window.removeEventListener("keydown", onKeyDown);
-    };
-  }, [activeIndex, totalSteps, updateActiveStep]);
-
-  /* =======================================================
-     CLICK NAVIGATION
-  ======================================================= */
-
-  const goToStep = useCallback(
-    (index: number) => {
-      const step = sectionRef.current?.querySelector(
-        `[data-process-index="${index}"]`,
-      );
-
-      if (!step) {
-        updateActiveStep(index);
-        return;
-      }
-
-      const reduceMotion = window.matchMedia(
-        "(prefers-reduced-motion: reduce)",
-      ).matches;
-
-      const rect = step.getBoundingClientRect();
-
-      const target =
-        window.scrollY +
-        rect.top -
-        window.innerHeight * 0.46;
-
-      window.scrollTo({
-        top: target,
-        behavior: reduceMotion ? "auto" : "smooth",
-      });
-
-      updateActiveStep(index);
-    },
-    [updateActiveStep],
-  );
 
   return (
     <section
       ref={sectionRef}
       id="process"
       aria-labelledby="process-heading"
-      className="
-        relative
-        w-full
-        overflow-hidden
-        bg-[#f7f7f5]
-        text-[#15131a]
-      "
+      className="relative isolate w-full overflow-x-clip bg-[#f7f7f5] text-[#15131a]"
     >
-      {/* =====================================================
-          BACKGROUND
-      ===================================================== */}
-
+      {/* BACKGROUND */}
       <div
         aria-hidden="true"
-        className="pointer-events-none absolute inset-0"
+        className="pointer-events-none absolute inset-0 overflow-hidden"
       >
-        <div
-          className="
-            absolute
-            inset-0
-            opacity-[0.32]
-            [background-image:linear-gradient(to_right,rgba(20,16,30,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,16,30,0.035)_1px,transparent_1px)]
-            [background-size:80px_80px]
-          "
-        />
-
+        <div className="absolute inset-0 opacity-[0.32] [background-image:linear-gradient(to_right,rgba(20,16,30,0.035)_1px,transparent_1px),linear-gradient(to_bottom,rgba(20,16,30,0.035)_1px,transparent_1px)] [background-size:80px_80px]" />
         <div className="absolute -left-40 top-[18%] h-[420px] w-[420px] rounded-full bg-[#854fee]/[0.035] blur-3xl" />
-
         <div className="absolute -right-40 bottom-[12%] h-[500px] w-[500px] rounded-full bg-[#854fee]/[0.035] blur-3xl" />
       </div>
 
-      {/* =====================================================
-          HEADER
-      ===================================================== */}
-
-      <div className="relative mx-auto w-full max-w-[1500px] px-5 pb-14 pt-20 sm:px-8 sm:pb-20 sm:pt-28 lg:px-12 lg:pb-24 lg:pt-36">
-        <div className="grid gap-10 lg:grid-cols-[1fr_0.62fr] lg:items-end lg:gap-20">
+      {/* HEADER */}
+      <div className="relative mx-auto w-full max-w-[1500px] px-5 pb-12 pt-20 sm:px-8 sm:pb-20 sm:pt-28 lg:px-12 lg:pb-20 lg:pt-32">
+        <div className="grid gap-8 lg:grid-cols-[1fr_0.62fr] lg:items-end lg:gap-20">
           <div>
             <div className="process-header-item mb-6 flex items-center gap-3">
               <span className="h-1.5 w-1.5 rounded-full bg-[#854fee]" />
-
               <span className="text-[10px] font-bold uppercase tracking-[0.22em] text-black/45">
                 HOW WE WORK
               </span>
@@ -813,14 +901,7 @@ export default function Process() {
 
             <h2
               id="process-heading"
-              className="
-                process-header-item
-                max-w-[900px]
-                text-[clamp(2.7rem,7vw,6.8rem)]
-                font-bold
-                leading-[0.9]
-                tracking-[-0.065em]
-              "
+              className="process-header-item max-w-[900px] text-[clamp(2.7rem,7vw,6.8rem)] font-bold leading-[0.9] tracking-[-0.065em]"
             >
               From First Idea
               <br />
@@ -830,406 +911,181 @@ export default function Process() {
             </h2>
           </div>
 
-          <p
-            className="
-              process-header-item
-              max-w-[480px]
-              text-[14px]
-              leading-7
-              text-black/55
-              sm:text-[15px]
-              sm:leading-7
-              lg:pb-1
-            "
-          >
-            Every successful digital project starts with a clear
-            strategy. We combine creative thinking, technology,
-            and data-driven decisions to help businesses build,
-            launch, and improve their digital presence.
+          <p className="process-header-item max-w-[480px] text-[14px] leading-7 text-black/55 sm:text-[15px] lg:pb-1">
+            Every successful digital project starts with a clear strategy.
+            We combine creative thinking, technology, and data-driven
+            decisions to help businesses build, launch, and improve their
+            digital presence.
           </p>
         </div>
       </div>
 
-      {/* =====================================================
-          JOURNEY
-      ===================================================== */}
-
-      <div className="process-journey relative mx-auto w-full max-w-[1500px] px-5 pb-24 sm:px-8 sm:pb-32 lg:px-12 lg:pb-40">
-        <div className="relative grid gap-10 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-20">
-          {/* =================================================
-              LEFT — TIMELINE
-          ================================================= */}
-
-          <div className="relative">
-            {/* Desktop vertical timeline */}
-            <div
-              aria-hidden="true"
-              className="
-                absolute
-                bottom-10
-                left-[18px]
-                top-8
-                hidden
-                w-px
-                bg-black/[0.09]
-                lg:block
-              "
-            />
-
-            <svg
-              ref={timelineRef}
-              aria-hidden="true"
-              className="
-                pointer-events-none
-                absolute
-                bottom-10
-                left-0
-                top-8
-                hidden
-                h-[calc(100%-40px)]
-                w-[38px]
-                overflow-visible
-                lg:block
-              "
-              viewBox="0 0 38 1000"
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M19 0 V1000"
-                pathLength="1"
-                fill="none"
-                stroke="#854fee"
-                strokeWidth="2"
-                strokeLinecap="round"
-                ref={progressPathRef}
+      {/* PIN SHELL */}
+      <div
+        ref={pinShellRef}
+        className="process-pin-shell relative w-full"
+      >
+        <div
+          ref={journeyRef}
+          className="process-journey relative mx-auto flex min-h-0 w-full max-w-[1500px] items-center px-5 pb-16 sm:px-8 sm:pb-20 lg:h-screen lg:min-h-0 lg:px-12 lg:pb-0"
+        >
+          <div className="relative grid w-full gap-9 lg:grid-cols-[minmax(0,0.82fr)_minmax(0,1.18fr)] lg:gap-16 xl:gap-20">
+            {/* LEFT — TIMELINE */}
+            <div className="relative">
+              <div
+                aria-hidden="true"
+                className="absolute bottom-10 left-[18px] top-8 hidden w-px bg-black/[0.09] lg:block"
               />
-            </svg>
 
-            <div className="space-y-4 lg:space-y-0">
-              {processSteps.map((step, index) => {
-                const isActive = activeIndex === index;
-                const isComplete = index < activeIndex;
+              <svg
+                aria-hidden="true"
+                className="pointer-events-none absolute bottom-10 left-0 top-8 hidden h-[calc(100%-40px)] w-[38px] overflow-visible lg:block"
+                viewBox="0 0 38 1000"
+                preserveAspectRatio="none"
+              >
+                <path
+                  d="M19 0 V1000"
+                  pathLength="1"
+                  fill="none"
+                  stroke="#854fee"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  ref={progressPathRef}
+                />
+              </svg>
 
-                return (
-                  <article
-                    key={step.number}
-                    data-process-index={index}
-                    className="
-                      process-step
-                      relative
-                      lg:min-h-[220px]
-                      lg:pl-[68px]
-                    "
-                  >
-                    {/* marker */}
-                    <button
-                      type="button"
-                      aria-label={`Go to ${step.title}`}
-                      aria-current={isActive ? "step" : undefined}
-                      onClick={() => goToStep(index)}
-                      className="
-                        group
-                        absolute
-                        left-0
-                        top-0
-                        z-20
-                        hidden
-                        h-[38px]
-                        w-[38px]
-                        place-items-center
-                        rounded-full
-                        border
-                        border-black/10
-                        bg-[#f7f7f5]
-                        transition-all
-                        duration-300
-                        focus:outline-none
-                        focus-visible:ring-2
-                        focus-visible:ring-[#854fee]
-                        focus-visible:ring-offset-4
-                        focus-visible:ring-offset-[#f7f7f5]
-                        lg:grid
-                      "
+              <div className="space-y-7 lg:space-y-0">
+                {processSteps.map((step, index) => {
+                  const isActive = activeIndex === index;
+
+                  return (
+                    <article
+                      key={step.number}
+                      className="process-step relative lg:min-h-[140px] lg:pl-[68px]"
                     >
-                      <span
-                        className={`
-                          grid
-                          h-2.5
-                          w-2.5
-                          rounded-full
-                          transition-all
-                          duration-300
-                          ${
-                            isActive
-                              ? "h-3.5 w-3.5 bg-[#854fee] shadow-[0_0_0_6px_rgba(133,79,238,0.12)]"
-                              : isComplete
-                                ? "bg-[#854fee]"
-                                : "bg-black/15 group-hover:bg-[#854fee]/60"
-                          }
-                        `}
-                      />
-                    </button>
-
-                    {/* mobile number */}
-                    <div className="mb-4 flex items-center justify-between lg:hidden">
-                      <button
-                        type="button"
-                        onClick={() => goToStep(index)}
-                        className="
-                          flex
-                          min-h-11
-                          items-center
-                          gap-3
-                          rounded-full
-                          border
-                          border-black/[0.08]
-                          bg-white
-                          px-3
-                          pr-4
-                          text-left
-                          focus:outline-none
-                          focus-visible:ring-2
-                          focus-visible:ring-[#854fee]
-                        "
+                      {/* DESKTOP MARKER */}
+                      <div
+                        aria-hidden="true"
+                        className="absolute left-0 top-0 z-20 hidden h-[38px] w-[38px] place-items-center rounded-full border border-black/10 bg-[#f7f7f5] lg:grid"
                       >
                         <span
-                          className={`
-                            grid
-                            h-7
-                            w-7
-                            place-items-center
-                            rounded-full
-                            text-[9px]
-                            font-bold
-                            transition-colors
-                            ${
+                          className={`h-2.5 w-2.5 rounded-full transition-all duration-300 ${
+                            isActive
+                              ? "scale-125 bg-[#854fee] shadow-[0_0_0_6px_rgba(133,79,238,0.12)]"
+                              : "bg-black/15"
+                          }`}
+                        />
+                      </div>
+
+                      {/* MOBILE LABEL */}
+                      <div className="mb-3 flex items-center justify-between lg:hidden">
+                        <div className="flex min-h-10 items-center gap-3 rounded-full border border-black/[0.08] bg-white px-3 pr-4">
+                          <span
+                            className={`grid h-7 w-7 place-items-center rounded-full text-[9px] font-bold ${
                               isActive
                                 ? "bg-[#854fee] text-white"
                                 : "bg-black/[0.045] text-black/45"
-                            }
-                          `}
-                        >
-                          {step.number}
-                        </span>
-
-                        <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
-                          {isActive ? "Current step" : "View step"}
-                        </span>
-                      </button>
-
-                      <span className="text-[9px] font-bold uppercase tracking-[0.14em] text-black/25">
-                        {String(index + 1).padStart(2, "0")} / 05
-                      </span>
-                    </div>
-
-                    {/* content */}
-                    <button
-                      type="button"
-                      onClick={() => goToStep(index)}
-                      className="
-                        group
-                        w-full
-                        rounded-2xl
-                        text-left
-                        focus:outline-none
-                        focus-visible:ring-2
-                        focus-visible:ring-[#854fee]
-                        focus-visible:ring-offset-4
-                        focus-visible:ring-offset-[#f7f7f5]
-                      "
-                    >
-                      <div
-                        className={`
-                          border-t
-                          py-7
-                          transition-all
-                          duration-500
-                          lg:border-t-0
-                          lg:py-0
-                          ${
-                            isActive
-                              ? "border-[#854fee]/20"
-                              : "border-black/[0.07]"
-                          }
-                        `}
-                      >
-                        <div className="flex items-start gap-4">
-                          <span
-                            className={`
-                              hidden
-                              pt-1
-                              text-[10px]
-                              font-bold
-                              tracking-[0.12em]
-                              transition-colors
-                              lg:block
-                              ${
-                                isActive
-                                  ? "text-[#854fee]"
-                                  : "text-black/25"
-                              }
-                            `}
+                            }`}
                           >
                             {step.number}
                           </span>
 
-                          <div className="min-w-0 flex-1">
-                            <div className="mb-3 flex items-center gap-3">
-                              <span
-                                className={`
-                                  grid
-                                  h-9
-                                  w-9
-                                  shrink-0
-                                  place-items-center
-                                  rounded-full
-                                  transition-all
-                                  duration-300
-                                  ${
-                                    isActive
-                                      ? "bg-[#854fee] text-white"
-                                      : "bg-white text-black/40"
-                                  }
-                                `}
-                              >
-                                <ProcessIconSvg
-                                  type={step.icon}
-                                  size={17}
-                                />
-                              </span>
+                          <span className="text-[9px] font-bold uppercase tracking-[0.12em] text-black/45">
+                            {isActive ? "Current step" : "Process"}
+                          </span>
+                        </div>
 
-                              <span
-                                className={`
-                                  text-[9px]
-                                  font-bold
-                                  uppercase
-                                  tracking-[0.16em]
-                                  transition-colors
-                                  ${
+                        <span className="text-[9px] font-bold tracking-[0.14em] text-black/25">
+                          {step.number} / 05
+                        </span>
+                      </div>
+
+                      <div className="w-full rounded-2xl text-left">
+                        <div className="border-t border-black/[0.07] py-5 lg:border-t-0 lg:py-0">
+                          <div className="flex items-start gap-4">
+                            <span
+                              className={`hidden pt-1 text-[10px] font-bold tracking-[0.12em] lg:block ${
+                                isActive
+                                  ? "text-[#854fee]"
+                                  : "text-black/25"
+                              }`}
+                            >
+                              {step.number}
+                            </span>
+
+                            <div className="min-w-0 flex-1">
+                              <div className="mb-3 flex items-center gap-3">
+                                <span className="process-step-icon grid h-9 w-9 shrink-0 place-items-center rounded-full bg-white text-black/40 transition-all duration-300">
+                                  <ProcessIconSvg
+                                    type={step.icon}
+                                    size={17}
+                                  />
+                                </span>
+
+                                <span
+                                  className={`text-[9px] font-bold uppercase tracking-[0.16em] ${
                                     isActive
                                       ? "text-[#854fee]"
                                       : "text-black/30"
-                                  }
-                                `}
-                              >
-                                {isActive
-                                  ? "Active process"
-                                  : isComplete
-                                    ? "Completed"
-                                    : "Next"}
-                              </span>
-                            </div>
+                                  }`}
+                                >
+                                  {isActive
+                                    ? "Active process"
+                                    : "Process stage"}
+                                </span>
+                              </div>
 
-                            <h3
-                              className={`
-                                max-w-[500px]
-                                text-[clamp(1.7rem,3vw,3rem)]
-                                font-bold
-                                leading-[0.98]
-                                tracking-[-0.045em]
-                                transition-colors
-                                duration-300
-                                ${
+                              <h3
+                                className={`process-step-title max-w-[500px] text-[clamp(1.4rem,2.2vw,2.15rem)] font-bold leading-[0.98] tracking-[-0.045em] transition-colors duration-300 ${
                                   isActive
                                     ? "text-black"
-                                    : "text-black/35 group-hover:text-black/70"
-                                }
-                              `}
-                            >
-                              {step.title}
-                            </h3>
+                                    : "text-black/35"
+                                }`}
+                              >
+                                {step.title}
+                              </h3>
 
-                            <p
-                              className={`
-                                mt-4
-                                max-w-[500px]
-                                text-[13px]
-                                leading-6
-                                transition-all
-                                duration-500
-                                sm:text-[14px]
-                                ${
-                                  isActive
-                                    ? "text-black/55"
-                                    : "text-black/25 lg:max-h-0 lg:overflow-hidden lg:opacity-0"
-                                }
-                              `}
-                            >
-                              {step.description}
-                            </p>
+                              <p className="process-step-description mt-3 max-w-[500px] overflow-hidden text-[12px] leading-6 text-black/55 sm:text-[13px] lg:max-h-0 lg:opacity-0">
+                                {step.description}
+                              </p>
 
-                            <div
-                              className={`
-                                mt-5
-                                flex
-                                flex-wrap
-                                gap-2
-                                transition-all
-                                duration-500
-                                ${
-                                  isActive
-                                    ? "opacity-100"
-                                    : "lg:max-h-0 lg:overflow-hidden lg:opacity-0"
-                                }
-                              `}
-                            >
-                              {step.tags.map((tag) => (
-                                <span
-                                  key={tag}
-                                  className="
-                                    rounded-full
-                                    border
-                                    border-black/[0.07]
-                                    bg-white
-                                    px-3
-                                    py-1.5
-                                    text-[8px]
-                                    font-bold
-                                    uppercase
-                                    tracking-[0.12em]
-                                    text-black/45
-                                  "
-                                >
-                                  {tag}
-                                </span>
-                              ))}
+                              <div className="process-step-tags mt-4 flex max-h-0 flex-wrap gap-2 overflow-hidden opacity-0">
+                                {step.tags.map((tag) => (
+                                  <span
+                                    key={tag}
+                                    className="rounded-full border border-black/[0.07] bg-white px-3 py-1.5 text-[8px] font-bold uppercase tracking-[0.1em] text-black/45"
+                                  >
+                                    {tag}
+                                  </span>
+                                ))}
+                              </div>
                             </div>
                           </div>
                         </div>
                       </div>
-                    </button>
-                  </article>
-                );
-              })}
+                    </article>
+                  );
+                })}
+              </div>
             </div>
-          </div>
 
-          {/* =================================================
-              RIGHT — VISUAL STORY
-          ================================================= */}
-
-          <div className="lg:sticky lg:top-24 lg:h-[calc(100vh-120px)] lg:max-h-[720px]">
-            <div className="flex h-full flex-col">
-              <div
-                ref={activeVisualRef}
-                className="relative min-h-0 flex-1"
-              >
+            {/* RIGHT — VISUAL */}
+            <div className="relative flex min-h-0 flex-col justify-center">
+              <div ref={activeVisualRef} className="relative w-full">
                 <StepVisual
                   step={processSteps[activeIndex]}
                   index={activeIndex}
-                  active
                 />
               </div>
 
               <div
                 ref={activeContentRef}
-                className="mt-6 flex items-center justify-between gap-5 border-t border-black/[0.08] pt-5"
+                className="mt-5 flex items-center justify-between gap-4 border-t border-black/[0.08] pt-5"
               >
                 <div className="min-w-0">
                   <p className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/30">
                     Current stage
                   </p>
-
                   <p className="mt-1 truncate text-sm font-semibold tracking-[-0.02em]">
                     {processSteps[activeIndex].title}
                   </p>
@@ -1240,7 +1096,6 @@ export default function Process() {
                     <span className="text-2xl font-bold leading-none tracking-[-0.06em]">
                       {processSteps[activeIndex].number}
                     </span>
-
                     <span className="text-xs font-semibold text-black/25">
                       / 05
                     </span>
@@ -1248,7 +1103,7 @@ export default function Process() {
 
                   <div className="mt-2 h-1 w-20 overflow-hidden rounded-full bg-black/[0.07]">
                     <div
-                      className="h-full rounded-full bg-[#854fee] transition-all duration-500"
+                      className="h-full rounded-full bg-[#854fee] transition-all duration-300"
                       style={{
                         width: `${((activeIndex + 1) / totalSteps) * 100}%`,
                       }}
@@ -1257,68 +1112,31 @@ export default function Process() {
                 </div>
               </div>
 
-              {/* desktop quick nav */}
               <div className="mt-5 hidden items-center gap-2 lg:flex">
                 {processSteps.map((step, index) => (
-                  <button
+                  <div
                     key={step.number}
-                    type="button"
-                    onClick={() => goToStep(index)}
-                    aria-label={`Go to process step ${index + 1}`}
-                    aria-current={activeIndex === index ? "step" : undefined}
-                    className="
-                      group
-                      flex
-                      min-h-10
-                      flex-1
-                      items-center
-                      gap-2
-                      rounded-full
-                      border
-                      border-black/[0.07]
-                      bg-white/70
-                      px-3
-                      transition-all
-                      duration-300
-                      hover:border-[#854fee]/30
-                      focus:outline-none
-                      focus-visible:ring-2
-                      focus-visible:ring-[#854fee]
-                    "
+                    className="flex min-h-10 flex-1 items-center gap-2 rounded-full border border-black/[0.07] bg-white/70 px-3"
                   >
                     <span
-                      className={`
-                        h-1.5
-                        w-1.5
-                        shrink-0
-                        rounded-full
-                        transition-all
-                        ${
-                          activeIndex === index
-                            ? "scale-125 bg-[#854fee]"
-                            : index < activeIndex
-                              ? "bg-[#854fee]/50"
-                              : "bg-black/15 group-hover:bg-[#854fee]/50"
-                        }
-                      `}
+                      className={`h-1.5 w-1.5 shrink-0 rounded-full transition-all ${
+                        activeIndex === index
+                          ? "scale-125 bg-[#854fee]"
+                          : index < activeIndex
+                            ? "bg-[#854fee]/50"
+                            : "bg-black/15"
+                      }`}
                     />
-
                     <span
-                      className={`
-                        text-[8px]
-                        font-bold
-                        uppercase
-                        tracking-[0.08em]
-                        ${
-                          activeIndex === index
-                            ? "text-black"
-                            : "text-black/30"
-                        }
-                      `}
+                      className={`text-[8px] font-bold tracking-[0.08em] ${
+                        activeIndex === index
+                          ? "text-black"
+                          : "text-black/30"
+                      }`}
                     >
                       {step.number}
                     </span>
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
@@ -1326,17 +1144,13 @@ export default function Process() {
         </div>
       </div>
 
-      {/* =====================================================
-          SERVICE CONNECTION STRIP
-      ===================================================== */}
-
+      {/* SERVICE CONNECTION STRIP */}
       <div className="relative border-y border-black/[0.07] bg-white/55">
         <div className="mx-auto flex w-full max-w-[1500px] flex-wrap items-center justify-between gap-5 px-5 py-6 sm:px-8 sm:py-7 lg:px-12">
           <div>
             <span className="text-[9px] font-bold uppercase tracking-[0.18em] text-black/30">
               Built around the right mix
             </span>
-
             <p className="mt-1 text-sm font-semibold tracking-[-0.02em]">
               Strategy · Creative · Development · Advertising · Measurement
             </p>
@@ -1352,19 +1166,7 @@ export default function Process() {
             ].map((service) => (
               <span
                 key={service}
-                className="
-                  rounded-full
-                  border
-                  border-black/[0.07]
-                  bg-white
-                  px-3
-                  py-2
-                  text-[8px]
-                  font-bold
-                  uppercase
-                  tracking-[0.1em]
-                  text-black/45
-                "
+                className="rounded-full border border-black/[0.07] bg-white px-3 py-2 text-[8px] font-bold uppercase tracking-[0.1em] text-black/45"
               >
                 {service}
               </span>
@@ -1373,43 +1175,16 @@ export default function Process() {
         </div>
       </div>
 
-      {/* =====================================================
-          CTA
-      ===================================================== */}
-
-      <div className="relative mx-auto w-full max-w-[1500px] px-5 pb-20 pt-20 sm:px-8 sm:pb-28 sm:pt-28 lg:px-12 lg:pb-36 lg:pt-36">
-        <div
-          className="
-            relative
-            overflow-hidden
-            rounded-[30px]
-            bg-[#17141d]
-            px-6
-            py-12
-            text-white
-            sm:px-10
-            sm:py-16
-            lg:px-16
-            lg:py-20
-          "
-        >
+      {/* CTA */}
+      <div className="relative mx-auto w-full max-w-[1500px] px-5 pb-20 pt-16 sm:px-8 sm:pb-28 sm:pt-24 lg:px-12 lg:pb-36 lg:pt-32">
+        <div className="relative overflow-hidden rounded-[28px] bg-[#17141d] px-6 py-12 text-white sm:rounded-[30px] sm:px-10 sm:py-16 lg:px-16 lg:py-20">
           <div
             aria-hidden="true"
-            className="pointer-events-none absolute inset-0"
+            className="pointer-events-none absolute inset-0 overflow-hidden"
           >
             <div className="absolute -right-32 -top-32 h-80 w-80 rounded-full bg-[#854fee]/20 blur-3xl" />
-
             <div className="absolute -bottom-40 -left-32 h-80 w-80 rounded-full bg-[#854fee]/10 blur-3xl" />
-
-            <div
-              className="
-                absolute
-                inset-0
-                opacity-[0.06]
-                [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)]
-                [background-size:50px_50px]
-              "
-            />
+            <div className="absolute inset-0 opacity-[0.06] [background-image:linear-gradient(to_right,white_1px,transparent_1px),linear-gradient(to_bottom,white_1px,transparent_1px)] [background-size:50px_50px]" />
           </div>
 
           <div className="relative grid gap-10 lg:grid-cols-[1fr_auto] lg:items-end lg:gap-16">
@@ -1428,60 +1203,17 @@ export default function Process() {
               </h2>
 
               <p className="mt-6 max-w-[570px] text-sm leading-7 text-white/55 sm:text-[15px]">
-                Tell us what you're building, and let's explore
+                Tell us what you&apos;re building, and let&apos;s explore
                 how Nexora Digital can help.
               </p>
             </div>
 
             <Link
               href="/contact"
-              className="
-                group
-                inline-flex
-                min-h-14
-                w-full
-                items-center
-                justify-between
-                gap-8
-                rounded-full
-                bg-white
-                px-5
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-[0.14em]
-                text-black
-                transition-all
-                duration-300
-                hover:bg-[#854fee]
-                hover:text-white
-                focus:outline-none
-                focus-visible:ring-2
-                focus-visible:ring-white
-                focus-visible:ring-offset-4
-                focus-visible:ring-offset-[#17141d]
-                sm:w-auto
-                sm:min-w-[190px]
-              "
+              className="group inline-flex min-h-14 w-full items-center justify-between gap-8 rounded-full bg-white px-5 text-[10px] font-bold uppercase tracking-[0.14em] text-black transition-colors duration-300 hover:bg-[#854fee] hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[#17141d] sm:w-auto sm:min-w-[190px]"
             >
-              <span>Let's Talk</span>
-
-              <span
-                className="
-                  grid
-                  h-8
-                  w-8
-                  place-items-center
-                  rounded-full
-                  bg-black
-                  text-white
-                  transition-transform
-                  duration-300
-                  group-hover:rotate-45
-                  group-hover:bg-white
-                  group-hover:text-black
-                "
-              >
+              <span>Let&apos;s Talk</span>
+              <span className="grid h-8 w-8 place-items-center rounded-full bg-black text-white transition-transform duration-300 group-hover:rotate-45 group-hover:bg-white group-hover:text-black">
                 <svg
                   width="14"
                   height="14"

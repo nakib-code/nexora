@@ -1,13 +1,7 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
-import Link from "next/link";
+import React, { useLayoutEffect, useRef } from "react";
+import Image from "next/image";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -17,153 +11,108 @@ gsap.registerPlugin(ScrollTrigger);
    TYPES
 ========================================================= */
 
-type SocialPlatform = "linkedin" | "github" | "portfolio";
-
-type SocialLink = {
-  platform: SocialPlatform;
-  label: string;
-  href: string;
-};
-
-export type TeamMember = {
+type TeamMember = {
   id: string;
+  number: string;
   name: string;
   role: string;
+  specialty: string;
   intro: string;
-  image?: string;
-  social?: SocialLink[];
-  placeholder?: boolean;
+  image: string;
+
+  whatsapp?: string;
+  github?: string;
+  linkedin?: string;
 };
 
 /* =========================================================
    TEAM DATA
-
-   IMPORTANT:
-   No verified team-member data was found in the project
-   data available to this component.
-
-   Replace ONLY this array with real team information.
-   Do not add invented portraits/social URLs.
 ========================================================= */
 
 const teamMembers: TeamMember[] = [
   {
-    id: "member-01",
+    id: "founder",
+    number: "01",
     name: "Your Name",
-    role: "Founder / Full Stack Developer",
+    role: "Founder & Creative Lead",
+    specialty: "Strategy / Development",
     intro:
-      "Replace this placeholder with the real founder profile and a short introduction.",
-    image: undefined,
-    social: [],
-    placeholder: true,
+      "Leading Nexora Digital with a focus on strategy, digital experiences, and building work that connects creative thinking with real business goals.",
+    image: "/me.png",
+    whatsapp: "https://wa.me/8801XXXXXXXXX",
+    github: "https://github.com/yourusername",
+    linkedin: "https://www.linkedin.com/in/yourusername",
   },
+
   {
-    id: "member-02",
+    id: "developer",
+    number: "02",
     name: "Team Member",
-    role: "UI/UX Designer",
+    role: "Full Stack Developer",
+    specialty: "Web / Technology",
     intro:
-      "Replace this placeholder with the real team member information.",
-    image: undefined,
-    social: [],
-    placeholder: true,
+      "Turning ideas into fast, responsive, and scalable digital experiences with clean development and thoughtful interaction.",
+    image: "/me.png",
+    whatsapp: "https://wa.me/8801XXXXXXXXX",
+    github: "https://github.com/developerusername",
+    linkedin: "https://www.linkedin.com/in/developerusername",
   },
+
   {
-    id: "member-03",
+    id: "designer",
+    number: "03",
     name: "Team Member",
-    role: "Graphic Designer",
+    role: "UI/UX & Graphic Designer",
+    specialty: "Design / Visual Identity",
     intro:
-      "Replace this placeholder with the real team member information.",
-    image: undefined,
-    social: [],
-    placeholder: true,
+      "Creating visual systems and interfaces that make brands feel clear, distinctive, and easy to understand.",
+    image: "/me.png",
+    whatsapp: "https://wa.me/8801XXXXXXXXX",
+    linkedin: "https://www.linkedin.com/in/designerusername",
   },
+
   {
-    id: "member-04",
+    id: "editor",
+    number: "04",
     name: "Team Member",
     role: "Video Editor",
+    specialty: "Motion / Content",
     intro:
-      "Replace this placeholder with the real team member information.",
-    image: undefined,
-    social: [],
-    placeholder: true,
+      "Turning raw ideas into engaging visual stories through editing, motion, pacing, and creative direction.",
+    image: "/me.png",
+    whatsapp: "https://wa.me/8801XXXXXXXXX",
+    linkedin: "https://www.linkedin.com/in/editorusername",
   },
 ];
 
 /* =========================================================
    INLINE ICONS
-
-   Inline SVG keeps this component independent from
-   lucide-react social icon exports.
 ========================================================= */
 
-function ArrowLeftIcon() {
+function ArrowUpRightIcon({
+  size = 17,
+}: {
+  size?: number;
+}) {
   return (
     <svg
+      width={size}
+      height={size}
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
-      className="h-[18px] w-[18px]"
-    >
-      <path
-        d="M19 12H5"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-      <path
-        d="M11 18L5 12L11 6"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function ArrowRightIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="h-[18px] w-[18px]"
-    >
-      <path
-        d="M5 12H19"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-      />
-      <path
-        d="M13 6L19 12L13 18"
-        stroke="currentColor"
-        strokeWidth="1.7"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function ArrowUpRightIcon() {
-  return (
-    <svg
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-      className="h-[17px] w-[17px]"
     >
       <path
         d="M7 17L17 7"
         stroke="currentColor"
-        strokeWidth="1.7"
+        strokeWidth="1.8"
         strokeLinecap="round"
       />
+
       <path
         d="M8 7H17V16"
         stroke="currentColor"
-        strokeWidth="1.7"
+        strokeWidth="1.8"
         strokeLinecap="round"
         strokeLinejoin="round"
       />
@@ -171,499 +120,752 @@ function ArrowUpRightIcon() {
   );
 }
 
-function SocialIcon({
-  platform,
+function WhatsAppIcon({
+  size = 16,
 }: {
-  platform: SocialPlatform;
+  size?: number;
 }) {
-  if (platform === "linkedin") {
-    return (
-      <svg
-        viewBox="0 0 24 24"
-        fill="currentColor"
-        aria-hidden="true"
-        className="h-4 w-4"
-      >
-        <path d="M5.2 3.5A2.2 2.2 0 1 1 5.2 7.9a2.2 2.2 0 0 1 0-4.4ZM3.4 9.2h3.6V21H3.4V9.2Zm5.8 0h3.45v1.62h.05c.48-.91 1.65-1.87 3.4-1.87 3.63 0 4.3 2.39 4.3 5.49V21h-3.6v-5.8c0-1.38-.03-3.15-1.92-3.15-1.92 0-2.21 1.5-2.21 3.05V21H9.2V9.2Z" />
-      </svg>
-    );
-  }
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      aria-hidden="true"
+    >
+      <path
+        d="M20.2 3.8A10.1 10.1 0 0 0 13 1a10 10 0 0 0-8.6 15.1L3 22l6.1-1.6A10 10 0 0 0 23 12a10.1 10.1 0 0 0-2.8-8.2Z"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+      />
 
-  if (platform === "github") {
-    return (
-      <svg
-        viewBox="0 0 24 24"
+      <path
+        d="M8.7 7.2c.2-.4.4-.4.7-.4h.6c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4 0 .6l-.5.7c-.1.2-.1.3 0 .5.4.7 1 1.3 1.7 1.7.2.1.4.2.6 0l.7-.5c.2-.1.4-.1.6 0l1.8.8c.3.1.4.3.4.5v.6c0 .3 0 .5-.4.7-.4.2-1 .4-1.6.3-1-.2-2.2-.8-3.4-1.9-1.2-1.1-2-2.2-2.4-3.2-.3-.8-.2-1.5-.1-1.9Z"
         fill="currentColor"
-        aria-hidden="true"
-        className="h-4 w-4"
-      >
-        <path d="M12 .75a11.25 11.25 0 0 0-3.56 21.92c.56.1.77-.24.77-.54v-2.1c-3.13.68-3.79-1.5-3.79-1.5-.51-1.3-1.25-1.65-1.25-1.65-1.02-.7.08-.69.08-.69 1.13.08 1.73 1.16 1.73 1.16 1 1.72 2.63 1.22 3.27.93.1-.72.39-1.22.71-1.5-2.5-.28-5.13-1.25-5.13-5.57 0-1.23.44-2.24 1.16-3.03-.12-.28-.5-1.43.11-2.98 0 0 .95-.3 3.1 1.16a10.8 10.8 0 0 1 5.64 0c2.15-1.46 3.1-1.16 3.1-1.16.61 1.55.23 2.7.11 2.98.72.79 1.16 1.8 1.16 3.03 0 4.33-2.64 5.28-5.15 5.56.4.35.76 1.04.76 2.1v3.11c0 .3.2.65.78.54A11.25 11.25 0 0 0 12 .75Z" />
-      </svg>
-    );
-  }
+      />
+    </svg>
+  );
+}
 
-  return <ArrowUpRightIcon />;
+function GitHubIcon({
+  size = 16,
+}: {
+  size?: number;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M12 .7A11.3 11.3 0 0 0 8.4 22.9c.6.1.8-.3.8-.6v-2.2c-3.3.7-4-1.4-4-1.4-.5-1.3-1.3-1.6-1.3-1.6-1.1-.8.1-.8.1-.8 1.2.1 1.8 1.2 1.8 1.2 1.1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.8-1.6-2.7-.3-5.5-1.3-5.5-5.9 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.6.1-3.2 0 0 1-.3 3.2 1.2a10.8 10.8 0 0 1 5.8 0c2.2-1.5 3.2-1.2 3.2-1.2.6 1.6.2 2.9.1 3.2.8.8 1.2 1.8 1.2 3.1 0 4.6-2.8 5.6-5.5 5.9.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.3 11.3 0 0 0 12 .7Z" />
+    </svg>
+  );
+}
+
+function LinkedInIcon({
+  size = 16,
+}: {
+  size?: number;
+}) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+    >
+      <path d="M5.2 3.5A2.3 2.3 0 1 1 .6 3.5a2.3 2.3 0 0 1 4.6 0ZM1 8h4.3v13H1V8Zm6.9 0h4.1v1.8h.1c.6-1.1 2-2.2 4.2-2.2 4.5 0 5.3 3 5.3 6.9V21h-4.3v-5.8c0-1.4 0-3.2-2-3.2s-2.3 1.5-2.3 3.1V21H7.9V8Z" />
+    </svg>
+  );
 }
 
 /* =========================================================
    TEAM CARD
 ========================================================= */
 
-type TeamCardProps = {
-  member: TeamMember;
-  index: number;
-  active: boolean;
-  onActivate: () => void;
-};
-
-export function TeamCard({
+function TeamCard({
   member,
   index,
-  active,
-  onActivate,
-}: TeamCardProps) {
+}: {
+  member: TeamMember;
+  index: number;
+}) {
+  const cardRef = useRef<HTMLElement | null>(null);
+  const glowRef = useRef<HTMLDivElement | null>(null);
+  const imageRef = useRef<HTMLDivElement | null>(null);
+
+  /* =======================================================
+     MOUSE MOVE
+  ======================================================= */
+
+  const handleMouseMove = (
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    const card = cardRef.current;
+    const glow = glowRef.current;
+    const image = imageRef.current;
+
+    if (!card || !glow || !image) return;
+
+    const rect = card.getBoundingClientRect();
+
+    const x = event.clientX - rect.left;
+    const y = event.clientY - rect.top;
+
+    const rotateY = (x / rect.width - 0.5) * 5;
+    const rotateX = (y / rect.height - 0.5) * -5;
+
+    gsap.to(card, {
+      rotateX,
+      rotateY,
+      y: -7,
+      duration: 0.35,
+      ease: "power3.out",
+      transformPerspective: 900,
+      transformOrigin: "center center",
+      overwrite: true,
+    });
+
+    gsap.to(image, {
+      scale: 1.055,
+      x: (x / rect.width - 0.5) * 8,
+      y: (y / rect.height - 0.5) * 8,
+      duration: 0.45,
+      ease: "power3.out",
+      overwrite: true,
+    });
+
+    gsap.to(glow, {
+      opacity: 1,
+      x: x - rect.width / 2,
+      y: y - rect.height / 2,
+      duration: 0.3,
+      ease: "power2.out",
+      overwrite: true,
+    });
+  };
+
+  /* =======================================================
+     MOUSE LEAVE
+  ======================================================= */
+
+  const handleMouseLeave = () => {
+    const card = cardRef.current;
+    const glow = glowRef.current;
+    const image = imageRef.current;
+
+    if (!card || !glow || !image) return;
+
+    gsap.to(card, {
+      rotateX: 0,
+      rotateY: 0,
+      y: 0,
+      duration: 0.55,
+      ease: "power3.out",
+      overwrite: true,
+    });
+
+    gsap.to(image, {
+      scale: 1,
+      x: 0,
+      y: 0,
+      duration: 0.55,
+      ease: "power3.out",
+      overwrite: true,
+    });
+
+    gsap.to(glow, {
+      opacity: 0,
+      duration: 0.4,
+      ease: "power2.out",
+      overwrite: true,
+    });
+  };
+
+  /* =======================================================
+     CLICK ANIMATION
+  ======================================================= */
+
+  const handleCardClick = () => {
+    const card = cardRef.current;
+
+    if (!card) return;
+
+    gsap.killTweensOf(card);
+
+    const timeline = gsap.timeline();
+
+    timeline
+      .to(card, {
+        y: -10,
+        scale: 1.02,
+        rotateZ: index % 2 === 0 ? -0.6 : 0.6,
+        duration: 0.16,
+        ease: "power3.out",
+      })
+      .to(card, {
+        y: 0,
+        scale: 1,
+        rotateZ: 0,
+        duration: 0.5,
+        ease: "elastic.out(1, 0.45)",
+      });
+  };
+
   return (
     <article
+      ref={cardRef}
       data-team-card
-      data-active={active ? "true" : "false"}
-      className={`
-        relative
-        h-[410px]
-        shrink-0
-        overflow-hidden
-        rounded-[28px]
-        border
-        outline-none
-        transition-[width,background-color,border-color,box-shadow]
-        duration-500
-        ease-out
-        sm:h-[455px]
-        sm:rounded-[32px]
-        lg:h-[485px]
-        ${
-          active
-            ? "w-[min(72vw,540px)] border-[#242128] bg-[#1d1a20] text-white shadow-[0_30px_90px_rgba(28,23,35,0.20)]"
-            : "w-[min(22vw,205px)] border-black/[0.08] bg-white text-[#17151b] shadow-[0_16px_50px_rgba(23,21,27,0.05)]"
-        }
-      `}
       tabIndex={0}
-      aria-current={active ? "true" : undefined}
-      onFocus={onActivate}
-      onClick={onActivate}
+      onClick={handleCardClick}
       onKeyDown={(event) => {
-        if (
-          event.key === "Enter" ||
-          event.key === " "
-        ) {
+        if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
-          onActivate();
+          handleCardClick();
         }
       }}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      className="
+        team-card
+        group
+        relative
+        h-full
+        cursor-pointer
+        overflow-visible
+        rounded-[27px]
+        outline-none
+        [transform-style:preserve-3d]
+        will-change-transform
+        focus-visible:ring-2
+        focus-visible:ring-[#854fee]/50
+        focus-visible:ring-offset-4
+        focus-visible:ring-offset-[#f4f3f0]
+      "
     >
-      {/* Accent glow */}
+      {/* ===================================================
+          ROTATING BORDER LIGHT
+      =================================================== */}
+
       <div
         aria-hidden="true"
-        className={`
+        className="
           pointer-events-none
           absolute
-          -right-24
-          -top-24
-          h-64
-          w-64
-          rounded-full
-          bg-[#854fee]/20
-          blur-[70px]
+          -inset-[2px]
+          -z-20
+          overflow-hidden
+          rounded-[29px]
+          opacity-70
           transition-opacity
           duration-500
-          ${
-            active
-              ? "opacity-100"
-              : "opacity-0"
-          }
-        `}
-      />
+          group-hover:opacity-100
+        "
+      >
+        <div
+          className="
+            absolute
+            inset-[-35%]
+            rounded-[35%]
+            bg-[conic-gradient(from_0deg,transparent_0deg,#854fee_70deg,transparent_125deg,transparent_180deg,#d6ff00_230deg,transparent_285deg,transparent_360deg)]
+            blur-[1px]
+            animate-spin
+          "
+          style={{
+            animationDuration: "5s",
+          }}
+        />
 
-      {/* Top meta */}
-      <div className="absolute left-5 right-5 top-5 z-20 flex items-start justify-between sm:left-6 sm:right-6 sm:top-6">
-        <span
-          className={`
-            text-[10px]
-            font-bold
-            tracking-[0.16em]
-            ${
-              active
-                ? "text-white/45"
-                : "text-black/25"
-            }
-          `}
-        >
-          {String(index + 1).padStart(2, "0")}
-        </span>
-
-        <span
-          className={`
-            rounded-full
-            border
-            px-2.5
-            py-1
-            text-[8px]
-            font-bold
-            uppercase
-            tracking-[0.16em]
-            ${
-              active
-                ? "border-white/10 bg-white/[0.06] text-white/50"
-                : "border-black/[0.06] bg-black/[0.02] text-black/30"
-            }
-          `}
-        >
-          {active ? "Selected" : "Profile"}
-        </span>
+        <div
+          className="
+            absolute
+            inset-[2px]
+            rounded-[27px]
+            bg-[#f4f3f0]
+          "
+        />
       </div>
 
-      {/* Portrait / placeholder */}
-      <div
-        className={`
-          absolute
-          inset-x-0
-          top-0
-          overflow-hidden
-          ${
-            active
-              ? "h-[55%]"
-              : "h-full"
-          }
-        `}
-      >
-        {member.image ? (
-          <>
-            <img
-              src={member.image}
-              alt={`${member.name}, ${member.role}`}
-              className={`
-                h-full
-                w-full
-                object-cover
-                transition-transform
-                duration-700
-                ease-out
-                ${
-                  active
-                    ? "scale-100"
-                    : "scale-[1.03]"
-                }
-              `}
-              draggable={false}
-            />
+      {/* ===================================================
+          SOFT AURA
+      =================================================== */}
 
-            <div
-              className={`
-                absolute
-                inset-0
-                bg-gradient-to-t
-                ${
-                  active
-                    ? "from-[#1d1a20] via-transparent to-transparent"
-                    : "from-black/25 via-transparent to-transparent"
-                }
-              `}
-            />
-          </>
-        ) : (
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          -inset-4
+          -z-30
+          rounded-[35px]
+          bg-[conic-gradient(from_180deg,#854fee,transparent_28%,#d6ff00,transparent_55%,#854fee)]
+          opacity-20
+          blur-[22px]
+          animate-spin
+          transition-opacity
+          duration-500
+          group-hover:opacity-40
+        "
+        style={{
+          animationDuration: "9s",
+        }}
+      />
+
+      {/* ===================================================
+          MOUSE GLOW
+      =================================================== */}
+
+      <div
+        ref={glowRef}
+        aria-hidden="true"
+        className="
+          pointer-events-none
+          absolute
+          left-1/2
+          top-1/2
+          -z-10
+          h-48
+          w-48
+          -translate-x-1/2
+          -translate-y-1/2
+          rounded-full
+          bg-[#854fee]/35
+          opacity-0
+          blur-[65px]
+        "
+      />
+
+      {/* ===================================================
+          CARD BODY
+      =================================================== */}
+
+      <div
+        className="
+          relative
+          overflow-hidden
+          rounded-[26px]
+          border
+          border-black/[0.08]
+          bg-white
+          shadow-[0_20px_70px_rgba(23,21,27,0.07)]
+          transition-shadow
+          duration-500
+          group-hover:shadow-[0_30px_90px_rgba(133,79,238,0.18)]
+        "
+      >
+        {/* =================================================
+            INNER BORDER
+        ================================================= */}
+
+        <div
+          aria-hidden="true"
+          className="
+            pointer-events-none
+            absolute
+            inset-[1px]
+            z-30
+            rounded-[25px]
+            border
+            border-white/20
+            opacity-0
+            transition-opacity
+            duration-500
+            group-hover:opacity-100
+          "
+        />
+
+        {/* =================================================
+            IMAGE
+        ================================================= */}
+
+        <div
+          className="
+            relative
+            aspect-[0.82]
+            overflow-hidden
+            bg-[#17151b]
+          "
+        >
           <div
-            className={`
-              relative
+            ref={imageRef}
+            className="
+              absolute
+              inset-[-3%]
+              will-change-transform
+            "
+          >
+            <Image
+              src={member.image}
+              alt={`${member.name} — ${member.role}`}
+              fill
+              priority={index === 0}
+              sizes="
+                (max-width: 639px) 100vw,
+                (max-width: 1023px) 50vw,
+                25vw
+              "
+              className="
+                object-cover
+                object-center
+              "
+            />
+          </div>
+
+          {/* DARK GRADIENT */}
+
+          <div
+            className="
+              absolute
+              inset-0
+              bg-gradient-to-t
+              from-black
+              via-black/25
+              to-black/5
+            "
+          />
+
+          {/* PURPLE GLOW */}
+
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -right-24
+              -top-24
+              h-64
+              w-64
+              rounded-full
+              bg-[#854fee]/25
+              blur-[75px]
+              transition-all
+              duration-700
+              group-hover:bg-[#854fee]/50
+            "
+          />
+
+          {/* LIME GLOW */}
+
+          <div
+            className="
+              pointer-events-none
+              absolute
+              -bottom-24
+              -left-24
+              h-52
+              w-52
+              rounded-full
+              bg-[#d6ff00]/10
+              blur-[70px]
+              transition-all
+              duration-700
+              group-hover:bg-[#d6ff00]/25
+            "
+          />
+
+          {/* =================================================
+              NUMBER
+          ================================================= */}
+
+          <div
+            className="
+              absolute
+              left-5
+              top-5
+              z-20
               flex
-              h-full
-              w-full
+              items-center
+              gap-2
+              text-[9px]
+              font-bold
+              tracking-[0.2em]
+              text-white/55
+            "
+          >
+            <span className="h-px w-6 bg-[#d6ff00]" />
+
+            {member.number}
+          </div>
+
+          {/* =================================================
+              ARROW
+          ================================================= */}
+
+          <div
+            className="
+              absolute
+              right-5
+              top-5
+              z-20
+              flex
+              h-9
+              w-9
               items-center
               justify-center
-              overflow-hidden
-              ${
-                active
-                  ? "bg-[#29232f]"
-                  : "bg-[#efedf2]"
-              }
-            `}
+              rounded-full
+              border
+              border-white/15
+              bg-black/20
+              text-white/60
+              backdrop-blur-md
+              transition-all
+              duration-500
+              group-hover:border-[#d6ff00]/70
+              group-hover:bg-[#d6ff00]
+              group-hover:text-black
+              group-hover:rotate-45
+            "
           >
-            {/* Abstract placeholder */}
-            <div
-              aria-hidden="true"
-              className={`
-                absolute
-                h-44
-                w-44
-                rounded-full
-                bg-[#854fee]/20
-                blur-3xl
-              `}
-            />
+            <ArrowUpRightIcon size={16} />
+          </div>
 
-            <div
-              className={`
-                relative
-                flex
-                h-28
-                w-28
-                items-center
-                justify-center
-                rounded-full
-                border
-                text-3xl
-                font-semibold
-                tracking-[-0.06em]
-                ${
-                  active
-                    ? "border-white/10 bg-white/[0.05] text-white/70"
-                    : "border-black/[0.07] bg-white text-black/20"
-                }
-              `}
-            >
-              {member.name
-                .split(" ")
-                .filter(Boolean)
-                .slice(0, 2)
-                .map((part) => part[0])
-                .join("")
-                .toUpperCase()}
+          {/* =================================================
+              ROLE + NAME
+          ================================================= */}
+
+          <div
+            className="
+              absolute
+              bottom-0
+              left-0
+              right-0
+              z-20
+              p-5
+              sm:p-6
+            "
+          >
+            {/* ROLE */}
+
+            <div className="flex items-center gap-2">
+              <span
+                className="
+                  h-1.5
+                  w-1.5
+                  shrink-0
+                  rounded-full
+                  bg-[#d6ff00]
+                  shadow-[0_0_12px_rgba(214,255,0,0.9)]
+                "
+              />
+
+              <span
+                className="
+                  text-[10px]
+                  font-black
+                  uppercase
+                  tracking-[0.15em]
+                  text-[#d6ff00]
+                  drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)]
+                  sm:text-[11px]
+                "
+              >
+                {member.role}
+              </span>
             </div>
 
-            <span
-              className={`
-                absolute
-                bottom-7
-                left-1/2
-                -translate-x-1/2
-                whitespace-nowrap
+            {/* NAME */}
+
+            <h3
+              className="
+                mt-2
+                text-[1.7rem]
+                font-bold
+                leading-[0.9]
+                tracking-[-0.055em]
+                text-white
+                drop-shadow-[0_3px_18px_rgba(0,0,0,0.4)]
+                sm:text-[1.9rem]
+                lg:text-[1.65rem]
+                xl:text-[1.9rem]
+              "
+            >
+              {member.name}
+            </h3>
+
+            {/* SPECIALTY */}
+
+            <div
+              className="
+                mt-3
+                flex
+                items-center
+                gap-2
                 text-[8px]
                 font-bold
                 uppercase
-                tracking-[0.16em]
-                ${
-                  active
-                    ? "text-white/25"
-                    : "text-black/20"
-                }
-              `}
-            >
-              Photo placeholder
-            </span>
-          </div>
-        )}
-      </div>
-
-      {/* Inactive vertical identity */}
-      {!active && (
-        <div className="absolute inset-x-0 bottom-0 z-10 bg-gradient-to-t from-white via-white/95 to-transparent px-5 pb-5 pt-20">
-          <p className="truncate text-sm font-semibold tracking-[-0.02em]">
-            {member.name}
-          </p>
-
-          <p className="mt-1 truncate text-[9px] font-bold uppercase tracking-[0.12em] text-[#854fee]">
-            {member.role}
-          </p>
-        </div>
-      )}
-
-      {/* Active content */}
-      {active && (
-        <div className="absolute inset-x-0 bottom-0 z-10 flex h-[49%] flex-col justify-end p-6 sm:p-7 lg:p-8">
-          <div className="flex items-end justify-between gap-5">
-            <div className="min-w-0">
-              <p className="mb-2 text-[9px] font-bold uppercase tracking-[0.18em] text-[#a984ff]">
-                {member.role}
-              </p>
-
-              <h3 className="text-3xl font-semibold leading-none tracking-[-0.05em] sm:text-4xl lg:text-[2.8rem]">
-                {member.name}
-              </h3>
-
-              <p className="mt-4 max-w-[470px] text-xs leading-6 text-white/55 sm:text-sm sm:leading-6">
-                {member.intro}
-              </p>
-
-              {/* Placeholder notice */}
-              {member.placeholder && (
-                <p className="mt-3 text-[8px] font-bold uppercase tracking-[0.14em] text-white/25">
-                  Replace with verified team data
-                </p>
-              )}
-            </div>
-
-            <button
-              type="button"
-              aria-label={`Select ${member.name}`}
-              onClick={(event) => {
-                event.stopPropagation();
-                onActivate();
-              }}
-              className="
-                flex
-                h-11
-                w-11
-                shrink-0
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-[#854fee]/40
-                bg-[#854fee]
-                text-white
-                shadow-[0_12px_30px_rgba(133,79,238,0.30)]
-                transition-transform
-                duration-300
-                hover:scale-105
-                focus:outline-none
-                focus:ring-2
-                focus:ring-[#a984ff]
-                focus:ring-offset-2
-                focus:ring-offset-[#1d1a20]
+                tracking-[0.14em]
+                text-white/55
               "
             >
-              <ArrowUpRightIcon />
-            </button>
+              <span className="h-px w-5 bg-white/25" />
+
+              {member.specialty}
+            </div>
+          </div>
+        </div>
+
+        {/* ===================================================
+            FOOTER
+        =================================================== */}
+
+        <div
+          className="
+            flex
+            items-center
+            justify-between
+            gap-3
+            px-4
+            py-4
+            sm:px-5
+          "
+        >
+          {/* SOCIALS */}
+
+          <div className="flex items-center gap-2">
+            {member.whatsapp && (
+              <a
+                href={member.whatsapp}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${member.name} WhatsApp`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+                className="
+                  flex
+                  h-8
+                  w-8
+                  items-center
+                  justify-center
+                  rounded-full
+                  border
+                  border-black/[0.08]
+                  bg-white
+                  text-black/45
+                  transition-all
+                  duration-300
+                  hover:-translate-y-1
+                  hover:border-[#25D366]
+                  hover:bg-[#25D366]
+                  hover:text-white
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-[#25D366]/40
+                "
+              >
+                <WhatsAppIcon size={15} />
+              </a>
+            )}
+
+            {member.github && (
+              <a
+                href={member.github}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${member.name} GitHub`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+                className="
+                  flex
+                  h-8
+                  w-8
+                  items-center
+                  justify-center
+                  rounded-full
+                  border
+                  border-black/[0.08]
+                  bg-white
+                  text-black/45
+                  transition-all
+                  duration-300
+                  hover:-translate-y-1
+                  hover:border-black
+                  hover:bg-black
+                  hover:text-white
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-black/20
+                "
+              >
+                <GitHubIcon size={15} />
+              </a>
+            )}
+
+            {member.linkedin && (
+              <a
+                href={member.linkedin}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${member.name} LinkedIn`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                }}
+                className="
+                  flex
+                  h-8
+                  w-8
+                  items-center
+                  justify-center
+                  rounded-full
+                  border
+                  border-black/[0.08]
+                  bg-white
+                  text-black/45
+                  transition-all
+                  duration-300
+                  hover:-translate-y-1
+                  hover:border-[#0A66C2]
+                  hover:bg-[#0A66C2]
+                  hover:text-white
+                  focus:outline-none
+                  focus:ring-2
+                  focus:ring-[#0A66C2]/30
+                "
+              >
+                <LinkedInIcon size={15} />
+              </a>
+            )}
           </div>
 
-          {/* Real socials only */}
-          {member.social &&
-            member.social.length > 0 && (
-              <div className="mt-5 flex gap-2">
-                {member.social.map((social) => (
-                  <Link
-                    key={social.platform}
-                    href={social.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`${member.name} — ${social.label}`}
-                    onClick={(event) =>
-                      event.stopPropagation()
-                    }
-                    className="
-                      flex
-                      h-8
-                      w-8
-                      items-center
-                      justify-center
-                      rounded-full
-                      border
-                      border-white/10
-                      bg-white/[0.05]
-                      text-white/60
-                      transition-all
-                      duration-200
-                      hover:border-[#854fee]
-                      hover:bg-[#854fee]
-                      hover:text-white
-                      focus:outline-none
-                      focus:ring-2
-                      focus:ring-[#a984ff]
-                    "
-                  >
-                    <SocialIcon
-                      platform={social.platform}
-                    />
-                  </Link>
-                ))}
-              </div>
-            )}
-        </div>
-      )}
+          {/* SPECIALTY */}
 
-      {/* Active purple edge */}
-      <div
-        aria-hidden="true"
-        className={`
-          absolute
-          bottom-0
-          left-0
-          top-0
-          w-[3px]
-          bg-[#854fee]
-          transition-opacity
-          duration-300
-          ${
-            active
-              ? "opacity-100"
-              : "opacity-0"
-          }
-        `}
-      />
+          <div className="flex items-center gap-2 text-right">
+            <span className="h-1 w-1 rounded-full bg-[#854fee]" />
+
+            <span
+              className="
+                max-w-[130px]
+                truncate
+                text-[8px]
+                font-bold
+                uppercase
+                tracking-[0.13em]
+                text-black/30
+              "
+            >
+              {member.specialty}
+            </span>
+          </div>
+        </div>
+      </div>
     </article>
   );
 }
 
 /* =========================================================
-   TEAM SECTION
+   MAIN TEAM SECTION
 ========================================================= */
 
 export default function TeamSection() {
-  const sectionRef =
-    useRef<HTMLElement | null>(null);
-
-  const viewportRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const trackRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const cardsRef =
-    useRef<(HTMLElement | null)[]>([]);
-
-  const [activeIndex, setActiveIndex] =
-    useState(0);
-
-  const activeIndexRef =
-    useRef(0);
-
-  const touchStartX =
-    useRef<number | null>(null);
-
-  const touchStartY =
-    useRef<number | null>(null);
-
-  const memberCount = teamMembers.length;
+  const sectionRef = useRef<HTMLElement | null>(null);
 
   /* =======================================================
-     ACTIVE MEMBER
-  ======================================================= */
-
-  const setActive = useCallback(
-    (nextIndex: number) => {
-      if (!memberCount) return;
-
-      const normalized =
-        (nextIndex + memberCount) %
-        memberCount;
-
-      if (
-        normalized ===
-        activeIndexRef.current
-      ) {
-        return;
-      }
-
-      activeIndexRef.current =
-        normalized;
-
-      setActiveIndex(normalized);
-    },
-    [memberCount]
-  );
-
-  const goNext = useCallback(() => {
-    setActive(
-      activeIndexRef.current + 1
-    );
-  }, [setActive]);
-
-  const goPrevious = useCallback(() => {
-    setActive(
-      activeIndexRef.current - 1
-    );
-  }, [setActive]);
-
-  /* =======================================================
-     GSAP — SECTION ENTRANCE
+     INTRO ANIMATION
   ======================================================= */
 
   useLayoutEffect(() => {
@@ -671,70 +873,42 @@ export default function TeamSection() {
 
     if (!section) return;
 
+    const reduceMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (reduceMotion) return;
+
     const ctx = gsap.context(() => {
-      const reduceMotion =
-        window.matchMedia(
-          "(prefers-reduced-motion: reduce)"
-        ).matches;
+      const eyebrow = section.querySelector(
+        "[data-team-eyebrow]"
+      );
 
-      const eyebrow =
-        section.querySelector(
-          "[data-team-eyebrow]"
-        );
+      const heading = section.querySelector(
+        "[data-team-heading]"
+      );
 
-      const heading =
-        section.querySelector(
-          "[data-team-heading]"
-        );
+      const description = section.querySelector(
+        "[data-team-description]"
+      );
 
-      const description =
-        section.querySelector(
-          "[data-team-description]"
-        );
+      const cards = section.querySelectorAll(
+        "[data-team-card]"
+      );
 
-      const features =
-        gsap.utils.toArray<HTMLElement>(
-          "[data-team-feature]"
-        );
+      const manifesto = section.querySelector(
+        "[data-team-manifesto]"
+      );
 
-      const viewport =
-        section.querySelector(
-          "[data-team-viewport]"
-        );
+      const timeline = gsap.timeline({
+        scrollTrigger: {
+          trigger: section,
+          start: "top 78%",
+          once: true,
+        },
+      });
 
-      const navigation =
-        section.querySelector(
-          "[data-team-navigation]"
-        );
-
-      if (reduceMotion) {
-        gsap.set(
-          [
-            eyebrow,
-            heading,
-            description,
-            ...features,
-            viewport,
-            navigation,
-          ],
-          {
-            clearProps: "all",
-          }
-        );
-
-        return;
-      }
-
-      const intro =
-        gsap.timeline({
-          scrollTrigger: {
-            trigger: section,
-            start: "top 78%",
-            once: true,
-          },
-        });
-
-      intro
+      timeline
         .from(eyebrow, {
           y: 18,
           opacity: 0,
@@ -744,9 +918,9 @@ export default function TeamSection() {
         .from(
           heading,
           {
-            y: 34,
+            y: 45,
             opacity: 0,
-            duration: 0.75,
+            duration: 0.8,
             ease: "power3.out",
           },
           "-=0.25"
@@ -754,49 +928,35 @@ export default function TeamSection() {
         .from(
           description,
           {
-            y: 22,
+            y: 25,
             opacity: 0,
             duration: 0.6,
             ease: "power3.out",
           },
-          "-=0.42"
+          "-=0.45"
         )
         .from(
-          features,
+          cards,
           {
-            y: 18,
+            y: 50,
             opacity: 0,
-            duration: 0.55,
-            stagger: 0.08,
+            scale: 0.94,
+            duration: 0.7,
+            stagger: 0.12,
             ease: "power3.out",
           },
-          "-=0.35"
+          "-=0.2"
+        )
+        .from(
+          manifesto,
+          {
+            y: 25,
+            opacity: 0,
+            duration: 0.6,
+            ease: "power3.out",
+          },
+          "-=0.25"
         );
-
-      gsap.from(viewport, {
-        y: 40,
-        opacity: 0,
-        scale: 0.985,
-        duration: 0.85,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: viewport,
-          start: "top 86%",
-          once: true,
-        },
-      });
-
-      gsap.from(navigation, {
-        y: 16,
-        opacity: 0,
-        duration: 0.55,
-        ease: "power3.out",
-        scrollTrigger: {
-          trigger: navigation,
-          start: "top 94%",
-          once: true,
-        },
-      });
     }, section);
 
     return () => {
@@ -804,308 +964,23 @@ export default function TeamSection() {
     };
   }, []);
 
-  /* =======================================================
-     GSAP — ACTIVE CARD TRANSITION
-  ======================================================= */
-
-  useEffect(() => {
-    const reduceMotion =
-      window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-
-    const cards =
-      cardsRef.current.filter(
-        Boolean
-      ) as HTMLElement[];
-
-    if (!cards.length) return;
-
-    if (reduceMotion) {
-      cards.forEach((card, index) => {
-        const active =
-          index === activeIndex;
-
-        gsap.set(card, {
-          width: active
-            ? "min(72vw, 540px)"
-            : "min(22vw, 205px)",
-          opacity: active ? 1 : 0.78,
-          scale: active ? 1 : 0.96,
-          y: active ? 0 : 8,
-        });
-      });
-
-      return;
-    }
-
-    const mobile = window.innerWidth < 768;
-    const tablet =
-      window.innerWidth >= 768 &&
-      window.innerWidth < 1024;
-
-    const activeWidth = mobile
-      ? "78vw"
-      : tablet
-        ? "48vw"
-        : "min(44vw, 540px)";
-
-    const inactiveWidth = mobile
-      ? "17vw"
-      : tablet
-        ? "21vw"
-        : "min(13vw, 185px)";
-
-    const timeline = gsap.timeline({
-      defaults: {
-        duration: 0.65,
-        ease: "power3.out",
-      },
-    });
-
-    cards.forEach((card, index) => {
-      const active =
-        index === activeIndex;
-
-      timeline.to(
-        card,
-        {
-          width: active
-            ? activeWidth
-            : inactiveWidth,
-          opacity: active ? 1 : 0.76,
-          scale: active ? 1 : 0.965,
-          y: active ? 0 : 6,
-          boxShadow: active
-            ? "0 30px 90px rgba(28,23,35,0.20)"
-            : "0 16px 50px rgba(23,21,27,0.05)",
-        },
-        0
-      );
-    });
-
-    return () => {
-      timeline.kill();
-    };
-  }, [activeIndex]);
-
-  /* =======================================================
-     KEEP ACTIVE CARD VISIBLE
-
-     Uses the browser's native horizontal scrolling model
-     instead of locking the page.
-  ======================================================= */
-
-  useEffect(() => {
-    const viewport =
-      viewportRef.current;
-
-    const activeCard =
-      cardsRef.current[activeIndex];
-
-    if (!viewport || !activeCard) {
-      return;
-    }
-
-    const reduceMotion =
-      window.matchMedia(
-        "(prefers-reduced-motion: reduce)"
-      ).matches;
-
-    const viewportRect =
-      viewport.getBoundingClientRect();
-
-    const cardRect =
-      activeCard.getBoundingClientRect();
-
-    const desired =
-      viewport.scrollLeft +
-      (cardRect.left -
-        viewportRect.left) -
-      (viewportRect.width -
-        cardRect.width) /
-        2;
-
-    const maxScroll =
-      viewport.scrollWidth -
-      viewport.clientWidth;
-
-    const target =
-      Math.max(
-        0,
-        Math.min(desired, maxScroll)
-      );
-
-    if (reduceMotion) {
-      viewport.scrollLeft = target;
-      return;
-    }
-
-    gsap.to(viewport, {
-      scrollLeft: target,
-      duration: 0.7,
-      ease: "power3.out",
-      overwrite: true,
-    });
-  }, [activeIndex]);
-
-  /* =======================================================
-     RESIZE
-  ======================================================= */
-
-  useEffect(() => {
-    const handleResize = () => {
-      ScrollTrigger.refresh();
-    };
-
-    window.addEventListener(
-      "resize",
-      handleResize
-    );
-
-    return () => {
-      window.removeEventListener(
-        "resize",
-        handleResize
-      );
-    };
-  }, []);
-
-  /* =======================================================
-     KEYBOARD NAVIGATION
-  ======================================================= */
-
-  useEffect(() => {
-    const section = sectionRef.current;
-
-    if (!section) return;
-
-    const handleKeyDown = (
-      event: KeyboardEvent
-    ) => {
-      const target =
-        event.target as HTMLElement | null;
-
-      if (
-        target?.tagName === "INPUT" ||
-        target?.tagName === "TEXTAREA" ||
-        target?.isContentEditable
-      ) {
-        return;
-      }
-
-      if (event.key === "ArrowRight") {
-        event.preventDefault();
-        goNext();
-      }
-
-      if (event.key === "ArrowLeft") {
-        event.preventDefault();
-        goPrevious();
-      }
-    };
-
-    section.addEventListener(
-      "keydown",
-      handleKeyDown
-    );
-
-    return () => {
-      section.removeEventListener(
-        "keydown",
-        handleKeyDown
-      );
-    };
-  }, [goNext, goPrevious]);
-
-  /* =======================================================
-     TOUCH / SWIPE
-  ======================================================= */
-
-  const handleTouchStart = (
-    event: React.TouchEvent
-  ) => {
-    touchStartX.current =
-      event.touches[0]?.clientX ?? null;
-
-    touchStartY.current =
-      event.touches[0]?.clientY ?? null;
-  };
-
-  const handleTouchEnd = (
-    event: React.TouchEvent
-  ) => {
-    if (
-      touchStartX.current === null ||
-      touchStartY.current === null
-    ) {
-      return;
-    }
-
-    const endX =
-      event.changedTouches[0]?.clientX ?? 0;
-
-    const endY =
-      event.changedTouches[0]?.clientY ?? 0;
-
-    const deltaX =
-      endX - touchStartX.current;
-
-    const deltaY =
-      endY - touchStartY.current;
-
-    touchStartX.current = null;
-    touchStartY.current = null;
-
-    /* Ignore mostly vertical gestures */
-    if (
-      Math.abs(deltaY) >
-      Math.abs(deltaX)
-    ) {
-      return;
-    }
-
-    if (Math.abs(deltaX) < 45) {
-      return;
-    }
-
-    if (deltaX < 0) {
-      goNext();
-    } else {
-      goPrevious();
-    }
-  };
-
-  const activeMember =
-    teamMembers[activeIndex];
-
-  if (!teamMembers.length) {
-    return null;
-  }
-
   return (
     <section
       ref={sectionRef}
       id="team"
-      tabIndex={-1}
+      data-sidebar-theme="light"
       className="
+        section-with-left-nav
         relative
+        isolate
         overflow-hidden
-        bg-[#f7f7f5]
-        px-5
-        py-24
+        bg-[#f4f3f0]
         text-[#17151b]
-        outline-none
-        sm:px-8
-        sm:py-28
-        lg:px-12
-        lg:py-32
-        xl:px-16
       "
     >
-      {/* =================================================
-          BACKGROUND DETAIL
-      ================================================= */}
+      {/* ===================================================
+          BACKGROUND
+      =================================================== */}
 
       <div
         aria-hidden="true"
@@ -1113,53 +988,86 @@ export default function TeamSection() {
           pointer-events-none
           absolute
           inset-0
+          -z-10
           overflow-hidden
         "
       >
-        <div
-          className="
-            absolute
-            -right-40
-            top-10
-            h-[420px]
-            w-[420px]
-            rounded-full
-            bg-[#854fee]/[0.055]
-            blur-[100px]
-          "
-        />
+        {/* PURPLE */}
 
         <div
           className="
             absolute
-            -left-48
-            bottom-10
-            h-[360px]
-            w-[360px]
+            -right-40
+            top-[8%]
+            h-[520px]
+            w-[520px]
             rounded-full
-            bg-[#854fee]/[0.035]
-            blur-[100px]
+            bg-[#854fee]/[0.07]
+            blur-[120px]
           "
         />
+
+        {/* LIME */}
+
+        <div
+          className="
+            absolute
+            -left-40
+            bottom-[-100px]
+            h-[420px]
+            w-[420px]
+            rounded-full
+            bg-[#d6ff00]/[0.035]
+            blur-[120px]
+          "
+        />
+
+        {/* GRID */}
 
         <div
           className="
             absolute
             inset-0
-            opacity-[0.25]
+            opacity-[0.35]
             [background-image:linear-gradient(rgba(23,21,27,0.035)_1px,transparent_1px),linear-gradient(90deg,rgba(23,21,27,0.035)_1px,transparent_1px)]
-            [background-size:72px_72px]
-            [mask-image:linear-gradient(to_bottom,black,transparent_85%)]
+            [background-size:70px_70px]
+            [mask-image:linear-gradient(to_bottom,black,transparent_90%)]
           "
         />
       </div>
 
-      <div className="relative mx-auto max-w-[1500px]">
+      {/* ===================================================
+          CONTAINER
+      =================================================== */}
+
+      <div
+        className="
+          relative
+          mx-auto
+          w-full
+          max-w-[1500px]
+          px-5
+          py-20
+          sm:px-8
+          sm:py-28
+          lg:px-14
+          lg:py-36
+          xl:px-20
+        "
+      >
         {/* =================================================
             HEADER
         ================================================= */}
 
-        <div className="grid gap-10 lg:grid-cols-[1.15fr_0.85fr] lg:items-end">
+        <div
+          className="
+            grid
+            gap-10
+            lg:grid-cols-[1fr_0.55fr]
+            lg:items-end
+            lg:gap-20
+          "
+        >
           <div>
             <div
               data-team-eyebrow
@@ -1170,40 +1078,41 @@ export default function TeamSection() {
                 text-[10px]
                 font-bold
                 uppercase
-                tracking-[0.28em]
+                tracking-[0.25em]
                 text-[#854fee]
                 sm:text-[11px]
               "
             >
-              <span className="h-px w-9 bg-[#854fee]" />
+              <span className="h-px w-10 bg-[#854fee]" />
 
-              Meet the Team
+              The Team
             </div>
 
             <h2
               data-team-heading
               className="
-                mt-5
-                max-w-4xl
-                text-[clamp(2.8rem,6vw,6.7rem)]
-                font-semibold
-                leading-[0.9]
-                tracking-[-0.065em]
+                mt-6
+                max-w-[900px]
+                text-[clamp(3.2rem,8vw,7.8rem)]
+                font-bold
+                leading-[0.87]
+                tracking-[-0.075em]
               "
             >
-              The People
+              Small team.
               <br />
-              Behind{" "}
+
               <span className="text-[#854fee]">
-                Nexora Digital.
+                Big thinking.
               </span>
             </h2>
+          </div>
 
+          <div>
             <p
               data-team-description
               className="
-                mt-7
-                max-w-2xl
+                max-w-md
                 text-sm
                 leading-7
                 text-black/50
@@ -1211,267 +1120,194 @@ export default function TeamSection() {
                 sm:leading-8
               "
             >
-              Strategy, design, development and
-              creativity come together through
-              people who care about the details.
-              Meet the minds shaping the digital
-              work behind Nexora.
+              Nexora Digital brings together
+              strategy, design, development and
+              creative execution under one roof.
+              Different skills, one shared standard.
             </p>
-          </div>
 
-          {/* =================================================
-              FEATURE PRINCIPLES
-          ================================================= */}
-
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
-            {[
-              {
-                number: "01",
-                title: "Creative Minds",
-                text: "Ideas with purpose.",
-              },
-              {
-                number: "02",
-                title: "Technical Expertise",
-                text: "Built to perform.",
-              },
-              {
-                number: "03",
-                title: "Collaborative Spirit",
-                text: "Better work together.",
-              },
-            ].map((feature) => (
-              <div
-                key={feature.number}
-                data-team-feature
+            <div
+              className="
+                mt-7
+                flex
+                items-center
+                gap-3
+                text-[9px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-black/30
+              "
+            >
+              <span
                 className="
-                  flex
-                  items-center
-                  gap-4
-                  border-t
-                  border-black/[0.08]
-                  py-4
-                  lg:justify-between
+                  h-1.5
+                  w-1.5
+                  rounded-full
+                  bg-[#d6ff00]
+                  shadow-[0_0_10px_rgba(214,255,0,0.8)]
                 "
-              >
-                <span className="text-[9px] font-bold tracking-[0.16em] text-[#854fee]">
-                  {feature.number}
-                </span>
+              />
 
-                <div className="min-w-0 lg:flex-1 lg:px-5">
-                  <p className="text-xs font-semibold tracking-[-0.01em]">
-                    {feature.title}
-                  </p>
-
-                  <p className="mt-0.5 text-[10px] text-black/35">
-                    {feature.text}
-                  </p>
-                </div>
-
-                <span
-                  aria-hidden="true"
-                  className="
-                    hidden
-                    h-px
-                    w-12
-                    bg-black/10
-                    sm:block
-                  "
-                />
-              </div>
-            ))}
+              Built around collaboration
+            </div>
           </div>
         </div>
 
         {/* =================================================
-            TEAM SHOWCASE
+            TEAM CARDS
         ================================================= */}
 
-        <div className="mt-14 sm:mt-16 lg:mt-20">
-          <div
-            ref={viewportRef}
-            data-team-viewport
-            className="
-              -mx-5
-              overflow-x-auto
-              overscroll-x-contain
-              px-5
-              pb-5
-              [scrollbar-width:none]
-              [-ms-overflow-style:none]
-              [&::-webkit-scrollbar]:hidden
-              sm:-mx-8
-              sm:px-8
-              lg:-mx-12
-              lg:px-12
-              xl:-mx-16
-              xl:px-16
-            "
-            onTouchStart={handleTouchStart}
-            onTouchEnd={handleTouchEnd}
-          >
-            <div
-              ref={trackRef}
+        <div
+          className="
+            mt-14
+            grid
+            gap-4
+            sm:mt-20
+            sm:grid-cols-2
+            lg:grid-cols-4
+            lg:gap-5
+          "
+          style={{
+            perspective: "1200px",
+          }}
+        >
+          {teamMembers.map((member, index) => (
+            <TeamCard
+              key={member.id}
+              member={member}
+              index={index}
+            />
+          ))}
+        </div>
+
+        {/* =================================================
+            BOTTOM INFO
+        ================================================= */}
+
+        <div
+          className="
+            mt-6
+            flex
+            flex-col
+            gap-5
+            sm:flex-row
+            sm:items-center
+            sm:justify-between
+          "
+        >
+          <div className="flex items-center gap-3">
+            <span
               className="
-                flex
-                min-w-max
-                items-stretch
-                gap-3
-                sm:gap-4
+                h-1.5
+                w-1.5
+                rounded-full
+                bg-[#854fee]
+                shadow-[0_0_10px_rgba(133,79,238,0.7)]
+              "
+            />
+
+            <span
+              className="
+                text-[8px]
+                font-bold
+                uppercase
+                tracking-[0.18em]
+                text-black/30
+                sm:text-[9px]
               "
             >
-              {teamMembers.map(
-                (member, index) => (
-                  <TeamCard
-                    key={member.id}
-                    member={member}
-                    index={index}
-                    active={
-                      index === activeIndex
-                    }
-                    onActivate={() =>
-                      setActive(index)
-                    }
-                  />
-                )
-              )}
-            </div>
+              Four minds. One direction.
+            </span>
           </div>
 
-          {/* =================================================
-              NAVIGATION
-          ================================================= */}
-
-          <div
-            ref={(node) => {
-              if (node) {
-                // Keep the DOM reference local for animation
-              }
-            }}
-            data-team-navigation
+          <span
             className="
-              mt-5
+              text-[8px]
+              font-bold
+              uppercase
+              tracking-[0.16em]
+              text-black/20
+              sm:text-[9px]
+            "
+          >
+            Nexora Digital / Team
+          </span>
+        </div>
+
+        {/* =================================================
+            MANIFESTO
+        ================================================= */}
+
+        <div
+          data-team-manifesto
+          className="
+            mt-20
+            border-t
+            border-black/[0.08]
+            pt-8
+            sm:mt-28
+            sm:pt-10
+            lg:mt-36
+          "
+        >
+          <div
+            className="
               flex
               flex-col
-              gap-4
-              border-t
-              border-black/[0.08]
-              pt-5
+              gap-8
               sm:flex-row
-              sm:items-center
+              sm:items-end
               sm:justify-between
             "
           >
-            {/* Current member */}
-            <div className="flex items-center gap-3">
-              <span className="text-[10px] font-bold uppercase tracking-[0.18em] text-black/30">
-                Current
-              </span>
+            <div>
+              <p
+                className="
+                  text-[10px]
+                  font-bold
+                  uppercase
+                  tracking-[0.2em]
+                  text-[#854fee]
+                "
+              >
+                One team. One standard.
+              </p>
 
-              <span className="h-px w-7 bg-black/10" />
+              <h3
+                className="
+                  mt-4
+                  max-w-4xl
+                  text-[clamp(2.2rem,4.5vw,4.8rem)]
+                  font-bold
+                  leading-[0.95]
+                  tracking-[-0.065em]
+                "
+              >
+                Different skills.
+                <br />
 
-              <span className="font-mono text-xs font-semibold tracking-[0.08em]">
-                {String(activeIndex + 1).padStart(
-                  2,
-                  "0"
-                )}
-                <span className="mx-1 text-black/20">
-                  /
+                <span className="text-black/25">
+                  One direction.
                 </span>
-                {String(memberCount).padStart(
-                  2,
-                  "0"
-                )}
-              </span>
-
-              <span className="hidden text-xs text-black/35 sm:block">
-                {activeMember?.name}
-              </span>
+              </h3>
             </div>
 
-            {/* Controls */}
-            <div className="flex items-center gap-2">
-              <button
-                type="button"
-                onClick={goPrevious}
-                aria-label="Previous team member"
-                className="
-                  group
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-full
-                  border
-                  border-black/[0.09]
-                  bg-white
-                  text-black/55
-                  shadow-[0_8px_25px_rgba(23,21,27,0.04)]
-                  transition-all
-                  duration-300
-                  hover:-translate-x-0.5
-                  hover:border-[#854fee]/30
-                  hover:bg-[#854fee]
-                  hover:text-white
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-[#854fee]
-                  focus:ring-offset-2
-                "
-              >
-                <ArrowLeftIcon />
-              </button>
-
-              <button
-                type="button"
-                onClick={goNext}
-                aria-label="Next team member"
-                className="
-                  group
-                  flex
-                  h-11
-                  w-11
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-[#17151b]
-                  text-white
-                  shadow-[0_10px_30px_rgba(23,21,27,0.12)]
-                  transition-all
-                  duration-300
-                  hover:translate-x-0.5
-                  hover:bg-[#854fee]
-                  focus:outline-none
-                  focus:ring-2
-                  focus:ring-[#854fee]
-                  focus:ring-offset-2
-                "
-              >
-                <ArrowRightIcon />
-              </button>
-            </div>
+            <p
+              className="
+                max-w-sm
+                text-xs
+                leading-6
+                text-black/35
+                sm:text-right
+              "
+            >
+              Strategy, design, technology and
+              creativity working together to create
+              digital experiences that actually move
+              businesses forward.
+            </p>
           </div>
-        </div>
-
-        {/* =================================================
-            BOTTOM STATEMENT
-        ================================================= */}
-
-        <div className="mt-20 border-t border-black/[0.08] pt-7 sm:mt-24 sm:flex sm:items-end sm:justify-between sm:gap-10">
-          <p className="max-w-2xl text-xl font-medium leading-tight tracking-[-0.035em] text-black/70 sm:text-2xl">
-            Different disciplines.
-            <br />
-            <span className="text-[#854fee]">
-              One shared standard.
-            </span>
-          </p>
-
-          <p className="mt-4 max-w-sm text-xs leading-6 text-black/35 sm:mt-0 sm:text-right">
-            We believe the best digital work
-            happens when creative thinking and
-            technical execution move together.
-          </p>
         </div>
       </div>
     </section>

@@ -7,13 +7,42 @@ import {
   ArrowUpRight,
   MoveUpRight,
 } from "lucide-react";
-import { motion, useReducedMotion } from "framer-motion";
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 import MobileHero from "./MobileHero";
 
+gsap.registerPlugin(ScrollTrigger);
+
 const phrase = "studio";
 
-const ease = [0.22, 1, 0.36, 1] as const;
+/* =========================================================
+   REDUCED MOTION
+========================================================= */
+
+function usePrefersReducedMotion() {
+  const [reduceMotion, setReduceMotion] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    );
+
+    const update = () => {
+      setReduceMotion(media.matches);
+    };
+
+    update();
+
+    media.addEventListener("change", update);
+
+    return () => {
+      media.removeEventListener("change", update);
+    };
+  }, []);
+
+  return reduceMotion;
+}
 
 /* =========================================================
    TYPING TEXT
@@ -25,7 +54,6 @@ function TypingText({
   reduceMotion: boolean;
 }) {
   const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
 
   useEffect(() => {
     if (reduceMotion) {
@@ -33,35 +61,52 @@ function TypingText({
       return;
     }
 
+    let index = 0;
+    let deleting = false;
     let timeout: ReturnType<typeof setTimeout>;
 
-    if (!deleting && text.length < phrase.length) {
-      timeout = setTimeout(() => {
-        setText(phrase.slice(0, text.length + 1));
-      }, 130);
-    } else if (!deleting && text.length === phrase.length) {
-      timeout = setTimeout(() => {
-        setDeleting(true);
-      }, 1600);
-    } else if (deleting && text.length > 0) {
-      timeout = setTimeout(() => {
-        setText(phrase.slice(0, text.length - 1));
-      }, 65);
-    } else {
-      timeout = setTimeout(() => {
-        setDeleting(false);
-      }, 350);
-    }
+    const tick = () => {
+      if (!deleting) {
+        index += 1;
 
-    return () => clearTimeout(timeout);
-  }, [text, deleting, reduceMotion]);
+        setText(phrase.slice(0, index));
+
+        if (index >= phrase.length) {
+          deleting = true;
+          timeout = setTimeout(tick, 1600);
+          return;
+        }
+
+        timeout = setTimeout(tick, 130);
+      } else {
+        index -= 1;
+
+        setText(phrase.slice(0, index));
+
+        if (index <= 0) {
+          deleting = false;
+          timeout = setTimeout(tick, 350);
+          return;
+        }
+
+        timeout = setTimeout(tick, 65);
+      }
+    };
+
+    timeout = setTimeout(tick, 300);
+
+    return () => {
+      clearTimeout(timeout);
+    };
+  }, [reduceMotion]);
 
   return (
     <span className="inline-flex min-w-0 items-baseline">
       <span>{text}</span>
 
       {!reduceMotion && (
-        <motion.span
+        <span
+          data-typing-cursor
           aria-hidden="true"
           className="
             ml-1
@@ -74,14 +119,6 @@ function TypingText({
             sm:ml-2
             sm:w-1
           "
-          animate={{
-            opacity: [1, 0, 1],
-          }}
-          transition={{
-            duration: 0.85,
-            repeat: Infinity,
-            ease: "linear",
-          }}
         />
       )}
     </span>
@@ -89,50 +126,230 @@ function TypingText({
 }
 
 /* =========================================================
-   DESKTOP / TABLET HERO
+   HERO
 ========================================================= */
 
 export default function Hero() {
-  const prefersReducedMotion = useReducedMotion();
-  const reduceMotion = Boolean(prefersReducedMotion);
+  const reduceMotion = usePrefersReducedMotion();
 
-  const reveal = {
-    hidden: {
-      opacity: 0,
-      y: reduceMotion ? 0 : 28,
-      filter: reduceMotion ? "blur(0px)" : "blur(8px)",
-    },
+  useEffect(() => {
+    const section =
+      document.querySelector<HTMLElement>(
+        "[data-hero-root]",
+      );
 
-    visible: {
-      opacity: 1,
-      y: 0,
-      filter: "blur(0px)",
+    if (!section) {
+      return;
+    }
 
-      transition: {
-        duration: reduceMotion ? 0 : 0.9,
-        ease,
-      },
-    },
-  };
+    const ctx = gsap.context(() => {
+      const revealItems =
+        gsap.utils.toArray<HTMLElement>(
+          "[data-hero-reveal]",
+          section,
+        );
 
-  const stagger = {
-    hidden: {},
+      const floatingItems =
+        gsap.utils.toArray<HTMLElement>(
+          "[data-hero-float]",
+          section,
+        );
 
-    visible: {
-      transition: {
-        staggerChildren: reduceMotion ? 0 : 0.12,
-      },
-    },
-  };
+      const worldMap =
+        section.querySelector<HTMLElement>(
+          "[data-world-map]",
+        );
+
+      const line =
+        section.querySelector<HTMLElement>(
+          "[data-hero-line]",
+        );
+
+      const bottom =
+        section.querySelector<HTMLElement>(
+          "[data-hero-bottom]",
+        );
+
+      const cursor =
+        section.querySelector<HTMLElement>(
+          "[data-typing-cursor]",
+        );
+
+      /* =====================================================
+         REDUCED MOTION
+      ===================================================== */
+
+      if (reduceMotion) {
+        gsap.set(revealItems, {
+          autoAlpha: 1,
+          y: 0,
+          clearProps: "filter,transform",
+        });
+
+        gsap.set(floatingItems, {
+          clearProps: "transform",
+        });
+
+        if (worldMap) {
+          gsap.set(worldMap, {
+            scale: 1,
+            opacity: 0.52,
+            yPercent: 0,
+          });
+        }
+
+        if (bottom) {
+          gsap.set(bottom, {
+            autoAlpha: 1,
+            y: 0,
+          });
+        }
+
+        if (line) {
+          gsap.set(line, {
+            xPercent: 0,
+          });
+        }
+
+        if (cursor) {
+          gsap.set(cursor, {
+            autoAlpha: 1,
+          });
+        }
+
+        return;
+      }
+
+      /* =====================================================
+         INITIAL REVEAL
+      ===================================================== */
+
+      gsap.set(revealItems, {
+        autoAlpha: 0,
+        y: 28,
+        filter: "blur(8px)",
+      });
+
+      gsap.to(revealItems, {
+        autoAlpha: 1,
+        y: 0,
+        filter: "blur(0px)",
+        duration: 0.85,
+        stagger: 0.12,
+        ease: "power3.out",
+        clearProps: "filter",
+      });
+
+      /* =====================================================
+         WORLD MAP
+      ===================================================== */
+
+      if (worldMap) {
+        gsap.to(worldMap, {
+          scale: 1.025,
+          opacity: 0.55,
+          duration: 9,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+
+        gsap.to(worldMap, {
+          yPercent: 7,
+          ease: "none",
+          scrollTrigger: {
+            trigger: section,
+            start: "top top",
+            end: "bottom top",
+            scrub: 0.8,
+          },
+        });
+      }
+
+      /* =====================================================
+         AMBIENT FLOATING GLOWS
+      ===================================================== */
+
+      floatingItems.forEach((item, index) => {
+        gsap.to(item, {
+          x: index % 2 === 0 ? -18 : 18,
+          y: index % 2 === 0 ? 16 : -16,
+          duration: 9 + index * 2,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut",
+        });
+      });
+
+      /* =====================================================
+         TYPING CURSOR
+      ===================================================== */
+
+      if (cursor) {
+        gsap.to(cursor, {
+          autoAlpha: 0,
+          duration: 0.45,
+          repeat: -1,
+          yoyo: true,
+          ease: "steps(1)",
+        });
+      }
+
+      /* =====================================================
+         BOTTOM CONTENT
+      ===================================================== */
+
+      if (bottom) {
+        gsap.fromTo(
+          bottom,
+          {
+            autoAlpha: 0,
+            y: 20,
+          },
+          {
+            autoAlpha: 1,
+            y: 0,
+            duration: 0.8,
+            delay: 0.45,
+            ease: "power3.out",
+          },
+        );
+      }
+
+      /* =====================================================
+         MOVING LIME LINE
+      ===================================================== */
+
+      if (line) {
+        gsap.fromTo(
+          line,
+          {
+            xPercent: -120,
+          },
+          {
+            xPercent: 350,
+            duration: 4,
+            repeat: -1,
+            ease: "none",
+          },
+        );
+      }
+    }, section);
+
+    return () => {
+      ctx.revert();
+    };
+  }, [reduceMotion]);
 
   return (
     <>
       {/* =====================================================
-          DESKTOP / TABLET
-      ===================================================== */}
+          DESKTOP / TABLET HERO
+      ====================================================== */}
 
       <section
         id="home"
+        data-hero-root
         data-sidebar-theme="dark"
         className="
           relative
@@ -140,17 +357,17 @@ export default function Hero() {
           hidden
           min-h-screen
           w-full
+          flex-col
           overflow-hidden
           bg-[#050505]
           text-white
           sm:flex
-          sm:flex-col
-          md:pl-[70px]
+          section-with-left-nav
         "
       >
-        {/* ===================================================
+        {/* =================================================
             BACKGROUND
-        =================================================== */}
+        ================================================== */}
 
         <div
           aria-hidden="true"
@@ -162,51 +379,62 @@ export default function Hero() {
             overflow-hidden
           "
         >
-          {/* Base */}
           <div className="absolute inset-0 bg-[#030303]" />
 
-          {/* World Map */}
-          <motion.div
+          {/* =================================================
+              DESKTOP / TABLET WORLD MAP
+
+              Uses:
+              /world-map-bg.png
+
+              IMPORTANT:
+              This file must be inside /public
+          ================================================== */}
+
+          <div
+            data-world-map
             className="
               absolute
               inset-0
-              bg-[url('/world-map-bg.png')]
-              bg-center
-              bg-no-repeat
-              bg-[length:110%_auto]
+              overflow-hidden
               opacity-[0.52]
               mix-blend-screen
             "
-            animate={
-              reduceMotion
-                ? undefined
-                : {
-                    scale: [1, 1.015, 1],
-                    opacity: [0.44, 0.55, 0.44],
-                  }
-            }
-            transition={{
-              duration: 14,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
-          />
+          >
+            <img
+              src="/world-map-bg.png"
+              alt=""
+              aria-hidden="true"
+              className="
+                absolute
+                inset-0
+                h-full
+                w-full
+                object-cover
+                object-center
+              "
+              draggable={false}
+            />
+          </div>
 
-          {/* Lime Map Glow */}
+          {/* =================================================
+              MAIN LIME GLOW
+          ================================================== */}
+
           <div
             className="
               absolute
               inset-0
-              bg-[radial-gradient(
-                ellipse_at_60%_42%,
-                rgba(214,255,0,0.16),
-                transparent 48%
-              )]
+              bg-[radial-gradient(ellipse_at_60%_42%,rgba(214,255,0,0.16),transparent_48%)]
             "
           />
 
-          {/* Center Glow */}
-          <motion.div
+          {/* =================================================
+              CENTER AMBIENT GLOW
+          ================================================== */}
+
+          <div
+            data-hero-float
             className="
               absolute
               left-1/2
@@ -219,23 +447,14 @@ export default function Hero() {
               bg-[#d6ff00]/[0.045]
               blur-[180px]
             "
-            animate={
-              reduceMotion
-                ? undefined
-                : {
-                    scale: [1, 1.08, 1],
-                    opacity: [0.5, 0.8, 0.5],
-                  }
-            }
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
           />
 
-          {/* Top Right Light */}
-          <motion.div
+          {/* =================================================
+              TOP RIGHT GLOW
+          ================================================== */}
+
+          <div
+            data-hero-float
             className="
               absolute
               -right-40
@@ -246,24 +465,14 @@ export default function Hero() {
               bg-[#d6ff00]/10
               blur-[150px]
             "
-            animate={
-              reduceMotion
-                ? undefined
-                : {
-                    x: [0, -30, 0],
-                    y: [0, 30, 0],
-                    scale: [1, 1.12, 1],
-                  }
-            }
-            transition={{
-              duration: 12,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
           />
 
-          {/* Left White Glow */}
-          <motion.div
+          {/* =================================================
+              LEFT GLOW
+          ================================================== */}
+
+          <div
+            data-hero-float
             className="
               absolute
               -left-40
@@ -274,25 +483,10 @@ export default function Hero() {
               bg-white/[0.05]
               blur-[140px]
             "
-            animate={
-              reduceMotion
-                ? undefined
-                : {
-                    x: [0, 30, 0],
-                    y: [0, -25, 0],
-                  }
-            }
-            transition={{
-              duration: 15,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }}
           />
 
-          {/* Readability */}
           <div className="absolute inset-0 bg-black/20" />
 
-          {/* Gradient */}
           <div
             className="
               absolute
@@ -304,52 +498,34 @@ export default function Hero() {
             "
           />
 
-          {/* Vignette */}
           <div
             className="
               absolute
               inset-0
-              bg-[radial-gradient(
-                ellipse_at_center,
-                transparent 28%,
-                rgba(0,0,0,0.65) 100%
-              )]
+              bg-[radial-gradient(ellipse_at_center,transparent_28%,rgba(0,0,0,0.65)_100%)]
             "
           />
 
-          {/* Dots */}
           <div
             className="
               absolute
               inset-0
-              bg-[radial-gradient(
-                rgba(255,255,255,0.16)_0.7px,
-                transparent_0.7px
-              )]
+              bg-[radial-gradient(rgba(255,255,255,0.16)_0.7px,transparent_0.7px)]
               [background-size:28px_28px]
               opacity-[0.08]
             "
           />
 
-          {/* Scan Lines */}
           <div
             className="
               absolute
               inset-0
-              bg-[linear-gradient(
-                to_bottom,
-                transparent 0%,
-                transparent 49.8%,
-                rgba(255,255,255,0.025) 50%,
-                transparent 50.2%,
-                transparent 100%
-              )]
-              bg-[length:100%_150px]
+              bg-[linear-gradient(to_bottom,transparent_0%,transparent_49.8%,rgba(255,255,255,0.025)_50%,transparent_50.2%,transparent_100%)]
+              [background-size:100%_150px]
               opacity-40
             "
           />
 
-          {/* Bottom Darkness */}
           <div
             className="
               absolute
@@ -363,9 +539,9 @@ export default function Hero() {
           />
         </div>
 
-        {/* ===================================================
+        {/* =================================================
             TOP LABEL
-        =================================================== */}
+        ================================================== */}
 
         <div
           className="
@@ -380,11 +556,7 @@ export default function Hero() {
             lg:pt-20
           "
         >
-          <motion.div
-            variants={reveal}
-            initial="hidden"
-            animate="visible"
-          >
+          <div data-hero-reveal>
             <Link
               href="/contact"
               className="
@@ -451,12 +623,12 @@ export default function Hero() {
                 "
               />
             </Link>
-          </motion.div>
+          </div>
         </div>
 
-        {/* ===================================================
-            MAIN
-        =================================================== */}
+        {/* =================================================
+            MAIN CONTENT
+        ================================================== */}
 
         <div
           className="
@@ -475,16 +647,9 @@ export default function Hero() {
             lg:pt-24
           "
         >
-          <motion.div
-            variants={stagger}
-            initial="hidden"
-            animate="visible"
-            className="flex flex-col"
-          >
-            {/* Heading */}
-
-            <motion.div
-              variants={reveal}
+          <div className="flex flex-col">
+            <div
+              data-hero-reveal
               className="
                 flex
                 min-w-0
@@ -525,9 +690,7 @@ export default function Hero() {
               >
                 Pro
               </span>
-            </motion.div>
-
-            {/* Studio + Description */}
+            </div>
 
             <div
               className="
@@ -542,8 +705,8 @@ export default function Hero() {
                 lg:gap-6
               "
             >
-              <motion.h2
-                variants={reveal}
+              <h2
+                data-hero-reveal
                 className="
                   min-w-0
                   max-w-full
@@ -555,11 +718,13 @@ export default function Hero() {
                   text-[#d6ff00]
                 "
               >
-                <TypingText reduceMotion={reduceMotion} />
-              </motion.h2>
+                <TypingText
+                  reduceMotion={reduceMotion}
+                />
+              </h2>
 
-              <motion.div
-                variants={reveal}
+              <div
+                data-hero-reveal
                 className="
                   relative
                   mt-10
@@ -580,10 +745,11 @@ export default function Hero() {
                     lg:leading-6
                   "
                 >
-                  With every project, we bring creativity,
-                  strategy, and technology together to solve
-                  problems and create digital experiences that
-                  move businesses forward.
+                  With every project, we bring
+                  creativity, strategy, and technology
+                  together to solve problems and create
+                  digital experiences that move businesses
+                  forward.
                 </p>
 
                 <Link
@@ -630,28 +796,16 @@ export default function Hero() {
                     <ArrowUpRight size={16} />
                   </span>
                 </Link>
-              </motion.div>
+              </div>
             </div>
-          </motion.div>
+          </div>
 
           {/* =================================================
               BOTTOM
-          ================================================= */}
+          ================================================== */}
 
-          <motion.div
-            initial={{
-              opacity: 0,
-              y: reduceMotion ? 0 : 20,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
-            transition={{
-              duration: reduceMotion ? 0 : 0.8,
-              delay: reduceMotion ? 0 : 0.5,
-              ease,
-            }}
+          <div
+            data-hero-bottom
             className="
               relative
               mt-auto
@@ -665,10 +819,8 @@ export default function Hero() {
               lg:pt-20
             "
           >
-            {/* Scroll */}
-
-            <a
-              href="#about"
+            <Link
+              href="/about"
               className="
                 group
                 inline-flex
@@ -708,10 +860,8 @@ export default function Hero() {
                 />
               </span>
 
-              Scroll to explore
-            </a>
-
-            {/* Counter */}
+              Explore About
+            </Link>
 
             <div
               className="
@@ -761,9 +911,11 @@ export default function Hero() {
                 Projects completed successfully
               </p>
             </div>
-          </motion.div>
+          </div>
 
-          {/* Animated Line */}
+          {/* =================================================
+              ANIMATED LINE
+          ================================================== */}
 
           <div
             className="
@@ -775,7 +927,8 @@ export default function Hero() {
               bg-white/10
             "
           >
-            <motion.div
+            <div
+              data-hero-line
               className="
                 absolute
                 inset-y-0
@@ -786,26 +939,17 @@ export default function Hero() {
                 via-[#d6ff00]
                 to-transparent
               "
-              animate={
-                reduceMotion
-                  ? undefined
-                  : {
-                      x: ["-100%", "400%"],
-                    }
-              }
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "linear",
-              }}
             />
           </div>
         </div>
       </section>
 
       {/* =====================================================
-          MOBILE — SEPARATE COMPONENT
-      ===================================================== */}
+          MOBILE HERO
+
+          MobileHero internally uses:
+          /world-map-bg-m.png
+      ====================================================== */}
 
       <MobileHero />
     </>

@@ -3,10 +3,9 @@ import ExpertiseStrip from "@/components/home/ExpertiseStrip";
 import Services from "@/components/home/Services";
 import Team from "@/components/home/Team";
 import About from "@/components/home/About";
-import Process from "@/components/home/Process";
+// import Process from "@/components/home/Process";
 import ContactCTA from "@/components/home/ContactCTA";
 import Hero from "@/components/home/hero/Hero";
-import Projects from "@/components/home/Projects";
 
 export default function HomePage() {
   return (
@@ -14,10 +13,10 @@ export default function HomePage() {
       <Hero />
       <ExpertiseStrip />
       <Services />
-      <Projects />
+      {/* <Projects /> */}
       <About />
       <Team />
-      <Process />
+      {/* <Process /> */}
       <ContactCTA />
     </main>
   );

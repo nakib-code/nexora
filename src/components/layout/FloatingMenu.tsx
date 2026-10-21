@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -14,99 +13,133 @@ import {
   UserRound,
   Mail,
 } from "lucide-react";
-import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+} from "framer-motion";
 
 const ACCENT = "#d6ff00";
+const WHATSAPP_URL = "https://wa.me/9587325902";
 
 const navItems = [
-  { label: "Home", href: "#home", icon: Home },
-  { label: "Services", href: "#services", icon: BriefcaseBusiness },
-  { label: "Projects", href: "#projects", icon: FolderKanban },
-  { label: "About", href: "#about", icon: UserRound },
-  { label: "Contact", href: "#contact", icon: Mail },
+  { label: "Home", href: "/", icon: Home },
+  { label: "Services", href: "/services", icon: BriefcaseBusiness },
+  // { label: "Projects", href: "/projects", icon: FolderKanban },
+  { label: "About", href: "/about", icon: UserRound },
+  { label: "Contact", href: "/contact", icon: Mail },
 ];
 
 export default function FloatingMenu() {
   const [isOpen, setIsOpen] = useState(false);
-  const [sidebarTheme, setSidebarTheme] = useState<"dark" | "light">("dark");
+  const [sidebarTheme, setSidebarTheme] =
+    useState<"dark" | "light">("dark");
+
   const reduceMotion = useReducedMotion();
+  const isLight = sidebarTheme === "light";
 
-  // Detect the section behind the sidebar.
+  const themeAccent = isLight ? "#111111" : ACCENT;
+
+  const closeMenu = () => setIsOpen(false);
+
+  // Detect the section behind the sidebar and update its theme.
   useEffect(() => {
+    let frame = 0;
+
     const updateSidebarTheme = () => {
-      const sections = Array.from(
-        document.querySelectorAll<HTMLElement>("[data-sidebar-theme]")
-      );
+      cancelAnimationFrame(frame);
 
-      const center = window.innerHeight / 2;
-
-      const activeSection = sections.find((section) => {
-        const rect = section.getBoundingClientRect();
-        return rect.top <= center && rect.bottom > center;
-      });
-
-      if (activeSection) {
-        setSidebarTheme(
-          activeSection.dataset.sidebarTheme === "light" ? "light" : "dark"
+      frame = requestAnimationFrame(() => {
+        const sections = Array.from(
+          document.querySelectorAll<HTMLElement>(
+            "[data-sidebar-theme]"
+          )
         );
-      }
+
+        const center = window.innerHeight / 2;
+
+        const activeSection = sections.find((section) => {
+          const rect = section.getBoundingClientRect();
+          return rect.top <= center && rect.bottom > center;
+        });
+
+        if (activeSection) {
+          const nextTheme =
+            activeSection.dataset.sidebarTheme === "light"
+              ? "light"
+              : "dark";
+
+          setSidebarTheme((current) =>
+            current === nextTheme ? current : nextTheme
+          );
+        }
+      });
     };
 
     updateSidebarTheme();
 
-    window.addEventListener("scroll", updateSidebarTheme, { passive: true });
+    window.addEventListener("scroll", updateSidebarTheme, {
+      passive: true,
+    });
     window.addEventListener("resize", updateSidebarTheme);
 
     return () => {
+      cancelAnimationFrame(frame);
       window.removeEventListener("scroll", updateSidebarTheme);
       window.removeEventListener("resize", updateSidebarTheme);
     };
   }, []);
 
-  // Lock page scrolling while the menu is open.
+  // Lock background scrolling while the fullscreen menu is open.
   useEffect(() => {
-    document.body.style.overflow = isOpen ? "hidden" : "";
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = isOpen ? "hidden" : previousOverflow;
 
     const handleKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setIsOpen(false);
+      if (event.key === "Escape") closeMenu();
     };
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => {
-      document.body.style.overflow = "";
+      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
     };
   }, [isOpen]);
 
-  const isLight = sidebarTheme === "light";
+  const desktopToggleTheme = isLight
+    ? "border-black/20 bg-white/80 hover:border-black/50 hover:bg-black/5"
+    : "border-[#d6ff00]/35 bg-transparent hover:border-[#d6ff00] hover:bg-[#d6ff00]/10";
 
-  const borderColor = isLight
-    ? "border-black/15"
-    : "border-white/15";
+  const mobileToggleTheme = isLight
+    ? "border-black/20 bg-white/95 text-black hover:border-black/40 hover:bg-black/5"
+    : "border-[#d6ff00]/40 bg-[#080808]/95 text-[#d6ff00] hover:bg-[#d6ff00]/10";
 
-  const hoverBackground = isLight
-    ? "hover:bg-black/5"
-    : "hover:bg-white/10";
+  const focusRing = isLight
+    ? "focus-visible:ring-black"
+    : "focus-visible:ring-[#d6ff00]";
 
-  const closeMenu = () => setIsOpen(false);
+  const iconMotion = reduceMotion
+    ? { duration: 0 }
+    : { duration: 0.18 };
 
   return (
     <>
-      {/* Desktop Sidebar */}
+      {/* DESKTOP SIDEBAR */}
       <aside
         className={`
           fixed left-0 top-0 z-[80]
           hidden h-dvh w-[70px]
-          border-r ${borderColor}
+          border-r
+          ${isLight ? "border-black/15" : "border-white/15"}
           bg-transparent
           transition-colors duration-300
           md:flex md:flex-col md:items-center
         `}
       >
-        {/* Vertical Brand */}
+        {/* Brand */}
         <Link
-          href="#home"
+          href="/"
           aria-label="Nexora Digital home"
           onClick={closeMenu}
           className="absolute left-1/2 top-7 -translate-x-1/2"
@@ -116,14 +149,15 @@ export default function FloatingMenu() {
               block rotate-180 whitespace-nowrap
               text-sm font-extrabold tracking-[0.25em]
               [writing-mode:vertical-rl]
+              transition-colors duration-300
             "
-            style={{ color: ACCENT }}
+            style={{ color: themeAccent }}
           >
             NEXORA
           </span>
         </Link>
 
-        {/* Animated Menu Toggle */}
+        {/* Desktop Menu Toggle */}
         <motion.button
           type="button"
           onClick={() => setIsOpen((prev) => !prev)}
@@ -134,45 +168,43 @@ export default function FloatingMenu() {
           className={`
             group absolute left-1/2 top-1/2
             flex h-12 w-12 -translate-x-1/2 -translate-y-1/2
-            items-center justify-center rounded-full
-            border border-[#d6ff00]/35
+            items-center justify-center rounded-full border
             transition-colors duration-300
-            hover:border-[#d6ff00] hover:bg-[#d6ff00]/10
+            ${desktopToggleTheme}
             focus-visible:outline-none focus-visible:ring-2
-            focus-visible:ring-[#d6ff00] focus-visible:ring-offset-2
-            focus-visible:ring-offset-transparent
+            ${focusRing} focus-visible:ring-offset-2
           `}
         >
           <AnimatePresence mode="wait" initial={false}>
             {isOpen ? (
               <motion.span
-                key="close"
+                key="desktop-close"
                 initial={reduceMotion ? false : { rotate: -90, opacity: 0 }}
                 animate={{ rotate: 0, opacity: 1 }}
                 exit={reduceMotion ? undefined : { rotate: 90, opacity: 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.18 }}
+                transition={iconMotion}
                 className="flex"
               >
-                <X size={23} strokeWidth={1.8} color={ACCENT} />
+                <X size={23} strokeWidth={1.8} color={themeAccent} />
               </motion.span>
             ) : (
               <motion.span
-                key="menu"
+                key="desktop-menu"
                 initial={reduceMotion ? false : { rotate: 90, opacity: 0 }}
                 animate={{ rotate: 0, opacity: 1 }}
                 exit={reduceMotion ? undefined : { rotate: -90, opacity: 0 }}
-                transition={{ duration: reduceMotion ? 0 : 0.18 }}
+                transition={iconMotion}
                 className="flex"
               >
-                <Menu size={24} strokeWidth={1.8} color={ACCENT} />
+                <Menu size={24} strokeWidth={1.8} color={themeAccent} />
               </motion.span>
             )}
           </AnimatePresence>
         </motion.button>
 
         {/* WhatsApp */}
-        <a
-          href="https://wa.me/9587325902"
+        <Link
+          href={WHATSAPP_URL}
           target="_blank"
           rel="noopener noreferrer"
           aria-label="Chat with us on WhatsApp"
@@ -187,27 +219,26 @@ export default function FloatingMenu() {
           "
         >
           <MessageCircle size={21} strokeWidth={1.9} />
-        </a>
+        </Link>
       </aside>
 
-      {/* Mobile Menu Toggle */}
+      {/* MOBILE MENU BUTTON */}
       <motion.button
         type="button"
         onClick={() => setIsOpen((prev) => !prev)}
         aria-label={isOpen ? "Close navigation menu" : "Open navigation menu"}
         aria-expanded={isOpen}
         whileTap={reduceMotion ? undefined : { scale: 0.94 }}
-        className="
+        className={`
           fixed right-5 top-5 z-[110]
           flex h-12 w-12 items-center justify-center
-          rounded-full border border-[#d6ff00]/40
-          bg-[#080808]/95 text-[#d6ff00]
-          shadow-lg shadow-black/10 backdrop-blur-md
-          transition-colors duration-300 hover:bg-[#d6ff00]/10
+          rounded-full border shadow-lg shadow-black/10
+          backdrop-blur-md transition-colors duration-300
+          ${mobileToggleTheme}
           focus-visible:outline-none focus-visible:ring-2
-          focus-visible:ring-[#d6ff00]
+          ${focusRing}
           md:hidden
-        "
+        `}
       >
         <AnimatePresence mode="wait" initial={false}>
           {isOpen ? (
@@ -216,7 +247,7 @@ export default function FloatingMenu() {
               initial={reduceMotion ? false : { rotate: -90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               exit={reduceMotion ? undefined : { rotate: 90, opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.18 }}
+              transition={iconMotion}
               className="flex"
             >
               <X size={23} strokeWidth={1.8} />
@@ -227,7 +258,7 @@ export default function FloatingMenu() {
               initial={reduceMotion ? false : { rotate: 90, opacity: 0 }}
               animate={{ rotate: 0, opacity: 1 }}
               exit={reduceMotion ? undefined : { rotate: -90, opacity: 0 }}
-              transition={{ duration: reduceMotion ? 0 : 0.18 }}
+              transition={iconMotion}
               className="flex"
             >
               <Menu size={24} strokeWidth={1.8} />
@@ -236,7 +267,7 @@ export default function FloatingMenu() {
         </AnimatePresence>
       </motion.button>
 
-      {/* Fullscreen Navigation */}
+      {/* FULLSCREEN NAVIGATION */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -245,16 +276,21 @@ export default function FloatingMenu() {
             exit={{ opacity: 0 }}
             transition={{ duration: reduceMotion ? 0 : 0.25 }}
             className="
-              fixed inset-0 z-[100]
-              overflow-y-auto bg-[#080808] text-white
+              fixed inset-0 z-[100] overflow-y-auto
+              bg-[#080808] text-white
               md:left-[70px]
             "
           >
-            <div className="flex min-h-dvh flex-col justify-between px-7 py-24 sm:px-12 md:px-16 md:py-12">
+            <div
+              className="
+                flex min-h-dvh flex-col justify-between
+                px-7 py-24 sm:px-12 md:px-16 md:py-12
+              "
+            >
               {/* Menu Header */}
               <div className="flex items-center justify-between">
                 <Link
-                  href="#home"
+                  href="/"
                   onClick={closeMenu}
                   className="text-sm font-extrabold tracking-[0.25em]"
                   style={{ color: ACCENT }}
@@ -276,9 +312,7 @@ export default function FloatingMenu() {
                     return (
                       <motion.li
                         key={item.label}
-                        initial={
-                          reduceMotion ? false : { opacity: 0, y: 18 }
-                        }
+                        initial={reduceMotion ? false : { opacity: 0, y: 18 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{
                           duration: reduceMotion ? 0 : 0.35,
@@ -321,6 +355,7 @@ export default function FloatingMenu() {
                                 group-hover:text-[#d6ff00]
                               "
                             />
+
                             <ArrowUpRight
                               size={23}
                               className="
@@ -350,8 +385,8 @@ export default function FloatingMenu() {
                     Have a project in mind?
                   </p>
 
-                  <a
-                    href="https://wa.me/9587325902"
+                  <Link
+                    href={WHATSAPP_URL}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="
@@ -361,7 +396,7 @@ export default function FloatingMenu() {
                   >
                     Let&apos;s talk
                     <ArrowUpRight size={16} />
-                  </a>
+                  </Link>
                 </div>
 
                 <p className="text-xs text-white/35">

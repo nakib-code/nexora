@@ -1,4 +1,3 @@
-
 @import "tailwindcss";
 
 /* ==============================
@@ -18,22 +17,28 @@
   --border: #eae8ef;
   --dark: #19171f;
 
+  /* Sidebar / Navigation */
   --sidebar-accent: #d6ff00;
   --sidebar-border-light: rgb(0 0 0 / 14%);
   --sidebar-border-dark: rgb(255 255 255 / 15%);
+  --left-nav-width: 70px;
 
+  /* Layout */
   --container-width: 1600px;
   --page-gutter: clamp(18px, 5vw, 88px);
   --section-space: clamp(64px, 9vw, 144px);
 
+  /* Radius */
   --radius-sm: 12px;
   --radius-md: 18px;
   --radius-lg: 24px;
   --radius-full: 999px;
 
+  /* Shadows */
   --shadow-sm: 0 4px 16px rgb(25 23 31 / 6%);
   --shadow-md: 0 12px 32px rgb(25 23 31 / 10%);
 
+  /* Transition */
   --transition: 180ms ease;
 }
 
@@ -456,9 +461,37 @@ h6 {
   min-width: 0;
 }
 
+/*
+  Main reusable class for sections that
+  need to leave space for the fixed left nav.
+
+  Desktop / Tablet:
+  70px reserved for sidebar.
+
+  Mobile:
+  Full width — no sidebar gap.
+*/
+
+.section-with-left-nav {
+  width: 100%;
+  min-width: 0;
+  padding-left: 0;
+}
+
+@media (min-width: 768px) {
+  .section-with-left-nav {
+    padding-left: var(--left-nav-width);
+  }
+}
+
+/*
+  Legacy / inner layout helper.
+  Keep this if other components already use .section-inner.
+*/
+
 @media (min-width: 768px) {
   .section-inner {
-    padding-left: 70px;
+    padding-left: var(--left-nav-width);
   }
 }
 
@@ -540,6 +573,20 @@ h6 {
   .btn {
     min-height: 48px;
     padding: 13px 18px;
+  }
+
+  /*
+    Force full-width on mobile.
+    This prevents accidental sidebar spacing
+    from leaking into mobile sections.
+  */
+
+  .section-with-left-nav {
+    padding-left: 0;
+  }
+
+  .section-inner {
+    padding-left: 0;
   }
 }
 
