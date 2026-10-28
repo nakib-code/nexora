@@ -2,6 +2,7 @@
 
 import React, { useLayoutEffect, useRef } from "react";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
@@ -19,7 +20,6 @@ type TeamMember = {
   specialty: string;
   intro: string;
   image: string;
-
   whatsapp?: string;
   github?: string;
   linkedin?: string;
@@ -43,7 +43,6 @@ const teamMembers: TeamMember[] = [
     github: "https://github.com/yourusername",
     linkedin: "https://www.linkedin.com/in/yourusername",
   },
-
   {
     id: "developer",
     number: "02",
@@ -57,7 +56,6 @@ const teamMembers: TeamMember[] = [
     github: "https://github.com/developerusername",
     linkedin: "https://www.linkedin.com/in/developerusername",
   },
-
   {
     id: "designer",
     number: "03",
@@ -70,7 +68,6 @@ const teamMembers: TeamMember[] = [
     whatsapp: "https://wa.me/8801XXXXXXXXX",
     linkedin: "https://www.linkedin.com/in/designerusername",
   },
-
   {
     id: "editor",
     number: "04",
@@ -89,11 +86,7 @@ const teamMembers: TeamMember[] = [
    INLINE ICONS
 ========================================================= */
 
-function ArrowUpRightIcon({
-  size = 17,
-}: {
-  size?: number;
-}) {
+function ArrowUpRightIcon({ size = 17 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -108,7 +101,6 @@ function ArrowUpRightIcon({
         strokeWidth="1.8"
         strokeLinecap="round"
       />
-
       <path
         d="M8 7H17V16"
         stroke="currentColor"
@@ -120,11 +112,7 @@ function ArrowUpRightIcon({
   );
 }
 
-function WhatsAppIcon({
-  size = 16,
-}: {
-  size?: number;
-}) {
+function WhatsAppIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -139,7 +127,6 @@ function WhatsAppIcon({
         strokeWidth="1.5"
         strokeLinejoin="round"
       />
-
       <path
         d="M8.7 7.2c.2-.4.4-.4.7-.4h.6c.2 0 .4.1.5.4l.8 1.8c.1.2.1.4 0 .6l-.5.7c-.1.2-.1.3 0 .5.4.7 1 1.3 1.7 1.7.2.1.4.2.6 0l.7-.5c.2-.1.4-.1.6 0l1.8.8c.3.1.4.3.4.5v.6c0 .3 0 .5-.4.7-.4.2-1 .4-1.6.3-1-.2-2.2-.8-3.4-1.9-1.2-1.1-2-2.2-2.4-3.2-.3-.8-.2-1.5-.1-1.9Z"
         fill="currentColor"
@@ -148,11 +135,7 @@ function WhatsAppIcon({
   );
 }
 
-function GitHubIcon({
-  size = 16,
-}: {
-  size?: number;
-}) {
+function GitHubIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -166,11 +149,7 @@ function GitHubIcon({
   );
 }
 
-function LinkedInIcon({
-  size = 16,
-}: {
-  size?: number;
-}) {
+function LinkedInIcon({ size = 16 }: { size?: number }) {
   return (
     <svg
       width={size}
@@ -195,13 +174,11 @@ function TeamCard({
   member: TeamMember;
   index: number;
 }) {
+  const router = useRouter();
+
   const cardRef = useRef<HTMLElement | null>(null);
   const glowRef = useRef<HTMLDivElement | null>(null);
   const imageRef = useRef<HTMLDivElement | null>(null);
-
-  /* =======================================================
-     MOUSE MOVE
-  ======================================================= */
 
   const handleMouseMove = (
     event: React.MouseEvent<HTMLElement>
@@ -213,7 +190,6 @@ function TeamCard({
     if (!card || !glow || !image) return;
 
     const rect = card.getBoundingClientRect();
-
     const x = event.clientX - rect.left;
     const y = event.clientY - rect.top;
 
@@ -250,10 +226,6 @@ function TeamCard({
     });
   };
 
-  /* =======================================================
-     MOUSE LEAVE
-  ======================================================= */
-
   const handleMouseLeave = () => {
     const card = cardRef.current;
     const glow = glowRef.current;
@@ -288,7 +260,7 @@ function TeamCard({
   };
 
   /* =======================================================
-     CLICK ANIMATION
+     CARD CLICK + NAVIGATION
   ======================================================= */
 
   const handleCardClick = () => {
@@ -298,7 +270,11 @@ function TeamCard({
 
     gsap.killTweensOf(card);
 
-    const timeline = gsap.timeline();
+    const timeline = gsap.timeline({
+      onComplete: () => {
+        router.push(`/team/${member.id}`);
+      },
+    });
 
     timeline
       .to(card, {
@@ -312,9 +288,18 @@ function TeamCard({
         y: 0,
         scale: 1,
         rotateZ: 0,
-        duration: 0.5,
-        ease: "elastic.out(1, 0.45)",
+        duration: 0.25,
+        ease: "power2.out",
       });
+  };
+
+  const handleKeyDown = (
+    event: React.KeyboardEvent<HTMLElement>
+  ) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleCardClick();
+    }
   };
 
   return (
@@ -322,13 +307,10 @@ function TeamCard({
       ref={cardRef}
       data-team-card
       tabIndex={0}
+      role="link"
+      aria-label={`View ${member.name}'s portfolio`}
       onClick={handleCardClick}
-      onKeyDown={(event) => {
-        if (event.key === "Enter" || event.key === " ") {
-          event.preventDefault();
-          handleCardClick();
-        }
-      }}
+      onKeyDown={handleKeyDown}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="
@@ -348,9 +330,7 @@ function TeamCard({
         focus-visible:ring-offset-[#f4f3f0]
       "
     >
-      {/* ===================================================
-          ROTATING BORDER LIGHT
-      =================================================== */}
+      {/* ROTATING BORDER LIGHT */}
 
       <div
         aria-hidden="true"
@@ -376,9 +356,7 @@ function TeamCard({
             blur-[1px]
             animate-spin
           "
-          style={{
-            animationDuration: "5s",
-          }}
+          style={{ animationDuration: "5s" }}
         />
 
         <div
@@ -391,9 +369,7 @@ function TeamCard({
         />
       </div>
 
-      {/* ===================================================
-          SOFT AURA
-      =================================================== */}
+      {/* SOFT AURA */}
 
       <div
         aria-hidden="true"
@@ -411,14 +387,10 @@ function TeamCard({
           duration-500
           group-hover:opacity-40
         "
-        style={{
-          animationDuration: "9s",
-        }}
+        style={{ animationDuration: "9s" }}
       />
 
-      {/* ===================================================
-          MOUSE GLOW
-      =================================================== */}
+      {/* MOUSE GLOW */}
 
       <div
         ref={glowRef}
@@ -440,9 +412,7 @@ function TeamCard({
         "
       />
 
-      {/* ===================================================
-          CARD BODY
-      =================================================== */}
+      {/* CARD BODY */}
 
       <div
         className="
@@ -458,9 +428,7 @@ function TeamCard({
           group-hover:shadow-[0_30px_90px_rgba(133,79,238,0.18)]
         "
       >
-        {/* =================================================
-            INNER BORDER
-        ================================================= */}
+        {/* INNER BORDER */}
 
         <div
           aria-hidden="true"
@@ -479,25 +447,12 @@ function TeamCard({
           "
         />
 
-        {/* =================================================
-            IMAGE
-        ================================================= */}
+        {/* IMAGE */}
 
-        <div
-          className="
-            relative
-            aspect-[0.82]
-            overflow-hidden
-            bg-[#17151b]
-          "
-        >
+        <div className="relative aspect-[0.82] overflow-hidden bg-[#17151b]">
           <div
             ref={imageRef}
-            className="
-              absolute
-              inset-[-3%]
-              will-change-transform
-            "
+            className="absolute inset-[-3%] will-change-transform"
           >
             <Image
               src={member.image}
@@ -509,25 +464,13 @@ function TeamCard({
                 (max-width: 1023px) 50vw,
                 25vw
               "
-              className="
-                object-cover
-                object-center
-              "
+              className="object-cover object-center"
             />
           </div>
 
           {/* DARK GRADIENT */}
 
-          <div
-            className="
-              absolute
-              inset-0
-              bg-gradient-to-t
-              from-black
-              via-black/25
-              to-black/5
-            "
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-black/5" />
 
           {/* PURPLE GLOW */}
 
@@ -567,9 +510,7 @@ function TeamCard({
             "
           />
 
-          {/* =================================================
-              NUMBER
-          ================================================= */}
+          {/* NUMBER */}
 
           <div
             className="
@@ -587,15 +528,13 @@ function TeamCard({
             "
           >
             <span className="h-px w-6 bg-[#d6ff00]" />
-
             {member.number}
           </div>
 
-          {/* =================================================
-              ARROW
-          ================================================= */}
+          {/* ARROW */}
 
           <div
+            aria-hidden="true"
             className="
               absolute
               right-5
@@ -623,23 +562,9 @@ function TeamCard({
             <ArrowUpRightIcon size={16} />
           </div>
 
-          {/* =================================================
-              ROLE + NAME
-          ================================================= */}
+          {/* ROLE + NAME */}
 
-          <div
-            className="
-              absolute
-              bottom-0
-              left-0
-              right-0
-              z-20
-              p-5
-              sm:p-6
-            "
-          >
-            {/* ROLE */}
-
+          <div className="absolute bottom-0 left-0 right-0 z-20 p-5 sm:p-6">
             <div className="flex items-center gap-2">
               <span
                 className="
@@ -667,8 +592,6 @@ function TeamCard({
               </span>
             </div>
 
-            {/* NAME */}
-
             <h3
               className="
                 mt-2
@@ -686,8 +609,6 @@ function TeamCard({
               {member.name}
             </h3>
 
-            {/* SPECIALTY */}
-
             <div
               className="
                 mt-3
@@ -702,27 +623,14 @@ function TeamCard({
               "
             >
               <span className="h-px w-5 bg-white/25" />
-
               {member.specialty}
             </div>
           </div>
         </div>
 
-        {/* ===================================================
-            FOOTER
-        =================================================== */}
+        {/* FOOTER */}
 
-        <div
-          className="
-            flex
-            items-center
-            justify-between
-            gap-3
-            px-4
-            py-4
-            sm:px-5
-          "
-        >
+        <div className="flex items-center justify-between gap-3 px-4 py-4 sm:px-5">
           {/* SOCIALS */}
 
           <div className="flex items-center gap-2">
@@ -732,9 +640,8 @@ function TeamCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${member.name} WhatsApp`}
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
                 className="
                   flex
                   h-8
@@ -767,9 +674,8 @@ function TeamCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${member.name} GitHub`}
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
                 className="
                   flex
                   h-8
@@ -802,9 +708,8 @@ function TeamCard({
                 target="_blank"
                 rel="noopener noreferrer"
                 aria-label={`${member.name} LinkedIn`}
-                onClick={(event) => {
-                  event.stopPropagation();
-                }}
+                onClick={(event) => event.stopPropagation()}
+                onKeyDown={(event) => event.stopPropagation()}
                 className="
                   flex
                   h-8
@@ -864,10 +769,6 @@ function TeamCard({
 export default function TeamSection() {
   const sectionRef = useRef<HTMLElement | null>(null);
 
-  /* =======================================================
-     INTRO ANIMATION
-  ======================================================= */
-
   useLayoutEffect(() => {
     const section = sectionRef.current;
 
@@ -880,25 +781,11 @@ export default function TeamSection() {
     if (reduceMotion) return;
 
     const ctx = gsap.context(() => {
-      const eyebrow = section.querySelector(
-        "[data-team-eyebrow]"
-      );
-
-      const heading = section.querySelector(
-        "[data-team-heading]"
-      );
-
-      const description = section.querySelector(
-        "[data-team-description]"
-      );
-
-      const cards = section.querySelectorAll(
-        "[data-team-card]"
-      );
-
-      const manifesto = section.querySelector(
-        "[data-team-manifesto]"
-      );
+      const eyebrow = section.querySelector("[data-team-eyebrow]");
+      const heading = section.querySelector("[data-team-heading]");
+      const description = section.querySelector("[data-team-description]");
+      const cards = section.querySelectorAll("[data-team-card]");
+      const manifesto = section.querySelector("[data-team-manifesto]");
 
       const timeline = gsap.timeline({
         scrollTrigger: {
@@ -978,22 +865,12 @@ export default function TeamSection() {
         text-[#17151b]
       "
     >
-      {/* ===================================================
-          BACKGROUND
-      =================================================== */}
+      {/* BACKGROUND */}
 
       <div
         aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          -z-10
-          overflow-hidden
-        "
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
-        {/* PURPLE */}
-
         <div
           className="
             absolute
@@ -1006,8 +883,6 @@ export default function TeamSection() {
             blur-[120px]
           "
         />
-
-        {/* LIME */}
 
         <div
           className="
@@ -1022,8 +897,6 @@ export default function TeamSection() {
           "
         />
 
-        {/* GRID */}
-
         <div
           className="
             absolute
@@ -1036,9 +909,7 @@ export default function TeamSection() {
         />
       </div>
 
-      {/* ===================================================
-          CONTAINER
-      =================================================== */}
+      {/* CONTAINER */}
 
       <div
         className="
@@ -1055,19 +926,9 @@ export default function TeamSection() {
           xl:px-20
         "
       >
-        {/* =================================================
-            HEADER
-        ================================================= */}
+        {/* HEADER */}
 
-        <div
-          className="
-            grid
-            gap-10
-            lg:grid-cols-[1fr_0.55fr]
-            lg:items-end
-            lg:gap-20
-          "
-        >
+        <div className="grid gap-10 lg:grid-cols-[1fr_0.55fr] lg:items-end lg:gap-20">
           <div>
             <div
               data-team-eyebrow
@@ -1084,7 +945,6 @@ export default function TeamSection() {
               "
             >
               <span className="h-px w-10 bg-[#854fee]" />
-
               The Team
             </div>
 
@@ -1101,76 +961,32 @@ export default function TeamSection() {
             >
               Small team.
               <br />
-
-              <span className="text-[#854fee]">
-                Big thinking.
-              </span>
+              <span className="text-[#854fee]">Big thinking.</span>
             </h2>
           </div>
 
           <div>
             <p
               data-team-description
-              className="
-                max-w-md
-                text-sm
-                leading-7
-                text-black/50
-                sm:text-base
-                sm:leading-8
-              "
+              className="max-w-md text-sm leading-7 text-black/50 sm:text-base sm:leading-8"
             >
-              Nexora Digital brings together
-              strategy, design, development and
-              creative execution under one roof.
+              Nexora Digital brings together strategy, design,
+              development and creative execution under one roof.
               Different skills, one shared standard.
             </p>
 
-            <div
-              className="
-                mt-7
-                flex
-                items-center
-                gap-3
-                text-[9px]
-                font-bold
-                uppercase
-                tracking-[0.18em]
-                text-black/30
-              "
-            >
-              <span
-                className="
-                  h-1.5
-                  w-1.5
-                  rounded-full
-                  bg-[#d6ff00]
-                  shadow-[0_0_10px_rgba(214,255,0,0.8)]
-                "
-              />
-
+            <div className="mt-7 flex items-center gap-3 text-[9px] font-bold uppercase tracking-[0.18em] text-black/30">
+              <span className="h-1.5 w-1.5 rounded-full bg-[#d6ff00] shadow-[0_0_10px_rgba(214,255,0,0.8)]" />
               Built around collaboration
             </div>
           </div>
         </div>
 
-        {/* =================================================
-            TEAM CARDS
-        ================================================= */}
+        {/* TEAM CARDS */}
 
         <div
-          className="
-            mt-14
-            grid
-            gap-4
-            sm:mt-20
-            sm:grid-cols-2
-            lg:grid-cols-4
-            lg:gap-5
-          "
-          style={{
-            perspective: "1200px",
-          }}
+          className="mt-14 grid gap-4 sm:mt-20 sm:grid-cols-2 lg:grid-cols-4 lg:gap-5"
+          style={{ perspective: "1200px" }}
         >
           {teamMembers.map((member, index) => (
             <TeamCard
@@ -1181,131 +997,45 @@ export default function TeamSection() {
           ))}
         </div>
 
-        {/* =================================================
-            BOTTOM INFO
-        ================================================= */}
+        {/* BOTTOM INFO */}
 
-        <div
-          className="
-            mt-6
-            flex
-            flex-col
-            gap-5
-            sm:flex-row
-            sm:items-center
-            sm:justify-between
-          "
-        >
+        <div className="mt-6 flex flex-col gap-5 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-3">
-            <span
-              className="
-                h-1.5
-                w-1.5
-                rounded-full
-                bg-[#854fee]
-                shadow-[0_0_10px_rgba(133,79,238,0.7)]
-              "
-            />
+            <span className="h-1.5 w-1.5 rounded-full bg-[#854fee] shadow-[0_0_10px_rgba(133,79,238,0.7)]" />
 
-            <span
-              className="
-                text-[8px]
-                font-bold
-                uppercase
-                tracking-[0.18em]
-                text-black/30
-                sm:text-[9px]
-              "
-            >
+            <span className="text-[8px] font-bold uppercase tracking-[0.18em] text-black/30 sm:text-[9px]">
               Four minds. One direction.
             </span>
           </div>
 
-          <span
-            className="
-              text-[8px]
-              font-bold
-              uppercase
-              tracking-[0.16em]
-              text-black/20
-              sm:text-[9px]
-            "
-          >
+          <span className="text-[8px] font-bold uppercase tracking-[0.16em] text-black/20 sm:text-[9px]">
             Nexora Digital / Team
           </span>
         </div>
 
-        {/* =================================================
-            MANIFESTO
-        ================================================= */}
+        {/* MANIFESTO */}
 
         <div
           data-team-manifesto
-          className="
-            mt-20
-            border-t
-            border-black/[0.08]
-            pt-8
-            sm:mt-28
-            sm:pt-10
-            lg:mt-36
-          "
+          className="mt-20 border-t border-black/[0.08] pt-8 sm:mt-28 sm:pt-10 lg:mt-36"
         >
-          <div
-            className="
-              flex
-              flex-col
-              gap-8
-              sm:flex-row
-              sm:items-end
-              sm:justify-between
-            "
-          >
+          <div className="flex flex-col gap-8 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p
-                className="
-                  text-[10px]
-                  font-bold
-                  uppercase
-                  tracking-[0.2em]
-                  text-[#854fee]
-                "
-              >
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-[#854fee]">
                 One team. One standard.
               </p>
 
-              <h3
-                className="
-                  mt-4
-                  max-w-4xl
-                  text-[clamp(2.2rem,4.5vw,4.8rem)]
-                  font-bold
-                  leading-[0.95]
-                  tracking-[-0.065em]
-                "
-              >
+              <h3 className="mt-4 max-w-4xl text-[clamp(2.2rem,4.5vw,4.8rem)] font-bold leading-[0.95] tracking-[-0.065em]">
                 Different skills.
                 <br />
-
-                <span className="text-black/25">
-                  One direction.
-                </span>
+                <span className="text-black/25">One direction.</span>
               </h3>
             </div>
 
-            <p
-              className="
-                max-w-sm
-                text-xs
-                leading-6
-                text-black/35
-                sm:text-right
-              "
-            >
-              Strategy, design, technology and
-              creativity working together to create
-              digital experiences that actually move
-              businesses forward.
+            <p className="max-w-sm text-xs leading-6 text-black/35 sm:text-right">
+              Strategy, design, technology and creativity working
+              together to create digital experiences that actually
+              move businesses forward.
             </p>
           </div>
         </div>
