@@ -25,8 +25,8 @@ const WHATSAPP_URL = "https://wa.me/9587325902";
 const navItems = [
   { label: "Home", href: "/", icon: Home },
   { label: "Services", href: "/services", icon: BriefcaseBusiness },
-  // { label: "Projects", href: "/projects", icon: FolderKanban },
   { label: "About", href: "/about", icon: UserRound },
+  { label: "Team", href: "/team", icon: FolderKanban },
   { label: "Contact", href: "/contact", icon: Mail },
 ];
 

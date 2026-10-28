@@ -1,6 +1,6 @@
 
 import TeamCard from "@/components/team/TeamCard";
-import { teamMembers } from "@/data/team";
+import { teamMembers } from "@/data/teamMembers";
 
 export default function TeamPage() {
   return (

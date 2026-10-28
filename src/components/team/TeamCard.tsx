@@ -3,7 +3,7 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import type { TeamMember } from "@/data/team";
+import type { TeamMember } from "@/data/teamMembers";
 
 type TeamCardProps = {
   member: TeamMember;

@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useLayoutEffect, useRef } from "react";
@@ -6,81 +7,10 @@ import { useRouter } from "next/navigation";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
+import { teamMembers } from "@/data/teamMembers";
+import type { TeamMember } from "@/data/teamMembers";
+
 gsap.registerPlugin(ScrollTrigger);
-
-/* =========================================================
-   TYPES
-========================================================= */
-
-type TeamMember = {
-  id: string;
-  number: string;
-  name: string;
-  role: string;
-  specialty: string;
-  intro: string;
-  image: string;
-  whatsapp?: string;
-  github?: string;
-  linkedin?: string;
-};
-
-/* =========================================================
-   TEAM DATA
-========================================================= */
-
-const teamMembers: TeamMember[] = [
-  {
-    id: "founder",
-    number: "01",
-    name: "Your Name",
-    role: "Founder & Creative Lead",
-    specialty: "Strategy / Development",
-    intro:
-      "Leading Nexora Digital with a focus on strategy, digital experiences, and building work that connects creative thinking with real business goals.",
-    image: "/me.png",
-    whatsapp: "https://wa.me/8801XXXXXXXXX",
-    github: "https://github.com/yourusername",
-    linkedin: "https://www.linkedin.com/in/yourusername",
-  },
-  {
-    id: "developer",
-    number: "02",
-    name: "Team Member",
-    role: "Full Stack Developer",
-    specialty: "Web / Technology",
-    intro:
-      "Turning ideas into fast, responsive, and scalable digital experiences with clean development and thoughtful interaction.",
-    image: "/me.png",
-    whatsapp: "https://wa.me/8801XXXXXXXXX",
-    github: "https://github.com/developerusername",
-    linkedin: "https://www.linkedin.com/in/developerusername",
-  },
-  {
-    id: "designer",
-    number: "03",
-    name: "Team Member",
-    role: "UI/UX & Graphic Designer",
-    specialty: "Design / Visual Identity",
-    intro:
-      "Creating visual systems and interfaces that make brands feel clear, distinctive, and easy to understand.",
-    image: "/me.png",
-    whatsapp: "https://wa.me/8801XXXXXXXXX",
-    linkedin: "https://www.linkedin.com/in/designerusername",
-  },
-  {
-    id: "editor",
-    number: "04",
-    name: "Team Member",
-    role: "Video Editor",
-    specialty: "Motion / Content",
-    intro:
-      "Turning raw ideas into engaging visual stories through editing, motion, pacing, and creative direction.",
-    image: "/me.png",
-    whatsapp: "https://wa.me/8801XXXXXXXXX",
-    linkedin: "https://www.linkedin.com/in/editorusername",
-  },
-];
 
 /* =========================================================
    INLINE ICONS
