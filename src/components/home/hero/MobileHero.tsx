@@ -1,28 +1,15 @@
+
 "use client";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import {
-  ArrowDown,
-  ArrowUpRight,
-  MoveUpRight,
-  Plus,
-} from "lucide-react";
+import { ArrowDown, ArrowUpRight, MoveUpRight } from "lucide-react";
 import { motion, useReducedMotion } from "framer-motion";
 
 const phrase = "studio";
-
 const ease = [0.22, 1, 0.36, 1] as const;
 
-/* =========================================================
-   TYPING TEXT
-========================================================= */
-
-function TypingText({
-  reduceMotion,
-}: {
-  reduceMotion: boolean;
-}) {
+function TypingText({ reduceMotion }: { reduceMotion: boolean }) {
   const [text, setText] = useState("");
   const [deleting, setDeleting] = useState(false);
 
@@ -36,30 +23,16 @@ function TypingText({
 
     if (!deleting && text.length < phrase.length) {
       timeout = setTimeout(() => {
-        setText(
-          phrase.slice(0, text.length + 1),
-        );
+        setText(phrase.slice(0, text.length + 1));
       }, 130);
-    } else if (
-      !deleting &&
-      text.length === phrase.length
-    ) {
+    } else if (!deleting && text.length === phrase.length) {
+      timeout = setTimeout(() => setDeleting(true), 1600);
+    } else if (deleting && text.length > 0) {
       timeout = setTimeout(() => {
-        setDeleting(true);
-      }, 1600);
-    } else if (
-      deleting &&
-      text.length > 0
-    ) {
-      timeout = setTimeout(() => {
-        setText(
-          phrase.slice(0, text.length - 1),
-        );
+        setText(phrase.slice(0, text.length - 1));
       }, 65);
     } else {
-      timeout = setTimeout(() => {
-        setDeleting(false);
-      }, 350);
+      timeout = setTimeout(() => setDeleting(false), 350);
     }
 
     return () => clearTimeout(timeout);
@@ -72,18 +45,8 @@ function TypingText({
       {!reduceMotion && (
         <motion.span
           aria-hidden="true"
-          className="
-            ml-1
-            inline-block
-            h-[0.75em]
-            w-[3px]
-            translate-y-[0.04em]
-            rounded-full
-            bg-[#d6ff00]
-          "
-          animate={{
-            opacity: [1, 0, 1],
-          }}
+          className="ml-1 inline-block h-[0.72em] w-[3px] translate-y-[0.04em] rounded-full bg-[#d6ff00]"
+          animate={{ opacity: [1, 0, 1] }}
           transition={{
             duration: 0.85,
             repeat: Infinity,
@@ -95,32 +58,151 @@ function TypingText({
   );
 }
 
-/* =========================================================
-   MOBILE HERO
-========================================================= */
+function CreativeCard({
+  reduceMotion,
+}: {
+  reduceMotion: boolean;
+}) {
+  return (
+    <motion.div
+      variants={{
+        hidden: {
+          opacity: 0,
+          y: reduceMotion ? 0 : 18,
+        },
+        visible: {
+          opacity: 1,
+          y: 0,
+          transition: {
+            duration: reduceMotion ? 0 : 0.7,
+            ease,
+          },
+        },
+      }}
+      className="relative mt-8 overflow-hidden rounded-2xl border border-white/10 bg-white/[0.035] p-4 sm:p-5"
+    >
+      {/* Subtle grid texture */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 opacity-[0.12] [background-image:linear-gradient(rgba(255,255,255,0.12)_1px,transparent_1px),linear-gradient(90deg,rgba(255,255,255,0.12)_1px,transparent_1px)] [background-size:24px_24px]"
+      />
+
+      {/* Ambient lime glow */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute -right-12 -top-16 h-40 w-40 rounded-full bg-[#d6ff00]/10 blur-[60px]"
+      />
+
+      <div className="relative flex items-center gap-4">
+        {/* Orbital graphic */}
+        <div className="relative flex h-[100px] w-[100px] shrink-0 items-center justify-center">
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-1 rounded-full border border-[#d6ff00]/25"
+            animate={reduceMotion ? undefined : { rotate: 360 }}
+            transition={{
+              duration: 18,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          >
+            <span className="absolute left-3 top-3 h-2 w-2 rounded-full bg-[#d6ff00] shadow-[0_0_12px_#d6ff00]" />
+          </motion.div>
+
+          <motion.div
+            aria-hidden="true"
+            className="absolute inset-[15px] rounded-full border border-dashed border-white/20"
+            animate={reduceMotion ? undefined : { rotate: -360 }}
+            transition={{
+              duration: 24,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+
+          <div className="absolute h-14 w-14 rounded-full bg-[#d6ff00]/20 blur-2xl" />
+
+          <motion.div
+            className="relative flex h-[50px] w-[50px] items-center justify-center rounded-2xl border border-[#d6ff00]/40 bg-[#d6ff00]/10 shadow-[0_0_30px_rgba(214,255,0,0.08)]"
+            animate={
+              reduceMotion
+                ? undefined
+                : { y: [0, -4, 0], rotate: [0, 4, 0] }
+            }
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }}
+          >
+            <span className="text-2xl font-semibold tracking-[-0.1em] text-[#d6ff00]">
+              Nx
+            </span>
+          </motion.div>
+
+          <span className="absolute bottom-1 right-0 rounded-full border border-white/10 bg-[#101010] px-2 py-1 text-[8px] font-medium tracking-wider text-white/60">
+            01 / 04
+          </span>
+        </div>
+
+        {/* Card copy */}
+        <div className="min-w-0 flex-1">
+          <div className="mb-2 flex items-center gap-2">
+            <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#d6ff00]" />
+
+            <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-white/45 sm:text-[9px]">
+              The creative process
+            </span>
+          </div>
+
+          <h3 className="text-[clamp(1.2rem,5.5vw,1.6rem)] font-semibold leading-[1.05] tracking-[-0.06em] text-white">
+            Ideas into
+            <br />
+            <span className="text-[#d6ff00]">impact.</span>
+          </h3>
+
+          <p className="mt-2 text-[10px] leading-relaxed text-white/45 sm:text-[11px]">
+            Strategy meets creativity to build digital experiences that matter.
+          </p>
+        </div>
+      </div>
+
+      {/* Card footer */}
+      <div className="relative mt-4 flex items-center justify-between border-t border-white/[0.08] pt-3">
+        <span className="text-[8px] font-medium uppercase tracking-[0.18em] text-white/35">
+          Nexora Digital
+        </span>
+
+        <div
+          aria-label="Creative process, step one of four"
+          className="flex items-center gap-1.5"
+        >
+          <span className="h-1 w-5 rounded-full bg-[#d6ff00]" />
+          <span className="h-1 w-2 rounded-full bg-white/20" />
+          <span className="h-1 w-2 rounded-full bg-white/20" />
+          <span className="h-1 w-2 rounded-full bg-white/20" />
+        </div>
+      </div>
+    </motion.div>
+  );
+}
 
 export default function MobileHero() {
   const prefersReducedMotion = useReducedMotion();
-  const reduceMotion = Boolean(
-    prefersReducedMotion,
-  );
+  const reduceMotion = Boolean(prefersReducedMotion);
 
   const reveal = {
     hidden: {
       opacity: 0,
-      y: reduceMotion ? 0 : 24,
-      filter: reduceMotion
-        ? "blur(0px)"
-        : "blur(7px)",
+      y: reduceMotion ? 0 : 22,
+      filter: reduceMotion ? "blur(0px)" : "blur(6px)",
     },
-
     visible: {
       opacity: 1,
       y: 0,
       filter: "blur(0px)",
-
       transition: {
-        duration: reduceMotion ? 0 : 0.8,
+        duration: reduceMotion ? 0 : 0.75,
         ease,
       },
     },
@@ -128,7 +210,6 @@ export default function MobileHero() {
 
   const stagger = {
     hidden: {},
-
     visible: {
       transition: {
         staggerChildren: reduceMotion ? 0 : 0.1,
@@ -140,66 +221,28 @@ export default function MobileHero() {
     <section
       id="home-mobile"
       data-sidebar-theme="dark"
-      className="
-        relative
-        isolate
-        flex
-        min-h-[100svh]
-        w-full
-        flex-col
-        overflow-hidden
-        bg-[#030303]
-        text-white
-        sm:hidden
-      "
+      className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#030303] text-white sm:hidden"
     >
-      {/* =========================================================
-          BACKGROUND
-      ========================================================= */}
-
+      {/* Animated background */}
       <div
         aria-hidden="true"
-        className="
-          pointer-events-none
-          absolute
-          inset-0
-          -z-10
-          overflow-hidden
-        "
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
-        {/* Base */}
         <div className="absolute inset-0 bg-[#030303]" />
 
-        {/* =====================================================
-            MOBILE WORLD MAP
-
-            IMPORTANT:
-            Mobile ONLY uses:
-
-            /world-map-bg-m.png
-
-            This must exist inside:
-            public/world-map-bg-m.png
-        ====================================================== */}
-
+        {/* World map */}
         <motion.div
-          className="
-            absolute
-            inset-0
-            overflow-hidden
-            opacity-[0.48]
-            mix-blend-screen
-          "
+          className="absolute inset-0 overflow-hidden mix-blend-screen"
           animate={
             reduceMotion
               ? undefined
               : {
-                  scale: [1, 1.025, 1],
-                  opacity: [0.42, 0.52, 0.42],
+                  scale: [1, 1.035, 1],
+                  opacity: [0.36, 0.5, 0.36],
                 }
           }
           transition={{
-            duration: 15,
+            duration: 16,
             repeat: Infinity,
             ease: "easeInOut",
           }}
@@ -208,49 +251,22 @@ export default function MobileHero() {
             src="/world-map-bg-m.png"
             alt=""
             aria-hidden="true"
-            className="
-              absolute
-              inset-0
-              h-full
-              w-full
-              object-cover
-              object-center
-            "
             draggable={false}
+            className="absolute inset-0 h-full w-full object-cover object-center"
           />
         </motion.div>
 
-        {/* Map glow */}
-
-        <div
-          className="
-            absolute
-            inset-0
-            bg-[radial-gradient(ellipse_at_60%_42%,rgba(214,255,0,0.13),transparent_50%)]
-          "
-        />
-
-        {/* Center glow */}
+        {/* Main lime atmosphere */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_55%_35%,rgba(214,255,0,0.14),transparent_52%)]" />
 
         <motion.div
-          className="
-            absolute
-            left-1/2
-            top-[42%]
-            h-[420px]
-            w-[420px]
-            -translate-x-1/2
-            -translate-y-1/2
-            rounded-full
-            bg-[#d6ff00]/[0.055]
-            blur-[115px]
-          "
+          className="absolute left-1/2 top-[36%] h-[390px] w-[390px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#d6ff00]/[0.07] blur-[110px]"
           animate={
             reduceMotion
               ? undefined
               : {
-                  scale: [1, 1.1, 1],
-                  opacity: [0.45, 0.75, 0.45],
+                  scale: [1, 1.16, 1],
+                  opacity: [0.45, 0.8, 0.45],
                 }
           }
           transition={{
@@ -260,25 +276,14 @@ export default function MobileHero() {
           }}
         />
 
-        {/* Top right */}
-
         <motion.div
-          className="
-            absolute
-            -right-40
-            -top-24
-            h-[320px]
-            w-[320px]
-            rounded-full
-            bg-[#d6ff00]/10
-            blur-[105px]
-          "
+          className="absolute -right-36 -top-16 h-[330px] w-[330px] rounded-full bg-[#d6ff00]/[0.09] blur-[100px]"
           animate={
             reduceMotion
               ? undefined
               : {
-                  x: [0, -20, 0],
-                  y: [0, 25, 0],
+                  x: [0, -24, 0],
+                  y: [0, 22, 0],
                   scale: [1, 1.12, 1],
                 }
           }
@@ -289,25 +294,14 @@ export default function MobileHero() {
           }}
         />
 
-        {/* Left glow */}
-
         <motion.div
-          className="
-            absolute
-            -left-44
-            top-[44%]
-            h-[250px]
-            w-[250px]
-            rounded-full
-            bg-white/[0.04]
-            blur-[95px]
-          "
+          className="absolute -left-40 top-[48%] h-[270px] w-[270px] rounded-full bg-white/[0.045] blur-[100px]"
           animate={
             reduceMotion
               ? undefined
               : {
-                  x: [0, 25, 0],
-                  y: [0, -20, 0],
+                  x: [0, 22, 0],
+                  y: [0, -18, 0],
                 }
           }
           transition={{
@@ -317,146 +311,35 @@ export default function MobileHero() {
           }}
         />
 
-        {/* Readability */}
+        {/* Contrast and texture */}
+        <div className="absolute inset-0 bg-black/20" />
 
-        <div className="absolute inset-0 bg-black/25" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/5 to-[#030303]" />
 
-        {/* Cinematic gradient */}
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_18%,rgba(0,0,0,0.58)_100%)]" />
 
-        <div
-          className="
-            absolute
-            inset-0
-            bg-gradient-to-b
-            from-black/45
-            via-transparent
-            to-black/90
-          "
-        />
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.18)_0.65px,transparent_0.65px)] [background-size:22px_22px] opacity-[0.06]" />
 
-        {/* Vignette */}
-
-        <div
-          className="
-            absolute
-            inset-0
-            bg-[radial-gradient(ellipse_at_center,transparent_18%,rgba(0,0,0,0.74)_100%)]
-          "
-        />
-
-        {/* Dots */}
-
-        <div
-          className="
-            absolute
-            inset-0
-            bg-[radial-gradient(rgba(255,255,255,0.18)_0.65px,transparent_0.65px)]
-            [background-size:20px_20px]
-            opacity-[0.07]
-          "
-        />
-
-        {/* Scan lines */}
-
-        <div
-          className="
-            absolute
-            inset-0
-            bg-[linear-gradient(to_bottom,transparent_0%,transparent_49.8%,rgba(255,255,255,0.025)_50%,transparent_50.2%,transparent_100%)]
-            [background-size:100%_130px]
-            opacity-40
-          "
-        />
-
-        {/* Bottom fade */}
-
-        <div
-          className="
-            absolute
-            inset-x-0
-            bottom-0
-            h-[42%]
-            bg-gradient-to-t
-            from-[#030303]
-            via-[#030303]/80
-            to-transparent
-          "
-        />
+        <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-[#030303] via-[#030303]/75 to-transparent" />
       </div>
 
-      {/* =========================================================
-          CONTENT
-      ========================================================= */}
-
-      <div
-        className="
-          relative
-          z-10
-          flex
-          min-h-[100svh]
-          flex-col
-          px-5
-        "
-      >
-        {/* =======================================================
-            TOP LABEL
-        ======================================================= */}
-
+      {/* Main content */}
+      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[560px] flex-1 flex-col px-5 pb-5 pt-5 sm:px-7">
+        {/* Top label */}
         <motion.div
           variants={reveal}
           initial="hidden"
           animate="visible"
-          className="pt-5"
         >
           <Link
             href="/contact"
-            className="
-              group
-              inline-flex
-              max-w-full
-              items-center
-              gap-2
-              rounded-full
-              border
-              border-white/15
-              bg-white/[0.035]
-              px-3.5
-              py-2
-              text-[9px]
-              font-medium
-              uppercase
-              tracking-[0.13em]
-              text-white/65
-              backdrop-blur-md
-              transition-colors
-              hover:border-[#d6ff00]/40
-              hover:text-white
-            "
+            className="group inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2.5 text-[9px] font-medium uppercase tracking-[0.13em] text-white/70 backdrop-blur-xl transition-colors hover:border-[#d6ff00]/40 hover:text-white"
           >
             <span className="relative flex h-2 w-2 shrink-0">
-              <span
-                className="
-                  absolute
-                  inline-flex
-                  h-full
-                  w-full
-                  animate-ping
-                  rounded-full
-                  bg-[#d6ff00]
-                  opacity-50
-                "
-              />
-
-              <span
-                className="
-                  relative
-                  inline-flex
-                  h-2
-                  w-2
-                  rounded-full
-                  bg-[#d6ff00]
-                "
-              />
+              {!reduceMotion && (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#d6ff00] opacity-50" />
+              )}
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-[#d6ff00]" />
             </span>
 
             <span className="whitespace-nowrap">
@@ -465,456 +348,137 @@ export default function MobileHero() {
 
             <MoveUpRight
               size={12}
-              className="shrink-0 text-[#d6ff00]"
+              className="shrink-0 text-[#d6ff00] transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
             />
           </Link>
         </motion.div>
 
-        {/* =======================================================
-            MAIN CONTENT
-        ======================================================= */}
-
+        {/* Headline and message */}
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="visible"
-          className="
-            flex
-            flex-1
-            flex-col
-            pt-9
-          "
+          className="flex flex-1 flex-col pt-12"
         >
-          {/* Heading */}
-
           <motion.div
             variants={reveal}
-            className="
-              flex
-              items-start
-              justify-between
-              gap-3
-            "
+            className="flex items-start justify-between gap-3"
           >
-            <h1
-              className="
-                min-w-0
-                text-[clamp(3.8rem,18vw,4.55rem)]
-                font-bold
-                leading-[0.78]
-                tracking-[-0.08em]
-              "
-            >
+            <h1 className="min-w-0 text-[clamp(3.65rem,16.8vw,5.25rem)] font-bold leading-[0.82] tracking-[-0.085em]">
               Digital
               <br />
               agency
             </h1>
 
-            <span
-              className="
-                mt-1
-                shrink-0
-                rounded-md
-                border
-                border-white/55
-                px-2
-                py-1
-                text-[9px]
-                font-semibold
-                text-white/75
-              "
-            >
+            <span className="mt-1 shrink-0 rounded-lg border border-white/45 px-2.5 py-1.5 text-[10px] font-semibold tracking-wide text-white/80">
               Pro
             </span>
           </motion.div>
 
-          {/* Studio */}
-
           <motion.div
             variants={reveal}
-            className="mt-5 overflow-hidden"
+            className="mt-6 overflow-hidden"
           >
-            <h2
-              className="
-                min-w-0
-                whitespace-nowrap
-                text-[clamp(4rem,19vw,6.5rem)]
-                font-bold
-                leading-[0.78]
-                tracking-[-0.09em]
-                text-[#d6ff00]
-              "
-            >
-              <TypingText
-                reduceMotion={reduceMotion}
-              />
+            <h2 className="whitespace-nowrap text-[clamp(4.15rem,18.8vw,6.7rem)] font-bold leading-[0.82] tracking-[-0.09em] text-[#d6ff00]">
+              <TypingText reduceMotion={reduceMotion} />
             </h2>
           </motion.div>
 
-          {/* Description */}
-
-          <motion.div
-            variants={reveal}
-            className="mt-5"
-          >
-            <p
-              className="
-                max-w-[350px]
-                text-[12px]
-                font-medium
-                leading-[1.75]
-                text-white/55
-              "
-            >
-              With every project, we bring creativity,
-              strategy, and technology together to solve
-              problems and create digital experiences that
-              move businesses forward.
+          <motion.div variants={reveal} className="mt-7">
+            <p className="max-w-[390px] text-[13px] font-normal leading-[1.85] text-white/60">
+              With every project, we bring{" "}
+              <span className="font-medium text-white">
+                creativity, strategy, and technology
+              </span>{" "}
+              together to solve problems and create digital experiences that{" "}
+              <span className="font-medium text-[#d6ff00]">
+                move businesses forward.
+              </span>
             </p>
           </motion.div>
 
-          {/* CTA */}
-
-          <motion.div
-            variants={reveal}
-            className="mt-6"
-          >
+          {/* Primary CTA */}
+          <motion.div variants={reveal} className="mt-7">
             <Link
               href="/contact"
-              className="
-                group
-                flex
-                min-h-12
-                w-full
-                items-center
-                justify-between
-                border-b
-                border-white/20
-                px-1
-                py-3
-                text-[13px]
-                font-semibold
-                transition-all
-                duration-300
-                hover:border-white/60
-              "
+              className="group flex min-h-[54px] w-full items-center justify-between border-b border-white/20 px-1 py-3 text-[13px] font-semibold transition-colors duration-300 hover:border-[#d6ff00]/60"
             >
-              <span>
-                Let&apos;s work together
-              </span>
+              <span>Let&apos;s work together</span>
 
-              <span
-                className="
-                  flex
-                  h-9
-                  w-9
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-full
-                  bg-black
-                  text-[#d6ff00]
-                  transition-transform
-                  duration-300
-                  group-hover:rotate-45
-                "
-              >
-                <ArrowUpRight size={17} />
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#d6ff00] text-black transition-transform duration-300 group-hover:rotate-45">
+                <ArrowUpRight size={18} />
               </span>
             </Link>
           </motion.div>
 
-          {/* Middle Area */}
-
+          {/* Supporting brand statement */}
           <motion.div
             variants={reveal}
-            className="
-              mt-10
-              flex
-              flex-col
-            "
+            className="mt-8 flex items-center gap-3"
           >
-            <div
-              className="
-                mb-4
-                flex
-                items-center
-                justify-between
-              "
-            >
-              <span
-                className="
-                  text-[9px]
-                  font-medium
-                  uppercase
-                  tracking-[0.2em]
-                  text-white/35
-                "
-              >
-                What we do
-              </span>
+            <span className="h-px w-8 shrink-0 bg-[#d6ff00]/70" />
 
-              <span
-                className="
-                  text-[9px]
-                  uppercase
-                  tracking-[0.16em]
-                  text-[#d6ff00]/60
-                "
-              >
-                01 — 04
-              </span>
-            </div>
-
-            <div
-              className="
-                relative
-                overflow-hidden
-                rounded-2xl
-                border
-                border-white/10
-                bg-white/[0.025]
-                backdrop-blur-[2px]
-              "
-            >
-              <div
-                className="
-                  pointer-events-none
-                  absolute
-                  -right-16
-                  top-1/2
-                  h-40
-                  w-40
-                  -translate-y-1/2
-                  rounded-full
-                  bg-[#d6ff00]/[0.07]
-                  blur-[60px]
-                "
-              />
-
-              {[
-                ["01", "Strategy"],
-                ["02", "Design"],
-                ["03", "Development"],
-                ["04", "Growth"],
-              ].map(([number, title], index) => (
-                <div
-                  key={number}
-                  className={`
-                    group
-                    relative
-                    flex
-                    items-center
-                    justify-between
-                    px-4
-                    py-4
-                    ${
-                      index !== 3
-                        ? "border-b border-white/10"
-                        : ""
-                    }
-                  `}
-                >
-                  <div className="flex items-center gap-3">
-                    <span
-                      className="
-                        text-[9px]
-                        font-mono
-                        text-[#d6ff00]/60
-                      "
-                    >
-                      {number}
-                    </span>
-
-                    <span
-                      className="
-                        text-[13px]
-                        font-medium
-                        text-white/80
-                      "
-                    >
-                      {title}
-                    </span>
-                  </div>
-
-                  <Plus
-                    size={14}
-                    className="text-white/30"
-                  />
-                </div>
-              ))}
-            </div>
-
-            <div
-              className="
-                mt-5
-                flex
-                items-center
-                gap-3
-              "
-            >
-              <span className="h-px flex-1 bg-white/10" />
-
-              <span
-                className="
-                  h-1.5
-                  w-1.5
-                  rounded-full
-                  bg-[#d6ff00]
-                  shadow-[0_0_14px_rgba(214,255,0,0.8)]
-                "
-              />
-
-              <span className="h-px w-10 bg-white/10" />
-            </div>
+            <p className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/45">
+              Thoughtful ideas. Meaningful digital experiences.
+            </p>
           </motion.div>
 
-          {/* Bottom */}
+          {/* Creative card replaces the empty hello area */}
+          <CreativeCard reduceMotion={reduceMotion} />
 
+          {/* Explore footer */}
           <motion.div
             initial={{
               opacity: 0,
-              y: reduceMotion ? 0 : 18,
+              y: reduceMotion ? 0 : 12,
             }}
             animate={{
               opacity: 1,
               y: 0,
             }}
             transition={{
-              duration: reduceMotion ? 0 : 0.8,
-              delay: reduceMotion ? 0 : 0.5,
+              duration: reduceMotion ? 0 : 0.7,
+              delay: reduceMotion ? 0 : 0.35,
               ease,
             }}
-            className="
-              mt-10
-              flex
-              items-end
-              justify-between
-              gap-4
-              pb-5
-              pt-2
-            "
+            className="mt-auto flex items-end justify-between gap-4 pt-8"
           >
             <a
               href="#about"
-              aria-label="Scroll to explore"
-              className="
-                group
-                flex
-                h-10
-                w-10
-                shrink-0
-                items-center
-                justify-center
-                rounded-full
-                border
-                border-white/20
-                text-white/60
-                transition-all
-                duration-300
-                hover:border-[#d6ff00]/60
-                hover:bg-[#d6ff00]/10
-                hover:text-[#d6ff00]
-              "
+              className="group inline-flex min-h-10 items-center gap-2.5 text-[10px] font-medium uppercase tracking-[0.15em] text-white/55 transition-colors hover:text-[#d6ff00]"
             >
-              <ArrowDown
-                size={15}
-                className="
-                  transition-transform
-                  duration-300
-                  group-hover:translate-y-1
-                "
-              />
+              <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 transition-all duration-300 group-hover:border-[#d6ff00]/60 group-hover:bg-[#d6ff00]/10">
+                <ArrowDown
+                  size={15}
+                  className="transition-transform duration-300 group-hover:translate-y-1"
+                />
+              </span>
+
+              Explore
             </a>
 
-            <div
-              className="
-                ml-auto
-                flex
-                min-w-0
-                flex-col
-                items-end
-                text-right
-              "
-            >
-              <div className="flex items-baseline gap-1">
-                <span
-                  className="
-                    text-[2.6rem]
-                    font-semibold
-                    leading-none
-                    tracking-[-0.075em]
-                  "
-                >
-                  25
-                </span>
-
-                <span
-                  className="
-                    text-[1.55rem]
-                    font-semibold
-                    leading-none
-                    tracking-[-0.06em]
-                    text-[#d6ff00]
-                  "
-                >
-                  k+
-                </span>
-              </div>
-
-              <p
-                className="
-                  mt-1.5
-                  max-w-[165px]
-                  text-[9px]
-                  leading-4
-                  text-white/40
-                "
-              >
-                Projects completed successfully
-              </p>
-            </div>
+            <span className="pb-3 text-[9px] uppercase tracking-[0.18em] text-white/30">
+              Scroll to discover
+            </span>
           </motion.div>
-
-          {/* Animated line */}
-
-          <div
-            className="
-              relative
-              h-px
-              w-full
-              overflow-hidden
-              bg-white/10
-            "
-          >
-            <motion.div
-              className="
-                absolute
-                inset-y-0
-                left-0
-                w-1/3
-                bg-gradient-to-r
-                from-transparent
-                via-[#d6ff00]
-                to-transparent
-              "
-              animate={
-                reduceMotion
-                  ? undefined
-                  : {
-                      x: ["-100%", "400%"],
-                    }
-              }
-              transition={{
-                duration: 4,
-                repeat: Infinity,
-                ease: "linear",
-              }}
-            />
-          </div>
-
-          <div className="h-4" />
         </motion.div>
+
+        {/* Animated accent line */}
+        <div className="relative mt-5 h-px w-full overflow-hidden bg-white/10">
+          <motion.div
+            className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-[#d6ff00] to-transparent"
+            animate={
+              reduceMotion
+                ? undefined
+                : { x: ["-100%", "400%"] }
+            }
+            transition={{
+              duration: 4.5,
+              repeat: Infinity,
+              ease: "linear",
+            }}
+          />
+        </div>
       </div>
     </section>
   );

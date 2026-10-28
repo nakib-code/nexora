@@ -1,20 +1,14 @@
 
 import type { Metadata } from "next";
-import { Space_Grotesk, Manrope } from "next/font/google";
+import { Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
 import FloatingMenu from "@/components/layout/FloatingMenu";
 import Footer from "@/components/layout/footer";
 
-const headingFont = Space_Grotesk({
+const jakartaSans = Plus_Jakarta_Sans({
   subsets: ["latin"],
-  variable: "--font-heading",
-  display: "swap",
-});
-
-const bodyFont = Manrope({
-  subsets: ["latin"],
-  variable: "--font-body",
+  variable: "--font-jakarta",
   display: "swap",
 });
 
@@ -48,9 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${headingFont.variable} ${bodyFont.variable} antialiased`}
-      >
+      <body className={`${jakartaSans.variable} antialiased`}>
         <FloatingMenu />
 
         <div className="site-content">

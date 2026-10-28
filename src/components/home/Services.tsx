@@ -1,18 +1,9 @@
 "use client";
 
-import React, {
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-
-import gsap from "gsap";
-import ScrollTrigger from "gsap/ScrollTrigger";
-
+import { useRef, type ElementType } from "react";
+import { motion, useInView, useReducedMotion } from "framer-motion";
 import {
-  ArrowDown,
-  ArrowRight,
+  ArrowUpRight,
   Check,
   Film,
   Gauge,
@@ -20,14 +11,7 @@ import {
   Megaphone,
   Search,
 } from "lucide-react";
-
-/* ================================================================
-   GSAP
-================================================================ */
-
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import Link from "next/link";
 
 /* ================================================================
    TYPES
@@ -42,11 +26,11 @@ type Service = {
   benefits: string[];
   accent: string;
   accentSoft: string;
-  icon: React.ElementType;
+  icon: ElementType;
 };
 
 /* ================================================================
-   SERVICES
+   SERVICES DATA
 ================================================================ */
 
 const services: Service[] = [
@@ -63,11 +47,10 @@ const services: Service[] = [
       "Campaign setup & optimization",
       "Retargeting & LAL setup",
     ],
-    accent: "#7c3aed",
-    accentSoft: "#a855f7",
+    accent: "#8B5CF6",
+    accentSoft: "#6D28D9",
     icon: Megaphone,
   },
-
   {
     id: "02",
     title: "Google Advertising",
@@ -81,15 +64,14 @@ const services: Service[] = [
       "Conversion-focused copy",
       "Continuous bid optimization",
     ],
-    accent: "#22c1dc",
-    accentSoft: "#06b6d4",
+    accent: "#0891B2",
+    accentSoft: "#0E7490",
     icon: Search,
   },
-
   {
     id: "03",
     title: "Conversion Tracking",
-    shortTitle: "Conversion Tracking",
+    shortTitle: "Tracking",
     subtitle: "Track What Matters",
     description:
       "Build a reliable measurement system so every important click, lead, purchase, and customer journey can be understood and optimized.",
@@ -99,15 +81,14 @@ const services: Service[] = [
       "CAPI & Meta Pixel",
       "Custom event funnels",
     ],
-    accent: "#fb9b63",
-    accentSoft: "#f97316",
+    accent: "#EA580C",
+    accentSoft: "#C2410C",
     icon: Gauge,
   },
-
   {
     id: "04",
     title: "Video Editing",
-    shortTitle: "Video Editing",
+    shortTitle: "Video",
     subtitle: "Content That Converts",
     description:
       "Create scroll-stopping video content with strong hooks, intentional pacing, polished motion, and sound designed to hold attention.",
@@ -117,15 +98,14 @@ const services: Service[] = [
       "Sleek motion graphics",
       "Pacing & sound design",
     ],
-    accent: "#e879d8",
-    accentSoft: "#d946ef",
+    accent: "#DB2777",
+    accentSoft: "#BE185D",
     icon: Film,
   },
-
   {
     id: "05",
     title: "Website Design & Development",
-    shortTitle: "Website Design & Development",
+    shortTitle: "Web Development",
     subtitle: "Web Experiences",
     description:
       "Design and develop fast, modern websites that combine premium visual systems with technical performance and conversion-focused experiences.",
@@ -135,1241 +115,492 @@ const services: Service[] = [
       "Core Web Vitals optimization",
       "Conversion-optimized CTA design",
     ],
-    accent: "#4f8df7",
-    accentSoft: "#2563eb",
+    accent: "#2563EB",
+    accentSoft: "#1D4ED8",
     icon: Globe2,
   },
 ];
 
+const ease = [0.22, 1, 0.36, 1] as const;
+
 /* ================================================================
-   COMPONENT
+   SECTION REVEAL
+================================================================ */
+
+function SectionReveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: React.ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement | null>(null);
+  const isInView = useInView(ref, {
+    once: true,
+    amount: 0.12,
+  });
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.div
+      ref={ref}
+      className={className}
+      initial={{
+        opacity: 0,
+        y: reduceMotion ? 0 : 28,
+        filter: reduceMotion ? "blur(0px)" : "blur(6px)",
+      }}
+      animate={
+        isInView
+          ? {
+              opacity: 1,
+              y: 0,
+              filter: "blur(0px)",
+            }
+          : undefined
+      }
+      transition={{
+        duration: reduceMotion ? 0 : 0.75,
+        delay: reduceMotion ? 0 : delay,
+        ease,
+      }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+/* ================================================================
+   SERVICE CARD
+================================================================ */
+
+function ServiceCard({
+  service,
+  index,
+}: {
+  service: Service;
+  index: number;
+}) {
+  const Icon = service.icon;
+  const reduceMotion = useReducedMotion();
+
+  return (
+    <motion.article
+      initial={{
+        opacity: 0,
+        y: reduceMotion ? 0 : 35,
+      }}
+      whileInView={{
+        opacity: 1,
+        y: 0,
+      }}
+      viewport={{
+        once: true,
+        amount: 0.12,
+      }}
+      whileHover={reduceMotion ? undefined : { y: -7 }}
+      transition={{
+        duration: reduceMotion ? 0 : 0.65,
+        delay: reduceMotion ? 0 : (index % 3) * 0.09,
+        ease,
+      }}
+      className="
+        group/card relative isolate flex h-full min-w-0
+        flex-col overflow-hidden rounded-[26px]
+        border border-black/[0.07]
+        bg-white p-5
+        shadow-[0_4px_24px_rgba(0,0,0,0.025)]
+        transition-[border-color,box-shadow,background-color]
+        duration-500
+        hover:border-black/[0.12]
+        hover:bg-white
+        hover:shadow-[0_20px_60px_rgba(0,0,0,0.07)]
+        sm:rounded-[30px] sm:p-7
+        lg:p-7 xl:p-8
+      "
+      style={
+        {
+          "--service-accent": service.accent,
+          "--service-accent-soft": service.accentSoft,
+        } as React.CSSProperties
+      }
+    >
+      {/* TOP ACCENT LINE */}
+      <div
+        aria-hidden="true"
+        className="
+          absolute left-0 top-0 h-[3px] w-full
+          origin-left scale-x-50 opacity-60
+          transition-all duration-500
+          group-hover/card:scale-x-100
+          group-hover/card:opacity-100
+        "
+        style={{
+          background: `linear-gradient(90deg, ${service.accentSoft}, ${service.accent}, transparent)`,
+        }}
+      />
+
+      {/* COLORED GLOW */}
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none absolute
+          -right-20 -top-24 h-56 w-56
+          rounded-full opacity-[0.045]
+          blur-[75px]
+          transition-all duration-700
+          group-hover/card:scale-125
+          group-hover/card:opacity-[0.12]
+        "
+        style={{ backgroundColor: service.accent }}
+      />
+
+      <div
+        aria-hidden="true"
+        className="
+          pointer-events-none absolute
+          -bottom-24 -left-20 h-48 w-48
+          rounded-full opacity-0 blur-[75px]
+          transition-opacity duration-700
+          group-hover/card:opacity-[0.07]
+        "
+        style={{ backgroundColor: service.accent }}
+      />
+
+      <div className="relative z-10 flex h-full flex-col">
+        {/* CARD TOP */}
+        <div className="flex items-start justify-between gap-4">
+          <div
+            className="
+              flex h-[54px] w-[54px] shrink-0
+              items-center justify-center rounded-[18px]
+              border transition-all duration-500
+              group-hover/card:rotate-[-6deg]
+              group-hover/card:scale-105
+            "
+            style={{
+              color: service.accent,
+              backgroundColor: `${service.accent}0D`,
+              borderColor: `${service.accent}24`,
+            }}
+          >
+            <Icon size={23} strokeWidth={1.7} />
+          </div>
+
+          <span
+            className="
+              select-none text-[50px] font-bold
+              leading-[0.8] tracking-[-0.09em]
+              transition-colors duration-500
+              sm:text-[58px]
+            "
+            style={{ color: `${service.accent}20` }}
+          >
+            {service.id}
+          </span>
+        </div>
+
+        {/* CATEGORY */}
+        <div className="mt-8">
+          <div
+            className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.2em] sm:text-[10px]"
+            style={{ color: service.accent }}
+          >
+            <span
+              className="h-1.5 w-1.5 rounded-full"
+              style={{ backgroundColor: service.accent }}
+            />
+            {service.shortTitle}
+          </div>
+
+          <h3 className="mt-3 max-w-[420px] text-[25px] font-bold leading-[1.02] tracking-[-0.055em] text-[#171717] sm:text-[30px] lg:text-[28px] xl:text-[32px]">
+            {service.title}
+          </h3>
+
+          <p className="mt-3 text-[11px] font-medium tracking-wide text-black/40">
+            {service.subtitle}
+          </p>
+
+          <p className="mt-4 text-[13px] leading-6 text-[#737373] sm:text-sm sm:leading-7">
+            {service.description}
+          </p>
+        </div>
+
+        {/* DIVIDER */}
+        <div className="my-6 h-px w-full bg-black/[0.07]" />
+
+        {/* BENEFITS */}
+        <div className="flex-1">
+          <h4 className="text-[11px] font-bold uppercase tracking-[0.15em] text-[#404040]">
+            What&apos;s included
+          </h4>
+
+          <div className="mt-4 space-y-3">
+            {service.benefits.map((benefit) => (
+              <div
+                key={benefit}
+                className="
+                  flex items-start gap-3
+                  text-[12px] leading-5 text-[#737373]
+                  transition-colors duration-300
+                  group-hover/card:text-[#525252]
+                  sm:text-[13px]
+                "
+              >
+                <span
+                  className="
+                    mt-0.5 flex h-[17px] w-[17px]
+                    shrink-0 items-center justify-center
+                    rounded-full transition-transform duration-300
+                    group-hover/card:scale-110
+                  "
+                  style={{
+                    color: service.accent,
+                    backgroundColor: `${service.accent}12`,
+                  }}
+                >
+                  <Check size={10} strokeWidth={2.5} />
+                </span>
+
+                <span>{benefit}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* FOOTER */}
+        <div className="mt-8 flex items-center justify-between border-t border-black/[0.07] pt-5">
+          <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-black/35">
+            Nexora Digital
+          </span>
+
+          <span
+            className="
+              flex h-9 w-9 items-center justify-center
+              rounded-full border
+              transition-all duration-300
+              group-hover/card:translate-x-0.5
+              group-hover/card:-translate-y-0.5
+            "
+            style={{
+              color: service.accent,
+              borderColor: `${service.accent}30`,
+              backgroundColor: `${service.accent}08`,
+            }}
+          >
+            <ArrowUpRight size={16} />
+          </span>
+        </div>
+      </div>
+    </motion.article>
+  );
+}
+
+/* ================================================================
+   SERVICES SECTION
 ================================================================ */
 
 export default function Services() {
-  const sectionRef =
-    useRef<HTMLElement | null>(null);
-
-  const desktopCardsRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const mobileCardsRef =
-    useRef<HTMLDivElement | null>(null);
-
-  const desktopTriggerRef =
-    useRef<ScrollTrigger | null>(null);
-
-  const [activeIndex, setActiveIndex] =
-    useState(0);
-
-  const activeIndexRef =
-    useRef(0);
-
-  const [isDesktop, setIsDesktop] =
-    useState(false);
-
-  /* ================================================================
-     RESPONSIVE
-  ================================================================= */
-
-  useEffect(() => {
-    const media = window.matchMedia(
-      "(min-width: 1024px)"
-    );
-
-    const handleChange = () => {
-      setIsDesktop(media.matches);
-    };
-
-    handleChange();
-
-    media.addEventListener(
-      "change",
-      handleChange
-    );
-
-    return () => {
-      media.removeEventListener(
-        "change",
-        handleChange
-      );
-    };
-  }, []);
-
-  /* ================================================================
-     ACTIVE INDEX
-  ================================================================= */
-
-  const updateActiveIndex =
-    useCallback((index: number) => {
-      const safeIndex = Math.max(
-        0,
-        Math.min(
-          index,
-          services.length - 1
-        )
-      );
-
-      activeIndexRef.current =
-        safeIndex;
-
-      setActiveIndex(safeIndex);
-    }, []);
-
-  /* ================================================================
-     DESKTOP CARD STACK
-  ================================================================= */
-
-  const updateDesktopCards =
-    useCallback((progress: number) => {
-      const cards =
-        desktopCardsRef.current?.querySelectorAll<HTMLElement>(
-          "[data-service-card]"
-        );
-
-      if (!cards?.length) {
-        return;
-      }
-
-      const total =
-        services.length;
-
-      const exactIndex =
-        progress * (total - 1);
-
-      const currentIndex =
-        Math.round(exactIndex);
-
-      if (
-        currentIndex !==
-        activeIndexRef.current
-      ) {
-        activeIndexRef.current =
-          currentIndex;
-
-        setActiveIndex(
-          currentIndex
-        );
-      }
-
-      cards.forEach(
-        (card, index) => {
-          const distance =
-            index - exactIndex;
-
-          const absDistance =
-            Math.abs(distance);
-
-          let x = 0;
-          let y = 0;
-          let scale = 1;
-          let opacity = 1;
-          let rotate = 0;
-          let rotateY = 0;
-          let zIndex = 10;
-
-          /* --------------------------------------------------------
-             ACTIVE CARD
-          --------------------------------------------------------- */
-
-          if (
-            absDistance < 0.55
-          ) {
-            const t =
-              Math.min(
-                absDistance /
-                  0.55,
-                1
-              );
-
-            x =
-              distance * -10;
-
-            y =
-              absDistance * 3;
-
-            scale =
-              1 - t * 0.02;
-
-            opacity =
-              1 - t * 0.05;
-
-            rotate =
-              distance * -0.5;
-
-            rotateY =
-              distance * -2;
-
-            zIndex = 100;
-          }
-
-          /* --------------------------------------------------------
-             NEXT CARDS
-          --------------------------------------------------------- */
-
-          else if (
-            distance > 0
-          ) {
-            const t =
-              Math.min(
-                (distance -
-                  0.55) /
-                  1.25,
-                1
-              );
-
-            x =
-              28 - t * 15;
-
-            y =
-              14 + t * 15;
-
-            scale =
-              0.965 - t * 0.05;
-
-            opacity =
-              0.55 - t * 0.4;
-
-            rotate =
-              1 + t * 1.5;
-
-            rotateY =
-              3 + t * 5;
-
-            zIndex =
-              80 - index;
-          }
-
-          /* --------------------------------------------------------
-             PREVIOUS CARDS
-          --------------------------------------------------------- */
-
-          else {
-            const t =
-              Math.min(
-                (-distance -
-                  0.55) /
-                  1.25,
-                1
-              );
-
-            x =
-              -28 - t * 18;
-
-            y =
-              15 + t * 18;
-
-            scale =
-              0.96 - t * 0.06;
-
-            opacity =
-              0.25 - t * 0.2;
-
-            rotate =
-              -1 - t * 2;
-
-            rotateY =
-              -4 - t * 5;
-
-            zIndex =
-              70 - index;
-          }
-
-          gsap.set(card, {
-            xPercent: x,
-            yPercent: y,
-            scale,
-            opacity,
-            rotate,
-            rotateY,
-            zIndex,
-            transformPerspective: 1400,
-            transformOrigin:
-              "center center",
-          });
-        }
-      );
-    }, []);
-
-  /* ================================================================
-     DESKTOP PIN
-  ================================================================= */
-
-  useEffect(() => {
-    if (!isDesktop) {
-      return;
-    }
-
-    const section =
-      sectionRef.current;
-
-    if (!section) {
-      return;
-    }
-
-    const ctx =
-      gsap.context(() => {
-        gsap.registerPlugin(
-          ScrollTrigger
-        );
-
-        updateDesktopCards(0);
-
-        desktopTriggerRef.current =
-          ScrollTrigger.create({
-            id: "services-pin-trigger",
-
-            trigger: section,
-
-            start: "top top",
-
-            end: () =>
-              `+=${window.innerHeight * 4}`,
-
-            pin: true,
-
-            pinSpacing: true,
-
-            anticipatePin: 1,
-
-            scrub: 0.35,
-
-            invalidateOnRefresh:
-              true,
-
-            onUpdate: (self) => {
-              updateDesktopCards(
-                self.progress
-              );
-            },
-          });
-
-        ScrollTrigger.refresh();
-      }, section);
-
-    return () => {
-      desktopTriggerRef.current?.kill();
-
-      desktopTriggerRef.current =
-        null;
-
-      ctx.revert();
-    };
-  }, [
-    isDesktop,
-    updateDesktopCards,
-  ]);
-
-  /* ================================================================
-     MOBILE FLYING CARD ANIMATION
-  ================================================================= */
-
-  useEffect(() => {
-    if (isDesktop) {
-      return;
-    }
-
-    const container =
-      mobileCardsRef.current;
-
-    if (!container) {
-      return;
-    }
-
-    const ctx =
-      gsap.context(() => {
-        const cards =
-          container.querySelectorAll<HTMLElement>(
-            "[data-mobile-card]"
-          );
-
-        cards.forEach(
-          (card, index) => {
-            const fromLeft =
-              index % 2 === 0;
-
-            gsap.fromTo(
-              card,
-              {
-                x: fromLeft
-                  ? -90
-                  : 90,
-
-                y: 35,
-
-                rotate: fromLeft
-                  ? -4
-                  : 4,
-
-                scale: 0.94,
-
-                opacity: 0,
-
-                transformOrigin:
-                  fromLeft
-                    ? "left center"
-                    : "right center",
-              },
-              {
-                x: 0,
-                y: 0,
-                rotate: 0,
-                scale: 1,
-                opacity: 1,
-
-                duration: 0.85,
-
-                ease:
-                  "power3.out",
-
-                scrollTrigger: {
-                  trigger: card,
-
-                  start:
-                    "top 88%",
-
-                  end:
-                    "top 52%",
-
-                  scrub: 0.75,
-
-                  invalidateOnRefresh:
-                    true,
-                },
-              }
-            );
-          }
-        );
-      }, container);
-
-    return () => {
-      ctx.revert();
-    };
-  }, [isDesktop]);
-
-  /* ================================================================
-     DESKTOP NAVIGATION
-  ================================================================= */
-
-  const goToService =
-    useCallback(
-      (index: number) => {
-        const safeIndex =
-          Math.max(
-            0,
-            Math.min(
-              index,
-              services.length - 1
-            )
-          );
-
-        if (!isDesktop) {
-          const card =
-            document.querySelector(
-              `[data-mobile-service="${safeIndex}"]`
-            );
-
-          card?.scrollIntoView({
-            behavior:
-              "smooth",
-            block: "center",
-          });
-
-          return;
-        }
-
-        const trigger =
-          desktopTriggerRef.current;
-
-        if (!trigger) {
-          updateActiveIndex(
-            safeIndex
-          );
-
-          return;
-        }
-
-        const progress =
-          safeIndex /
-          (services.length - 1);
-
-        const targetY =
-          trigger.start +
-          (trigger.end -
-            trigger.start) *
-            progress;
-
-        window.scrollTo({
-          top: targetY,
-          behavior:
-            "smooth",
-        });
-      },
-      [
-        isDesktop,
-        updateActiveIndex,
-      ]
-    );
-
-  /* ================================================================
-     RESIZE
-  ================================================================= */
-
-  useEffect(() => {
-    if (!isDesktop) {
-      return;
-    }
-
-    const handleResize =
-      () => {
-        ScrollTrigger.refresh();
-      };
-
-    window.addEventListener(
-      "resize",
-      handleResize
-    );
-
-    return () => {
-      window.removeEventListener(
-        "resize",
-        handleResize
-      );
-    };
-  }, [isDesktop]);
-
-  /* ================================================================
-     SERVICE CARD
-  ================================================================= */
-
-  const renderServiceCard =
-    (
-      service: Service,
-      index: number,
-      mobile = false
-    ) => {
-      const Icon =
-        service.icon;
-
-      return (
-        <article
-          key={service.id}
-          data-service-card={
-            !mobile
-              ? true
-              : undefined
-          }
-          data-mobile-card={
-            mobile
-              ? true
-              : undefined
-          }
-          data-mobile-service={
-            mobile
-              ? index
-              : undefined
-          }
-          className={
-            mobile
-              ? `
-                relative
-                w-full
-                overflow-hidden
-                rounded-[28px]
-                border
-                border-[#e6e7ef]
-                bg-white
-                p-5
-                shadow-[0_18px_55px_rgba(50,45,90,.08)]
-                sm:rounded-[32px]
-                sm:p-7
-              `
-              : `
-                absolute
-                left-0
-                top-1/2
-                h-[clamp(420px,58vh,525px)]
-                w-full
-                -translate-y-1/2
-                overflow-hidden
-                rounded-[32px]
-                border
-                border-[#e3e4ec]
-                bg-white
-                p-7
-                shadow-[0_30px_90px_rgba(55,45,100,.12)]
-                xl:p-8
-              `
-          }
-          style={{
-            borderTopColor:
-              `${service.accent}70`,
-            borderTopWidth:
-              "3px",
-          }}
-        >
-          {/* =======================================================
-              CARD HEADER
-          ======================================================== */}
-
-          <div className="relative z-10 flex items-start justify-between">
-            <div className="flex items-center gap-4">
-              <div
-                className="
-                  flex
-                  h-[54px]
-                  w-[54px]
-                  shrink-0
-                  items-center
-                  justify-center
-                  rounded-[17px]
-                  text-white
-                  shadow-lg
-                "
-                style={{
-                  background:
-                    `linear-gradient(135deg, #17122c, ${service.accent})`,
-
-                  boxShadow:
-                    `0 10px 25px ${service.accent}30`,
-                }}
-              >
-                <Icon
-                  size={
-                    mobile
-                      ? 24
-                      : 25
-                  }
-                  strokeWidth={
-                    1.8
-                  }
-                />
-              </div>
-
-              <div>
-                <div
-                  className="
-                    text-[10px]
-                    font-bold
-                    uppercase
-                    tracking-[0.18em]
-                  "
-                  style={{
-                    color:
-                      service.accent,
-                  }}
-                >
-                  Service
-                </div>
-
-                <div className="mt-1 text-[12px] text-[#7b89a4]">
-                  Nexora Digital
-                </div>
-              </div>
-            </div>
-
-            <div
-              className="
-                select-none
-                text-[62px]
-                font-bold
-                leading-[0.7]
-                tracking-[-0.08em]
-                sm:text-[72px]
-              "
-              style={{
-                color:
-                  `${service.accent}13`,
-              }}
-            >
-              {service.id}
-            </div>
-          </div>
-
-          {/* =======================================================
-              CONTENT
-          ======================================================== */}
-
-          <div
-            className={
-              mobile
-                ? "relative z-10 mt-8"
-                : "relative z-10 mt-7"
-            }
-          >
-            <div
-              className="
-                text-[10px]
-                font-bold
-                uppercase
-                tracking-[0.16em]
-              "
-              style={{
-                color:
-                  service.accent,
-              }}
-            >
-              {service.shortTitle}
-            </div>
-
-            <h3
-              className={
-                mobile
-                  ? `
-                    mt-2
-                    max-w-[560px]
-                    text-[clamp(2.2rem,10vw,3.5rem)]
-                    font-bold
-                    leading-[0.95]
-                    tracking-[-0.055em]
-                    text-[#171936]
-                  `
-                  : `
-                    mt-2
-                    max-w-[680px]
-                    text-[clamp(2.6rem,3.8vw,4rem)]
-                    font-bold
-                    leading-[0.94]
-                    tracking-[-0.06em]
-                    text-[#171936]
-                  `
-              }
-            >
-              {service.title}
-            </h3>
-
-            <p
-              className={
-                mobile
-                  ? `
-                    mt-5
-                    max-w-[650px]
-                    text-[14px]
-                    leading-6
-                    text-[#6d7d9d]
-                    sm:text-[15px]
-                    sm:leading-7
-                  `
-                  : `
-                    mt-4
-                    max-w-[680px]
-                    text-[14px]
-                    leading-6
-                    text-[#6d7d9d]
-                    xl:text-[15px]
-                    xl:leading-7
-                  `
-              }
-            >
-              {service.description}
-            </p>
-          </div>
-
-          {/* =======================================================
-              DIVIDER
-          ======================================================== */}
-
-          <div
-            className={
-              mobile
-                ? "relative z-10 my-6 h-px w-full"
-                : "relative z-10 my-5 h-px w-full"
-            }
-            style={{
-              background:
-                "#e8e9ef",
-            }}
-          />
-
-          {/* =======================================================
-              BENEFITS
-          ======================================================== */}
-
-          <div className="relative z-10">
-            <h4
-              className={
-                mobile
-                  ? "text-[14px] font-bold text-[#20233f]"
-                  : "text-[14px] font-bold text-[#20233f]"
-              }
-            >
-              Key Benefits
-            </h4>
-
-            <div
-              className={
-                mobile
-                  ? "mt-4 grid grid-cols-1 gap-3 sm:grid-cols-2"
-                  : "mt-3 grid grid-cols-2 gap-x-7 gap-y-3"
-              }
-            >
-              {service.benefits.map(
-                (benefit) => (
-                  <div
-                    key={benefit}
-                    className="
-                      flex
-                      items-start
-                      gap-3
-                      text-[12px]
-                      leading-5
-                      text-[#71819f]
-                      sm:text-[13px]
-                    "
-                  >
-                    <span
-                      className="
-                        mt-0.5
-                        flex
-                        h-4
-                        w-4
-                        shrink-0
-                        items-center
-                        justify-center
-                        rounded-full
-                        text-white
-                      "
-                      style={{
-                        background:
-                          service.accent,
-                      }}
-                    >
-                      <Check
-                        size={10}
-                        strokeWidth={3}
-                      />
-                    </span>
-
-                    <span>
-                      {benefit}
-                    </span>
-                  </div>
-                )
-              )}
-            </div>
-          </div>
-
-          {/* =======================================================
-              BOTTOM ACCENT
-          ======================================================== */}
-
-          <div
-            className="
-              absolute
-              bottom-0
-              left-0
-              h-[3px]
-              w-full
-            "
-            style={{
-              background:
-                service.accent,
-            }}
-          />
-        </article>
-      );
-    };
-
-  /* ================================================================
-     RETURN
-  ================================================================= */
+  const reduceMotion = useReducedMotion();
 
   return (
     <section
-      ref={sectionRef}
       id="services"
       data-sidebar-theme="light"
       className="
-        relative
-        overflow-hidden
-        bg-[#f8f8fa]
-        text-[#171936]
-        section-with-left-nav
+        section-with-left-nav relative isolate
+        scroll-mt-24 overflow-hidden
+        bg-[#FAFAF8] text-[#171717]
       "
     >
-      {/* ==============================================================
-          DESKTOP
-      =============================================================== */}
-
+      {/* BACKGROUND */}
       <div
-        className="
-          relative
-          hidden
-          h-[100svh]
-          min-h-[680px]
-          overflow-hidden
-          lg:block
-        "
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
       >
-        <div
-          className="
-            relative
-            z-10
-            mx-auto
-            flex
-            h-full
-            w-full
-            max-w-[1750px]
-            flex-col
-            px-8
-            py-8
-            xl:px-10
-            xl:py-9
-          "
-        >
-          {/* ========================================================
-              HEADER
-          ========================================================= */}
+        <div className="absolute -left-40 top-[8%] h-[320px] w-[320px] rounded-full bg-violet-400/[0.09] blur-[120px] sm:h-[500px] sm:w-[500px]" />
 
-          <div className="grid grid-cols-[1fr_0.65fr] gap-10">
-            <div>
-              <div className="mb-4 flex items-center gap-3">
-                <span className="h-2.5 w-2.5 rounded-full bg-violet-600" />
+        <div className="absolute -right-40 top-[35%] h-[300px] w-[300px] rounded-full bg-cyan-300/[0.10] blur-[120px] sm:h-[450px] sm:w-[450px]" />
 
-                <span className="text-[12px] font-bold uppercase tracking-[0.25em] text-violet-600">
-                  What We Do
-                </span>
-              </div>
+        <div className="absolute bottom-0 left-[25%] h-[300px] w-[300px] rounded-full bg-pink-300/[0.07] blur-[120px]" />
 
- <h2 className="max-w-[780px] text-[clamp(3.2rem,4.7vw,5.4rem)] font-bold leading-[0.93] tracking-[-0.065em]">
-  Built for attention.
-  <br />
-  <span className="bg-gradient-to-r from-[#9b4dff] via-[#7436f2] to-[#6b21ff] bg-clip-text text-transparent">
-    Designed for growth.
-  </span>
-</h2>
-            </div>
-          </div>
+        <div className="absolute inset-0 bg-[radial-gradient(rgba(0,0,0,0.22)_0.65px,transparent_0.65px)] opacity-[0.08] [background-size:26px_26px]" />
 
-          {/* ========================================================
-              MAIN
-              
-              CARD = WIDER
-              BUTTONS = NARROWER
-          ========================================================= */}
-
-          <div
-            className="
-              mt-5
-              grid
-              min-h-0
-              flex-1
-              grid-cols-[minmax(0,1.5fr)_minmax(280px,.58fr)]
-              gap-10
-              xl:grid-cols-[minmax(0,1.6fr)_minmax(300px,.55fr)]
-              xl:gap-14
-            "
-          >
-            {/* ======================================================
-                LEFT CARD
-            ======================================================= */}
-
-            <div
-              ref={desktopCardsRef}
-              className="
-                relative
-                min-h-0
-                overflow-visible
-              "
-              style={{
-                perspective:
-                  "1400px",
-              }}
-            >
-              {services.map(
-                (
-                  service,
-                  index
-                ) =>
-                  renderServiceCard(
-                    service,
-                    index,
-                    false
-                  )
-              )}
-            </div>
-
-            {/* ======================================================
-                RIGHT NAV
-            ======================================================= */}
-
-            <div className="flex min-h-0 items-center justify-end">
-              <div className="w-full max-w-[370px] space-y-2.5">
-                {services.map(
-                  (
-                    service,
-                    index
-                  ) => {
-                    const Icon =
-                      service.icon;
-
-                    const isActive =
-                      activeIndex ===
-                      index;
-
-                    return (
-                      <button
-                        key={
-                          service.id
-                        }
-                        type="button"
-                        onClick={() =>
-                          goToService(
-                            index
-                          )
-                        }
-                        className="
-                          group
-                          relative
-                          flex
-                          w-full
-                          items-center
-                          gap-3
-                          overflow-hidden
-                          rounded-[19px]
-                          border
-                          p-2.5
-                          text-left
-                          transition-all
-                          duration-500
-                        "
-                        style={{
-                          borderColor:
-                            isActive
-                              ? `${service.accent}65`
-                              : "#e3e4eb",
-
-                          background:
-                            isActive
-                              ? "#ffffff"
-                              : "rgba(255,255,255,.72)",
-
-                          boxShadow:
-                            isActive
-                              ? `0 14px 40px ${service.accent}18`
-                              : "0 7px 24px rgba(40,40,80,.035)",
-                        }}
-                      >
-                        {/* Active line */}
-
-                        <span
-                          className="
-                            absolute
-                            left-0
-                            top-1/2
-                            h-7
-                            w-[3px]
-                            -translate-y-1/2
-                            rounded-r-full
-                            transition-all
-                            duration-500
-                          "
-                          style={{
-                            background:
-                              isActive
-                                ? service.accent
-                                : "transparent",
-                          }}
-                        />
-
-                        {/* Icon */}
-
-                        <span
-                          className="
-                            flex
-                            h-14
-                            w-14
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-[16px]
-                            transition-all
-                            duration-500
-                          "
-                          style={{
-                            background:
-                              isActive
-                                ? `linear-gradient(135deg, ${service.accent}, ${service.accentSoft})`
-                                : "#f3f4f8",
-
-                            color:
-                              isActive
-                                ? "#ffffff"
-                                : service.accent,
-
-                            boxShadow:
-                              isActive
-                                ? `0 10px 24px ${service.accent}35`
-                                : "none",
-                          }}
-                        >
-                          <Icon
-                            size={22}
-                            strokeWidth={1.9}
-                          />
-                        </span>
-
-                        {/* Text */}
-
-                        <span className="min-w-0 flex-1">
-                          <span className="block truncate text-[14px] font-bold tracking-[-0.015em] text-[#20233f]">
-                            {
-                              service.shortTitle
-                            }
-                          </span>
-
-                          <span className="mt-0.5 block truncate text-[11px] text-[#7b8ba8]">
-                            {
-                              service.subtitle
-                            }
-                          </span>
-                        </span>
-
-                        {/* Number */}
-
-                        <span
-                          className="
-                            hidden
-                            text-[11px]
-                            font-bold
-                            tracking-[0.08em]
-                            sm:block
-                          "
-                          style={{
-                            color:
-                              isActive
-                                ? service.accent
-                                : "#a4aabd",
-                          }}
-                        >
-                          {
-                            service.id
-                          }
-                        </span>
-
-                        {/* Arrow */}
-
-                        <span
-                          className="
-                            flex
-                            h-9
-                            w-9
-                            shrink-0
-                            items-center
-                            justify-center
-                            rounded-full
-                            transition-all
-                            duration-500
-                          "
-                          style={{
-                            background:
-                              isActive
-                                ? service.accent
-                                : "#f1f2f6",
-
-                            color:
-                              isActive
-                                ? "#ffffff"
-                                : "#8b94aa",
-                          }}
-                        >
-                          <ArrowRight
-                            size={15}
-                            className="
-                              transition-transform
-                              duration-300
-                              group-hover:translate-x-0.5
-                            "
-                          />
-                        </span>
-                      </button>
-                    );
-                  }
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* ========================================================
-              DESKTOP FOOTER
-              
-              Explore Projects REMOVED
-          ========================================================= */}
-        </div>
+        <div className="absolute inset-x-0 top-0 h-40 bg-gradient-to-b from-white/70 to-transparent" />
       </div>
 
-      {/* ==============================================================
-          MOBILE
-          
-          NORMAL SCROLL
-          NO PIN
-          FLYING SIDE ANIMATION
-          NO EXPLORE BUTTON
-      =============================================================== */}
+      <div className="mx-auto w-full max-w-[1500px] px-5 py-20 sm:px-8 sm:py-28 lg:px-14 lg:py-36 xl:px-20">
+        {/* HEADER */}
+        <SectionReveal>
+          <div className="flex items-center gap-2.5 text-[10px] font-bold uppercase tracking-[0.22em] text-[#657D00] sm:text-xs">
+            <span className="h-2 w-2 rounded-full bg-[#A5C900]" />
+            What We Do
+          </div>
+        </SectionReveal>
 
-      <div className="block lg:hidden">
-        <div className="px-5 pb-16 pt-12 sm:px-7 sm:pt-16">
-          {/* ========================================================
-              MOBILE HEADER
-          ========================================================= */}
-
-          <div>
-            <div className="mb-4 flex items-center gap-2.5">
-              <span className="h-2 w-2 rounded-full bg-violet-600" />
-
-              <span className="text-[11px] font-bold uppercase tracking-[0.22em] text-violet-600">
-                What We Do
-              </span>
-            </div>
-
-            <h2 className="max-w-[650px] text-[clamp(2.65rem,11vw,4.2rem)] font-bold leading-[0.93] tracking-[-0.065em]">
-              Services built to
+        <div className="mt-6 grid gap-7 lg:grid-cols-[1.2fr_0.8fr] lg:items-end lg:gap-14">
+          <SectionReveal delay={0.08}>
+            <h2 className="max-w-[900px] text-[clamp(3rem,8.2vw,7.2rem)] font-bold leading-[0.88] tracking-[-0.075em] text-[#171717]">
+              Built for attention.
               <br />
-
-              <span className="bg-gradient-to-r from-[#9b4dff] via-[#7436f2] to-[#6b21ff] bg-clip-text text-transparent">
-                move your business
-                forward.
+              <span className="bg-gradient-to-r from-[#789600] via-[#8EAD12] to-[#4D7C0F] bg-clip-text text-transparent">
+                Designed for growth.
               </span>
             </h2>
+          </SectionReveal>
 
-            <p className="mt-5 max-w-[620px] text-[14px] leading-6 text-[#7182a1] sm:text-[15px] sm:leading-7">
-              From paid advertising
-              to high-converting
-              websites, we build
-              the systems that turn
-              attention into
-              measurable growth.
-            </p>
-          </div>
+          <SectionReveal delay={0.18}>
+            <div className="max-w-xl lg:justify-self-end lg:pb-2">
+              <p className="text-sm leading-7 text-[#737373] sm:text-base sm:leading-8">
+                From paid advertising to high-converting websites, we build
+                the systems that turn attention into measurable growth.
+              </p>
 
-          {/* ========================================================
-              MOBILE CARDS
-              
-              SIDE → CENTER FLYING ANIMATION
-          ========================================================= */}
-
-          <div
-            ref={mobileCardsRef}
-            className="
-              mt-8
-              space-y-5
-              overflow-visible
-              sm:mt-10
-              sm:space-y-7
-            "
-          >
-            {services.map(
-              (
-                service,
-                index
-              ) =>
-                renderServiceCard(
-                  service,
-                  index,
-                  true
-                )
-            )}
-          </div>
+              <div className="mt-6 flex flex-wrap items-center gap-3 text-[9px] font-bold uppercase tracking-[0.16em] text-black/45 sm:text-[10px]">
+                <span>Strategy</span>
+                <span className="h-1 w-1 rounded-full bg-[#8EAD12]" />
+                <span>Creative</span>
+                <span className="h-1 w-1 rounded-full bg-[#8EAD12]" />
+                <span>Performance</span>
+              </div>
+            </div>
+          </SectionReveal>
         </div>
+
+        {/* SMALL INTRO STRIP */}
+        <SectionReveal delay={0.12} className="mt-12 sm:mt-16">
+          <div className="flex flex-col gap-4 rounded-2xl border border-black/[0.07] bg-white/75 p-5 shadow-[0_4px_24px_rgba(0,0,0,0.025)] backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:rounded-[22px] sm:px-7 sm:py-6">
+            <div>
+              <p className="text-sm font-semibold text-[#262626] sm:text-base">
+                Five capabilities. One growth-focused team.
+              </p>
+
+              <p className="mt-1 text-xs leading-6 text-[#737373] sm:text-sm">
+                Every service is designed to work independently or as part
+                of a connected system.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2 text-[9px] font-bold uppercase tracking-[0.15em] text-black/45">
+              <span className="h-2 w-2 rounded-full bg-[#A5C900]" />
+              Built around your goals
+            </div>
+          </div>
+        </SectionReveal>
+
+        {/* SERVICE CARDS */}
+        <div className="mt-7 grid grid-cols-1 items-stretch gap-4 sm:mt-9 sm:grid-cols-2 sm:gap-5 xl:grid-cols-3 xl:gap-6">
+          {services.map((service, index) => (
+            <SectionReveal
+              key={service.id}
+              delay={reduceMotion ? 0 : (index % 3) * 0.07}
+              className="h-full min-w-0"
+            >
+              <ServiceCard service={service} index={index} />
+            </SectionReveal>
+          ))}
+
+          {/* CLOSING CARD */}
+          <SectionReveal
+            delay={reduceMotion ? 0 : 0.12}
+            className="h-full min-w-0"
+          >
+            <motion.div
+              whileHover={reduceMotion ? undefined : { y: -6 }}
+              transition={{ duration: 0.35, ease }}
+              className="
+                group/closing relative isolate
+                flex h-full min-h-[300px]
+                flex-col justify-between overflow-hidden
+                rounded-[26px] border border-[#D6FF09]/70
+                bg-[#D6FF09] p-6 text-[#080808]
+                shadow-[0_12px_40px_rgba(120,150,0,0.08)]
+                sm:rounded-[30px] sm:p-7
+                xl:min-h-[360px] xl:p-8
+              "
+            >
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -right-20 -top-20 h-56 w-56 rounded-full bg-white/60 blur-[75px] transition-transform duration-700 group-hover/closing:scale-125"
+              />
+
+              <div
+                aria-hidden="true"
+                className="pointer-events-none absolute -bottom-24 -left-20 h-48 w-48 rounded-full bg-black/[0.07] blur-[70px]"
+              />
+
+              <div className="relative z-10">
+                <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-black/55">
+                  One connected system
+                </span>
+
+                <h3 className="mt-5 max-w-[300px] text-[clamp(2rem,4vw,3.1rem)] font-bold leading-[0.92] tracking-[-0.065em]">
+                  Good work.
+                  <br />
+                  Real impact.
+                </h3>
+
+                <p className="mt-5 max-w-[300px] text-sm leading-7 text-black/70">
+                  Strategy, creative, tracking, and technology working
+                  together to help your business move forward.
+                </p>
+              </div>
+
+              <div className="relative z-10 mt-8 flex items-center justify-between border-t border-black/15 pt-5">
+                <span className="text-[9px] font-bold uppercase tracking-[0.16em] text-black/60">
+                  Let&apos;s build something
+                </span>
+
+                <Link
+                  href="/contact"
+                  aria-label="Contact Nexora Digital"
+                  className="flex h-11 w-11 items-center justify-center rounded-full bg-[#080808] text-[#D6FF09] transition-transform duration-300 hover:rotate-45"
+                >
+                  <ArrowUpRight size={19} />
+                </Link>
+              </div>
+            </motion.div>
+          </SectionReveal>
+        </div>
+
+        {/* BOTTOM CTA */}
+        <SectionReveal delay={0.1} className="mt-16 sm:mt-20 lg:mt-24">
+          <div className="flex flex-col gap-6 border-t border-black/10 pt-7 sm:flex-row sm:items-end sm:justify-between sm:pt-9">
+            <div>
+              <p className="text-[10px] font-bold uppercase tracking-[0.2em] text-black/45">
+                Have a project in mind?
+              </p>
+
+              <h3 className="mt-3 max-w-2xl text-2xl font-bold tracking-[-0.045em] text-[#171717] sm:text-3xl lg:text-4xl">
+                Let&apos;s turn your next idea into progress.
+              </h3>
+            </div>
+
+            <motion.a
+              href="/contact"
+              whileHover={reduceMotion ? undefined : { y: -3 }}
+              whileTap={reduceMotion ? undefined : { scale: 0.98 }}
+              className="
+                group inline-flex shrink-0 items-center
+                justify-between gap-5 rounded-full
+                bg-[#D6FF09] px-5 py-3.5
+                text-xs font-bold uppercase tracking-[0.08em]
+                text-[#050505]
+                transition-shadow duration-300
+                hover:shadow-[0_10px_35px_rgba(120,150,0,0.18)]
+                sm:px-6 sm:py-4
+              "
+            >
+              Start a project
+
+              <span className="flex h-7 w-7 items-center justify-center rounded-full bg-[#050505] text-[#D6FF09] transition-transform duration-300 group-hover:rotate-45">
+                <ArrowUpRight size={15} />
+              </span>
+            </motion.a>
+          </div>
+        </SectionReveal>
       </div>
     </section>
   );

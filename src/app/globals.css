@@ -1,3 +1,4 @@
+
 @import "tailwindcss";
 
 /* ==============================
@@ -17,7 +18,7 @@
   --border: #eae8ef;
   --dark: #19171f;
 
-  /* Sidebar / Navigation */
+  /* Sidebar */
   --sidebar-accent: #d6ff00;
   --sidebar-border-light: rgb(0 0 0 / 14%);
   --sidebar-border-dark: rgb(255 255 255 / 15%);
@@ -54,9 +55,9 @@
   --color-surface: var(--surface);
   --color-border: var(--border);
 
-  --font-sans: var(--font-body);
-  --font-heading: var(--font-heading);
-  --font-body: var(--font-body);
+  --font-sans: var(--font-jakarta);
+  --font-heading: var(--font-jakarta);
+  --font-body: var(--font-jakarta);
 }
 
 /* ==============================
@@ -81,7 +82,7 @@ body {
   overflow-x: clip;
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-body), sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -133,7 +134,7 @@ h3,
 h4,
 h5,
 h6 {
-  font-family: var(--font-heading), sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
 }
 
 ::selection {
@@ -173,7 +174,7 @@ h6 {
   gap: 10px;
   color: var(--primary);
   font-size: 12px;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: 0.14em;
   line-height: 1.5;
   text-transform: uppercase;
@@ -190,11 +191,11 @@ h6 {
 .section-title {
   max-width: 1000px;
   margin: 18px 0 0;
-  font-family: var(--font-heading), sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
   font-size: clamp(2.4rem, 5.2vw, 5.5rem);
-  font-weight: 800;
+  font-weight: 700;
   line-height: 0.99;
-  letter-spacing: -0.065em;
+  letter-spacing: -0.055em;
   text-wrap: balance;
 }
 
@@ -202,7 +203,7 @@ h6 {
   max-width: 640px;
   margin-top: 20px;
   color: var(--muted);
-  font-family: var(--font-body), sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
   font-size: clamp(1rem, 1.2vw, 1.125rem);
   line-height: 1.85;
   text-wrap: pretty;
@@ -221,9 +222,9 @@ h6 {
   padding: 14px 22px;
   border: 1px solid transparent;
   border-radius: var(--radius-full);
-  font-family: var(--font-body), sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
   font-size: 14px;
-  font-weight: 750;
+  font-weight: 600;
   line-height: 1.2;
   transition:
     background-color var(--transition),
@@ -294,16 +295,16 @@ h6 {
 
 .card-title {
   margin: 0;
-  font-family: var(--font-heading), sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
   font-size: 20px;
-  font-weight: 800;
-  letter-spacing: -0.04em;
+  font-weight: 700;
+  letter-spacing: -0.035em;
 }
 
 .card-description {
   margin-top: 10px;
   color: var(--muted);
-  font-family: var(--font-body), sans-serif;
+  font-family: var(--font-jakarta), sans-serif;
   font-size: 14px;
   line-height: 1.8;
 }
@@ -461,17 +462,6 @@ h6 {
   min-width: 0;
 }
 
-/*
-  Main reusable class for sections that
-  need to leave space for the fixed left nav.
-
-  Desktop / Tablet:
-  70px reserved for sidebar.
-
-  Mobile:
-  Full width — no sidebar gap.
-*/
-
 .section-with-left-nav {
   width: 100%;
   min-width: 0;
@@ -479,17 +469,7 @@ h6 {
 }
 
 @media (min-width: 768px) {
-  .section-with-left-nav {
-    padding-left: var(--left-nav-width);
-  }
-}
-
-/*
-  Legacy / inner layout helper.
-  Keep this if other components already use .section-inner.
-*/
-
-@media (min-width: 768px) {
+  .section-with-left-nav,
   .section-inner {
     padding-left: var(--left-nav-width);
   }
@@ -557,7 +537,7 @@ h6 {
 
   .section-title {
     font-size: clamp(2.25rem, 7vw, 3.75rem);
-    letter-spacing: -0.055em;
+    letter-spacing: -0.045em;
   }
 
   .section-description {
@@ -575,16 +555,7 @@ h6 {
     padding: 13px 18px;
   }
 
-  /*
-    Force full-width on mobile.
-    This prevents accidental sidebar spacing
-    from leaking into mobile sections.
-  */
-
-  .section-with-left-nav {
-    padding-left: 0;
-  }
-
+  .section-with-left-nav,
   .section-inner {
     padding-left: 0;
   }

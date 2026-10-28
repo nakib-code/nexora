@@ -1,11 +1,11 @@
 
-import ExpertiseStrip from "@/components/home/ExpertiseStrip";
 import Services from "@/components/home/Services";
 import Team from "@/components/home/Team";
 import About from "@/components/home/About";
 // import Process from "@/components/home/Process";
 import ContactCTA from "@/components/home/ContactCTA";
 import Hero from "@/components/home/hero/Hero";
+import ExpertiseStrip from "@/components/home/ExpertiseStrip";
 
 export default function HomePage() {
   return (
