@@ -1,16 +1,22 @@
 
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { ArrowLeft } from "lucide-react";
 
 import { teamMembers } from "@/data/teamMembers";
 import TeamHero from "@/components/team/TeamHero";
 import TeamAboutServices from "@/components/team/TeamAboutServices";
 import TeamProjects from "@/components/team/TeamProjects";
-import { ArrowLeft } from "lucide-react";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
 };
+
+export function generateStaticParams() {
+  return teamMembers.map((member) => ({
+    slug: member.id,
+  }));
+}
 
 export default async function TeamMemberPage({
   params,
@@ -26,13 +32,13 @@ export default async function TeamMemberPage({
   return (
     <main className="min-h-screen overflow-hidden bg-[#17151b] px-5 py-12 text-white sm:px-8 sm:py-16 lg:px-10">
       <div className="mx-auto max-w-6xl">
-        {/* 1. Hero */}
+        {/* Hero */}
         <TeamHero member={member} />
 
-        {/* 2. About + Services + Skills */}
+        {/* About, Services and Skills */}
         <TeamAboutServices member={member} />
 
-        {/* 3. Projects / Case Studies */}
+        {/* Projects and Case Studies */}
         <TeamProjects member={member} />
 
         {/* Back to Team */}
