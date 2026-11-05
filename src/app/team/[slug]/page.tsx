@@ -1,10 +1,10 @@
 
 import { notFound } from "next/navigation";
 import { teamMembers } from "@/data/teamMembers";
-import TeamHero from "@/components/team/TeamHero";
-import TeamProjects from "@/components/team/TeamProjects";
-import TeamServices from "@/components/team/TeamServices";
-import TeamAboutSkills from "@/components/team/TeamAboutSkills";
+import TeamProjects from "@/components/team/member/TeamProjects";
+import TeamServices from "@/components/team/member/TeamServices";
+import TeamAboutSkills from "@/components/team/member/TeamAboutSkills";
+import TeamMemberHero from "@/components/team/member/TeamHero";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -30,7 +30,7 @@ export default async function TeamMemberPage({
   return (
     <>
         {/* Hero */}
-        <TeamHero member={member} />
+        <TeamMemberHero member={member} />
         <TeamAboutSkills member={member}/>
         <TeamServices member={member}/>
         <TeamProjects member={member} />

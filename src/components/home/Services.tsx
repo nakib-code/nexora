@@ -419,7 +419,7 @@ export default function Services() {
                 flex min-h-[300px] h-full flex-col
                 justify-between overflow-hidden rounded-[20px]
                 border border-[#D6FF09]/70
-                bg-[#D6FF09] p-5 text-[#080808]
+                bg-[#d3f628]/80 p-5 text-[#080808]
                 shadow-[0_10px_35px_rgba(120,150,0,0.07)]
                 sm:min-h-[310px] sm:p-6 lg:min-h-[320px]
               "

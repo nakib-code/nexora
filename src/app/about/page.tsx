@@ -92,28 +92,39 @@ const capabilities = [
   },
 ];
 
-const reveal: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 28,
+const steps = [
+  {
+    number: "01",
+    title: "Understand",
+    description:
+      "We learn about your business, audience, challenges, and goals before choosing a direction.",
   },
+  {
+    number: "02",
+    title: "Build",
+    description:
+      "We turn insights into a focused plan and create the right digital solutions for your needs.",
+  },
+  {
+    number: "03",
+    title: "Improve",
+    description:
+      "We evaluate performance, learn from the results, and identify opportunities to do better.",
+  },
+];
+
+const reveal: Variants = {
+  hidden: { opacity: 0, y: 28 },
   visible: {
     opacity: 1,
     y: 0,
-    transition: {
-      duration: 0.75,
-      ease,
-    },
+    transition: { duration: 0.75, ease },
   },
 };
 
 const stagger: Variants = {
   hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.12,
-    },
-  },
+  visible: { transition: { staggerChildren: 0.12 } },
 };
 
 function Reveal({
@@ -134,11 +145,7 @@ function Reveal({
       initial="hidden"
       whileInView="visible"
       viewport={{ once: true, amount: 0.15 }}
-      transition={
-        shouldReduceMotion
-          ? { duration: 0 }
-          : { delay }
-      }
+      transition={shouldReduceMotion ? { duration: 0 } : { delay, ease }}
     >
       {children}
     </motion.div>
@@ -149,9 +156,12 @@ export default function AboutPage() {
   const shouldReduceMotion = useReducedMotion();
 
   return (
-    <main className="overflow-hidden bg-background text-foreground">
+    <main className="bg-background text-foreground">
       {/* ===================== HERO ===================== */}
-      <section className="relative isolate overflow-hidden bg-[#0B0D0A] text-white">
+      <section
+        data-sidebar-theme="dark"
+        className="section-with-left-nav relative isolate overflow-hidden bg-[#0B0D0A] text-white"
+      >
         {/* Background decoration */}
         <div
           aria-hidden="true"
@@ -167,13 +177,12 @@ export default function AboutPage() {
               backgroundImage:
                 "linear-gradient(rgba(255,255,255,.25) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.25) 1px, transparent 1px)",
               backgroundSize: "64px 64px",
-              maskImage:
-                "linear-gradient(to bottom, black, transparent 90%)",
+              maskImage: "linear-gradient(to bottom, black, transparent 90%)",
             }}
           />
         </div>
 
-        <div className="container relative mx-auto px-5 pb-20 pt-24 sm:px-8 sm:pb-28 sm:pt-32 lg:px-12 lg:pb-32 lg:pt-36">
+        <div className="relative mx-auto w-full max-w-[1500px] px-5 pb-20 pt-24 sm:px-8 sm:pb-28 sm:pt-32 lg:px-14 lg:pb-32 lg:pt-36 xl:px-20">
           <motion.div
             initial="hidden"
             animate="visible"
@@ -201,18 +210,16 @@ export default function AboutPage() {
                 <br />
                 starts with the
                 <br />
-                <span className="text-[#D7FF19]">
-                  right direction.
-                </span>
+                <span className="text-[#D7FF19]">right direction.</span>
               </motion.h1>
 
               <motion.p
                 variants={reveal}
                 className="mt-7 max-w-xl text-base leading-8 text-white/55 sm:text-lg sm:leading-9"
               >
-                We combine strategy, creativity, and technology
-                to help businesses build a stronger digital
-                presence and move forward with confidence.
+                We combine strategy, creativity, and technology to help
+                businesses build a stronger digital presence and move forward
+                with confidence.
               </motion.p>
 
               <motion.div
@@ -264,16 +271,14 @@ export default function AboutPage() {
                   </div>
                 </div>
 
-                <div className="relative mt-6 flex h-[230px] items-center justify-center overflow-hidden rounded-2xl bg-[#0B0D0A] sm:h-[270px]">
+                <div className="relative mt-6 flex h-[240px] items-center justify-center overflow-hidden rounded-2xl bg-[#0B0D0A] sm:h-[270px]">
                   <div className="absolute h-56 w-56 rounded-full border border-[#D7FF19]/10 sm:h-64 sm:w-64" />
                   <div className="absolute h-40 w-40 rounded-full border border-[#D7FF19]/15 sm:h-48 sm:w-48" />
                   <div className="absolute h-24 w-24 rounded-full border border-[#D7FF19]/20" />
 
                   <motion.div
                     animate={
-                      shouldReduceMotion
-                        ? undefined
-                        : { rotate: 360 }
+                      shouldReduceMotion ? undefined : { rotate: 360 }
                     }
                     transition={{
                       duration: 28,
@@ -287,11 +292,7 @@ export default function AboutPage() {
                   </motion.div>
 
                   <motion.div
-                    animate={
-                      shouldReduceMotion
-                        ? undefined
-                        : { y: [0, -7, 0] }
-                    }
+                    animate={shouldReduceMotion ? undefined : { y: [0, -7, 0] }}
                     transition={{
                       duration: 4,
                       repeat: Infinity,
@@ -308,10 +309,7 @@ export default function AboutPage() {
 
                   <div className="absolute left-4 top-5 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 backdrop-blur-sm sm:left-6">
                     <div className="flex items-center gap-2">
-                      <Target
-                        size={14}
-                        className="text-[#D7FF19]"
-                      />
+                      <Target size={14} className="text-[#D7FF19]" />
                       <span className="text-[10px] font-medium text-white/70 sm:text-xs">
                         Strategy
                       </span>
@@ -320,10 +318,7 @@ export default function AboutPage() {
 
                   <div className="absolute bottom-5 right-4 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-2 backdrop-blur-sm sm:bottom-6 sm:right-6">
                     <div className="flex items-center gap-2">
-                      <TrendingUp
-                        size={14}
-                        className="text-[#D7FF19]"
-                      />
+                      <TrendingUp size={14} className="text-[#D7FF19]" />
                       <span className="text-[10px] font-medium text-white/70 sm:text-xs">
                         Growth
                       </span>
@@ -360,7 +355,10 @@ export default function AboutPage() {
             <div className="flex flex-col justify-between gap-3 text-xs text-white/35 sm:flex-row sm:items-center">
               <span>STRATEGY. CREATIVITY. TECHNOLOGY.</span>
               <span className="flex items-center gap-2">
-                <span className="h-1.5 w-1.5 rounded-full bg-[#D7FF19]" />
+                <span
+                  aria-hidden="true"
+                  className="h-1.5 w-1.5 rounded-full bg-[#D7FF19]"
+                />
                 Built around your business goals
               </span>
             </div>
@@ -371,13 +369,17 @@ export default function AboutPage() {
       {/* ===================== WHO WE ARE ===================== */}
       <section
         id="who-we-are"
-        className="section-padding scroll-mt-24"
+        data-sidebar-theme="light"
+        className="section-with-left-nav section-padding scroll-mt-24"
       >
-        <div className="container mx-auto px-5 sm:px-8 lg:px-12">
+        <div className="mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-14 xl:px-20">
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
             <Reveal>
               <div className="section-label">
-                <span className="mr-2 inline-block h-2 w-2 rounded-full bg-[#D7FF19]" />
+                <span
+                  aria-hidden="true"
+                  className="mr-2 inline-block h-2 w-2 rounded-full bg-[#D7FF19]"
+                />
                 WHO WE ARE
               </div>
 
@@ -392,18 +394,17 @@ export default function AboutPage() {
             <Reveal delay={0.12}>
               <div className="max-w-2xl">
                 <p className="text-lg leading-8 text-foreground/80 sm:text-xl sm:leading-9">
-                  Nexora Digital is built around a simple idea:
-                  digital growth works best when every part of
-                  your strategy moves in the same direction.
+                  Nexora Digital is built around a simple idea: digital growth
+                  works best when every part of your strategy moves in the same
+                  direction.
                 </p>
 
                 <p className="section-description mt-6">
-                  From marketing and analytics to creative
-                  production and web development, we bring
-                  different digital capabilities together to
-                  solve real business challenges. We focus on
-                  understanding your goals first, then finding
-                  the right approach to help you reach them.
+                  From marketing and analytics to creative production and web
+                  development, we bring different digital capabilities
+                  together to solve real business challenges. We focus on
+                  understanding your goals first, then finding the right
+                  approach to help you reach them.
                 </p>
 
                 <div className="mt-9 flex items-center gap-4 border-t border-border pt-6">
@@ -412,9 +413,7 @@ export default function AboutPage() {
                   </div>
 
                   <div>
-                    <p className="font-semibold">
-                      Direction before execution
-                    </p>
+                    <p className="font-semibold">Direction before execution</p>
                     <p className="mt-1 text-sm text-muted">
                       Clear thinking. Purposeful work. Better decisions.
                     </p>
@@ -427,20 +426,21 @@ export default function AboutPage() {
       </section>
 
       {/* ===================== MISSION & VISION ===================== */}
-      <section className="section-padding bg-surface">
-        <div className="container mx-auto px-5 sm:px-8 lg:px-12">
+      <section
+        data-sidebar-theme="light"
+        className="section-with-left-nav section-padding bg-surface"
+      >
+        <div className="mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-14 xl:px-20">
           <Reveal className="mx-auto mb-14 max-w-2xl text-center">
-            <div className="section-label justify-center">
-              OUR PURPOSE
-            </div>
+            <div className="section-label justify-center">OUR PURPOSE</div>
 
             <h2 className="section-title mt-5">
               What guides everything we do.
             </h2>
 
             <p className="section-description mx-auto mt-5 max-w-xl">
-              Our mission defines the work we do today. Our
-              vision shapes the impact we want to create tomorrow.
+              Our mission defines the work we do today. Our vision shapes the
+              impact we want to create tomorrow.
             </p>
           </Reveal>
 
@@ -470,10 +470,9 @@ export default function AboutPage() {
               </h3>
 
               <p className="mt-5 max-w-lg leading-8 text-muted transition-colors group-hover:text-[#0B0D0A]/70">
-                To help businesses navigate the digital world
-                with clarity, thoughtful strategy, and
-                purposeful execution that supports sustainable
-                growth.
+                To help businesses navigate the digital world with clarity,
+                thoughtful strategy, and purposeful execution that supports
+                sustainable growth.
               </p>
 
               <div className="mt-8 flex items-center gap-2 text-sm font-semibold text-foreground transition-colors group-hover:text-[#0B0D0A]">
@@ -506,9 +505,9 @@ export default function AboutPage() {
               </h3>
 
               <p className="mt-5 max-w-lg leading-8 text-muted transition-colors group-hover:text-[#0B0D0A]/70">
-                To build meaningful digital partnerships where
-                businesses can adapt, innovate, and grow with
-                confidence in an ever-changing digital landscape.
+                To build meaningful digital partnerships where businesses can
+                adapt, innovate, and grow with confidence in an ever-changing
+                digital landscape.
               </p>
 
               <div className="mt-8 flex items-center gap-2 text-sm font-semibold text-foreground transition-colors group-hover:text-[#0B0D0A]">
@@ -526,13 +525,14 @@ export default function AboutPage() {
       </section>
 
       {/* ===================== OUR VALUES ===================== */}
-      <section className="section-padding">
-        <div className="container mx-auto px-5 sm:px-8 lg:px-12">
+      <section
+        data-sidebar-theme="light"
+        className="section-with-left-nav section-padding"
+      >
+        <div className="mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-14 xl:px-20">
           <div className="mb-14 flex flex-col justify-between gap-6 md:flex-row md:items-end">
             <Reveal className="max-w-2xl">
-              <div className="section-label">
-                WHAT WE BELIEVE
-              </div>
+              <div className="section-label">WHAT WE BELIEVE</div>
 
               <h2 className="section-title mt-5">
                 Principles that shape
@@ -544,9 +544,8 @@ export default function AboutPage() {
 
             <Reveal delay={0.1} className="max-w-sm">
               <p className="section-description">
-                Good work begins with good principles. These
-                values influence how we think, collaborate, and
-                approach every challenge.
+                Good work begins with good principles. These values influence
+                how we think, collaborate, and approach every challenge.
               </p>
             </Reveal>
           </div>
@@ -596,25 +595,23 @@ export default function AboutPage() {
       </section>
 
       {/* ===================== CAPABILITIES ===================== */}
-      <section className="section-padding bg-[#0B0D0A] text-white">
-        <div className="container mx-auto px-5 sm:px-8 lg:px-12">
+      <section
+        data-sidebar-theme="dark"
+        className="section-with-left-nav section-padding bg-[#0B0D0A] text-white"
+      >
+        <div className="mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-14 xl:px-20">
           <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
             <Reveal>
-              <div className="section-label text-[#D7FF19]">
-                WHAT WE BRING
-              </div>
+              <div className="section-label text-[#D7FF19]">WHAT WE BRING</div>
 
               <h2 className="mt-5 text-4xl font-semibold leading-tight tracking-[-0.045em] sm:text-5xl lg:text-6xl">
                 Different skills.
-                <span className="block text-[#D7FF19]">
-                  One direction.
-                </span>
+                <span className="block text-[#D7FF19]">One direction.</span>
               </h2>
 
               <p className="mt-6 max-w-md text-base leading-8 text-white/50">
-                We bring together the capabilities your
-                business needs to build a more connected and
-                effective digital presence.
+                We bring together the capabilities your business needs to
+                build a more connected and effective digital presence.
               </p>
 
               <Link
@@ -693,8 +690,11 @@ export default function AboutPage() {
       </section>
 
       {/* ===================== HOW WE WORK ===================== */}
-      <section className="section-padding">
-        <div className="container mx-auto px-5 sm:px-8 lg:px-12">
+      <section
+        data-sidebar-theme="light"
+        className="section-with-left-nav section-padding"
+      >
+        <div className="mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-14 xl:px-20">
           <Reveal className="mx-auto max-w-2xl text-center">
             <div className="section-label justify-center">
               A BETTER WAY TO GROW
@@ -708,9 +708,9 @@ export default function AboutPage() {
             </h2>
 
             <p className="section-description mx-auto mt-5 max-w-xl">
-              We believe effective digital work starts with
-              understanding, develops through collaboration,
-              and improves through continuous learning.
+              We believe effective digital work starts with understanding,
+              develops through collaboration, and improves through continuous
+              learning.
             </p>
           </Reveal>
 
@@ -721,26 +721,7 @@ export default function AboutPage() {
             viewport={{ once: true, amount: 0.12 }}
             className="mt-14 grid gap-4 md:grid-cols-3"
           >
-            {[
-              {
-                number: "01",
-                title: "Understand",
-                description:
-                  "We learn about your business, audience, challenges, and goals before choosing a direction.",
-              },
-              {
-                number: "02",
-                title: "Build",
-                description:
-                  "We turn insights into a focused plan and create the right digital solutions for your needs.",
-              },
-              {
-                number: "03",
-                title: "Improve",
-                description:
-                  "We evaluate performance, learn from the results, and identify opportunities to do better.",
-              },
-            ].map((step) => (
+            {steps.map((step) => (
               <motion.article
                 key={step.number}
                 variants={reveal}
@@ -771,9 +752,12 @@ export default function AboutPage() {
       </section>
 
       {/* ===================== FINAL CTA ===================== */}
-      <section className="px-5 pb-20 sm:px-8 sm:pb-28 lg:px-12">
+      <section
+        data-sidebar-theme="light"
+        className="section-with-left-nav px-5 pb-20 sm:px-8 sm:pb-28 lg:px-14 lg:pb-32 xl:px-20"
+      >
         <Reveal>
-          <div className="container relative mx-auto overflow-hidden rounded-[30px] bg-[#D7FF19] px-6 py-14 sm:px-12 sm:py-16 lg:px-16 lg:py-20">
+          <div className="relative mx-auto w-full max-w-[1500px] overflow-hidden rounded-[30px] bg-[#D7FF19] px-6 py-14 sm:px-12 sm:py-16 lg:px-16 lg:py-20">
             <div
               aria-hidden="true"
               className="pointer-events-none absolute -right-20 -top-28 h-80 w-80 rounded-full border border-black/[0.08]"
@@ -803,8 +787,8 @@ export default function AboutPage() {
                 </h2>
 
                 <p className="mt-5 max-w-xl text-base leading-8 text-[#0B0D0A]/65 sm:text-lg">
-                  Tell us where you want to go. Together, we can
-                  explore the right strategy to help you get there.
+                  Tell us where you want to go. Together, we can explore the
+                  right strategy to help you get there.
                 </p>
               </div>
 

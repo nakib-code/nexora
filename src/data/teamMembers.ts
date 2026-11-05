@@ -40,138 +40,176 @@ export type TeamMember = {
 
 export const teamMembers: TeamMember[] = [
   {
-    id: "founder",
-    slug: "founder",
+    id: "al-amin",
+    slug: "al-amin",
     number: "01",
-    name: "masud",
-    role: "Founder & Creative Lead",
-    specialty: "Strategy / Development",
+    name: "Al Amin",
+    role: "Digital Marketing Specialist",
+    specialty: "SEO / Social Media Marketing / Paid Advertising",
+
     intro:
-      "Leading Nexora Digital with a focus on strategy, digital experiences, and building work that connects creative thinking with real business goals.",
+      "I'm Al Amin, a passionate Digital Marketing Specialist focused on helping businesses grow their online presence, reach the right audience, and generate meaningful results through strategic digital marketing.",
+
     image: "/team1.jpeg",
 
     location: "Bangladesh",
+
     shortBio:
-      "Building thoughtful digital experiences and helping businesses grow through technology and creative thinking.",
+      "Helping businesses grow through strategic digital marketing, audience engagement, and data-driven campaigns.",
+
     about:
-      "I enjoy planning and building digital products that solve real problems. My focus includes frontend development, digital strategy, user experience, and creating a strong foundation for Nexora Digital. I believe great digital products combine clean code, thoughtful design, and clear business goals.",
+      "I'm a Digital Marketing Specialist with an interest in helping businesses build a strong online presence and connect with their target audience. My work focuses on social media marketing, search engine optimization, paid advertising, content strategy, and campaign planning. I believe successful digital marketing is not just about getting more views or followers; it's about reaching the right people, building trust, and turning engagement into real business opportunities. I aim to create effective marketing strategies that support long-term business growth.",
+
     email: "hello@example.com",
 
     whatsapp: "https://wa.me/8801XXXXXXXXX",
-    github: "https://github.com/yourusername",
-    linkedin: "https://www.linkedin.com/in/yourusername",
+
+    linkedin: "https://www.linkedin.com/in/al-amin",
 
     services: [
-      "Digital Strategy & Planning",
-      "Website Development",
-      "Business Growth Solutions",
-      "Creative Direction",
-      "Project Management",
+      "Social Media Marketing",
+      "Search Engine Optimization (SEO)",
+      "Facebook & Instagram Ads",
+      "Google Ads Management",
+      "Content Strategy & Planning",
+      "Social Media Page Management",
+      "Digital Marketing Strategy",
+      "Marketing Analytics & Reporting",
     ],
 
     skills: [
-      "Business Strategy",
-      "React",
-      "Next.js",
-      "TypeScript",
-      "Tailwind CSS",
-      "Team Leadership",
-      "Product Planning",
-      "UI/UX Principles",
+      "Facebook Marketing",
+      "Instagram Marketing",
+      "Google Ads",
+      "Search Engine Optimization (SEO)",
+      "Keyword Research",
+      "On-Page SEO",
+      "Off-Page SEO",
+      "Content Marketing",
+      "Content Strategy",
+      "Social Media Management",
+      "Meta Ads Manager",
+      "Audience Targeting",
+      "Campaign Optimization",
+      "Google Analytics 4",
+      "Google Search Console",
+      "Canva",
+      "Email Marketing",
+      "Marketing Analytics",
+      "Lead Generation",
+      "Competitor Analysis",
     ],
 
     projects: [
       {
-        title: "Nexora Digital",
+        title: "Social Media Marketing Campaign",
         description:
-          "A digital agency platform focused on modern websites, creative solutions, and meaningful digital experiences.",
-        image: "/images/projects/nexora.jpg",
-        category: "Agency Website",
-        technologies: ["Next.js", "React", "Tailwind CSS"],
+          "A social media marketing project focused on developing a content strategy, improving audience engagement, and building a consistent online brand presence across social platforms.",
+        image: "/images/projects/social-media.jpg",
+        category: "Social Media Marketing",
+        technologies: ["Facebook", "Instagram", "Meta Ads Manager", "Canva"],
         link: "",
       },
       {
-        title: "E-commerce Experience",
+        title: "SEO & Website Growth Strategy",
         description:
-          "A concept for a modern online shopping experience with organized product pages and a responsive interface.",
-        image: "/images/projects/ecommerce.jpg",
-        category: "E-commerce",
-        technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
+          "An SEO-focused project involving keyword research, on-page optimization, content planning, and website performance monitoring to improve organic search visibility.",
+        image: "/images/projects/seo.jpg",
+        category: "Search Engine Optimization",
+        technologies: [
+          "Google Analytics 4",
+          "Google Search Console",
+          "Keyword Research",
+          "On-Page SEO",
+        ],
         link: "",
       },
     ],
   },
-
+  
   {
-    id: "designer",
-    slug: "designer",
+    id: "al-amin",
+    slug: "al-amin",
     number: "02",
-    name: "Team Member",
-    role: "Full Stack Developer",
-    specialty: "Web / Technology",
+    name: "Al Amin",
+    role: "Digital Marketing Specialist",
+    specialty: "SEO / Social Media Marketing / Paid Advertising",
+
     intro:
-      "Turning ideas into fast, responsive, and scalable digital experiences with clean development and thoughtful interaction.",
+      "I'm Al Amin, a passionate Digital Marketing Specialist focused on helping businesses grow their online presence, reach the right audience, and generate meaningful results through strategic digital marketing.",
+
     image: "/team2.jpeg",
 
     location: "Bangladesh",
+
     shortBio:
-      "Developing responsive web applications with a focus on performance, maintainability, and usability.",
+      "Helping businesses grow through strategic digital marketing, audience engagement, and data-driven campaigns.",
+
     about:
-      "A development-focused team profile covering frontend and full-stack web development. The role includes building responsive interfaces, integrating APIs, improving application performance, and creating maintainable solutions. The profile details are placeholders until the actual team member's information is added.",
-    email: "developer@example.com",
+      "I'm a Digital Marketing Specialist with an interest in helping businesses build a strong online presence and connect with their target audience. My work focuses on social media marketing, search engine optimization, paid advertising, content strategy, and campaign planning. I believe successful digital marketing is not just about getting more views or followers; it's about reaching the right people, building trust, and turning engagement into real business opportunities. I aim to create effective marketing strategies that support long-term business growth.",
+
+    email: "hello@example.com",
 
     whatsapp: "https://wa.me/8801XXXXXXXXX",
-    github: "https://github.com/developerusername",
-    linkedin: "https://www.linkedin.com/in/developerusername",
+
+    linkedin: "https://www.linkedin.com/in/al-amin",
 
     services: [
-      "Frontend Development",
-      "Full Stack Web Development",
-      "Responsive Website Development",
-      "API Integration",
-      "Website Performance Optimization",
-      "Mobile App Development",
+      "Social Media Marketing",
+      "Search Engine Optimization (SEO)",
+      "Facebook & Instagram Ads",
+      "Google Ads Management",
+      "Content Strategy & Planning",
+      "Social Media Page Management",
+      "Digital Marketing Strategy",
+      "Marketing Analytics & Reporting",
     ],
 
     skills: [
-      "React",
-      "Next.js",
-      "TypeScript",
-      "JavaScript",
-      "Node.js",
-      "MongoDB",
-      "React Native",
-      "Tailwind CSS",
-      "REST APIs",
-      "Git & GitHub",
+      "Facebook Marketing",
+      "Instagram Marketing",
+      "Google Ads",
+      "Search Engine Optimization (SEO)",
+      "Keyword Research",
+      "On-Page SEO",
+      "Off-Page SEO",
+      "Content Marketing",
+      "Content Strategy",
+      "Social Media Management",
+      "Meta Ads Manager",
+      "Audience Targeting",
+      "Campaign Optimization",
+      "Google Analytics 4",
+      "Google Search Console",
+      "Canva",
+      "Email Marketing",
+      "Marketing Analytics",
+      "Lead Generation",
+      "Competitor Analysis",
     ],
 
     projects: [
       {
-        title: "E-commerce Platform",
+        title: "Social Media Marketing Campaign",
         description:
-          "A sample online store concept featuring responsive product pages, reusable UI components, and a scalable frontend structure.",
-        image: "/images/projects/ecommerce.jpg",
-        category: "E-commerce",
-        technologies: ["Next.js", "TypeScript", "Tailwind CSS"],
+          "A social media marketing project focused on developing a content strategy, improving audience engagement, and building a consistent online brand presence across social platforms.",
+        image: "/images/projects/social-media.jpg",
+        category: "Social Media Marketing",
+        technologies: ["Facebook", "Instagram", "Meta Ads Manager", "Canva"],
         link: "",
       },
       {
-        title: "Business Website",
+        title: "SEO & Website Growth Strategy",
         description:
-          "A professional business website concept designed to present services, communicate value, and establish an online presence.",
-        image: "/images/projects/business.jpg",
-        category: "Business Website",
-        technologies: ["React", "Next.js", "REST APIs"],
-        link: "",
-      },
-      {
-        title: "Mobile App Concept",
-        description:
-          "A sample mobile application project focused on a consistent user experience and reusable interface patterns.",
-        image: "/images/projects/mobile-app.jpg",
-        category: "Mobile Application",
-        technologies: ["React Native", "TypeScript"],
+          "An SEO-focused project involving keyword research, on-page optimization, content planning, and website performance monitoring to improve organic search visibility.",
+        image: "/images/projects/seo.jpg",
+        category: "Search Engine Optimization",
+        technologies: [
+          "Google Analytics 4",
+          "Google Search Console",
+          "Keyword Research",
+          "On-Page SEO",
+        ],
         link: "",
       },
     ],
@@ -188,7 +226,7 @@ export const teamMembers: TeamMember[] = [
     specialty: "Web Development / Full Stack Engineering",
 
     intro:
-     "I'm Nakibul Islam, a passionate Full Stack Developer who turns ideas into powerful digital experiences. I specialize in creating modern websites, e-commerce platforms, SaaS applications, and custom management systems. With hands-on experience in React.js, Next.js, TypeScript, Node.js, Express.js, MongoDB, and PostgreSQL, I build complete web solutions that combine intuitive design, robust backend functionality, secure integrations, and scalable architecture.",
+      "I'm Nakibul Islam, a passionate Full Stack Developer who turns ideas into powerful digital experiences. I specialize in creating modern websites, e-commerce platforms, SaaS applications, and custom management systems. With hands-on experience in React.js, Next.js, TypeScript, Node.js, Express.js, MongoDB, and PostgreSQL, I build complete web solutions that combine intuitive design, robust backend functionality, secure integrations, and scalable architecture.",
     image: "/me.png",
 
     // Profile Information
@@ -369,60 +407,67 @@ export const teamMembers: TeamMember[] = [
     id: "editor",
     slug: "editor",
     number: "04",
-    name: "Team Member",
+    name: "Riadul Sharif",
     role: "Video Editor",
-    specialty: "Motion / Content",
+    specialty: "Video Editing / Content",
+
     intro:
-      "Turning raw ideas into engaging visual stories through editing, motion, pacing, and creative direction.",
+      "Creating engaging visual stories through professional video editing, talking-head reels, short-form videos, and promotional advertisements.",
+
     image: "/team4.jpeg",
 
-    location: "Bangladesh",
-    shortBio:
-      "Creating engaging video content through editing, motion, and visual storytelling.",
-    about:
-      "This profile represents the video editing and motion content role within Nexora Digital. The work focuses on shaping raw footage into engaging stories, producing promotional content, and adapting videos for different digital platforms. The profile can be updated with the team member's real experience and portfolio.",
-    email: "editor@example.com",
+    location: "Mirpur, Dhaka, Bangladesh",
 
-    whatsapp: "https://wa.me/8801XXXXXXXXX",
-    linkedin: "https://www.linkedin.com/in/editorusername",
+    shortBio:
+      "Video editor with freelance experience creating talking-head reels, short-form videos, and product or service advertisements for multiple clients.",
+
+    about:
+      "Riadul Sharif is a video editor with experience completing projects for several clients. He specializes in editing talking-head reels, short-form videos, and product or service advertisements using Adobe Premiere Pro and CapCut. His work focuses on clean cuts, engaging pacing, and social media-friendly video content. He is passionate about contributing his editing skills to professional teams while continuously developing through hands-on experience.",
+
+    email: "riadulsedit@gmail.com",
+
+    whatsapp: "https://wa.me/8801354309410",
+
+    linkedin: "",
 
     services: [
       "Video Editing",
+      "Talking-Head Reels",
+      "Short-Form Videos",
+      "Product Advertisements",
+      "Service Advertisements",
       "Social Media Content",
-      "Motion Graphics",
-      "Promotional Videos",
-      "Reels & Short-Form Videos",
-      "Color Correction",
     ],
 
     skills: [
-      "Video Editing",
-      "Motion Design",
-      "Visual Storytelling",
-      "Color Correction",
-      "Audio Editing",
-      "Content Editing",
+      "Adobe Premiere Pro",
+      "CapCut",
+      "Talking-Head Reels",
+      "Short-Form Video Editing",
+      "Product & Service Advertisements",
+      "Clean Cuts & Pacing",
+      "Social Media Editing",
       "Video Transitions",
     ],
 
     projects: [
       {
-        title: "Brand Promotional Video",
+        title: "Talking-Head Reels",
         description:
-          "A sample promotional video concept designed to communicate a brand message through engaging visual storytelling.",
+          "Edited talking-head reels with clean cuts, engaging pacing, and audience-focused storytelling for social media platforms.",
         image: "/images/projects/brand-video.jpg",
-        category: "Video Production",
-        technologies: ["Video Editing", "Motion Graphics"],
-        link: "",
+        category: "Video Editing",
+        technologies: ["Adobe Premiere Pro", "CapCut"],
+        link: "https://drive.google.com/drive/folders/16r4DzD5uFKx2RuqV8DhIjF6DfYkMbPr8?usp=sharing",
       },
       {
-        title: "Social Media Reels",
+        title: "Product & Service Advertisements",
         description:
-          "A short-form video content concept designed for social platforms, with attention to pacing, transitions, and audience engagement.",
+          "Created promotional video content for products and services, focusing on clear messaging, engaging visuals, and effective presentation.",
         image: "/images/projects/social-reels.jpg",
-        category: "Social Media",
-        technologies: ["Short-Form Editing", "Motion Design"],
-        link: "",
+        category: "Video Production",
+        technologies: ["Adobe Premiere Pro", "CapCut"],
+        link: "https://drive.google.com/drive/folders/16r4DzD5uFKx2RuqV8DhIjF6DfYkMbPr8?usp=sharing",
       },
     ],
   },

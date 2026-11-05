@@ -109,32 +109,24 @@ export default function ServicesPage() {
   const reduceMotion = useReducedMotion();
 
   const reveal: Variants = {
-    hidden: {
-      opacity: 0,
-      y: reduceMotion ? 0 : 24,
-    },
+    hidden: { opacity: 0, y: reduceMotion ? 0 : 24 },
     visible: {
       opacity: 1,
       y: 0,
-      transition: {
-        duration: reduceMotion ? 0 : 0.7,
-        ease,
-      },
+      transition: { duration: reduceMotion ? 0 : 0.7, ease },
     },
   };
 
   const stagger: Variants = {
     hidden: {},
     visible: {
-      transition: {
-        staggerChildren: reduceMotion ? 0 : 0.1,
-      },
+      transition: { staggerChildren: reduceMotion ? 0 : 0.1 },
     },
   };
 
   return (
-    <main className="overflow-hidden bg-background text-foreground">
-      {/* HERO */}
+    <main className="bg-background text-foreground">
+      {/* ===================== HERO ===================== */}
       <section
         id="services"
         data-sidebar-theme="dark"
@@ -155,8 +147,7 @@ export default function ServicesPage() {
               backgroundImage:
                 "linear-gradient(rgba(255,255,255,0.45) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.45) 1px, transparent 1px)",
               backgroundSize: "64px 64px",
-              maskImage:
-                "linear-gradient(to bottom, black, transparent 90%)",
+              maskImage: "linear-gradient(to bottom, black, transparent 90%)",
               WebkitMaskImage:
                 "linear-gradient(to bottom, black, transparent 90%)",
             }}
@@ -164,7 +155,7 @@ export default function ServicesPage() {
         </div>
 
         <motion.div
-          className="container section-padding relative grid items-center gap-14 py-20 sm:py-24 lg:grid-cols-[1.1fr_0.9fr] lg:gap-12 lg:py-32"
+          className="relative mx-auto w-full max-w-[1500px] px-5 py-20 sm:px-8 sm:py-24 lg:grid lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-12 lg:px-14 lg:py-32 xl:px-20"
           variants={stagger}
           initial="hidden"
           animate="visible"
@@ -200,18 +191,16 @@ export default function ServicesPage() {
               <br />
               <span className="text-white/40">Better execution.</span>
               <br />
-              <span className="text-[#D7FF19]">
-                Real growth.
-              </span>
+              <span className="text-[#D7FF19]">Real growth.</span>
             </motion.h1>
 
             <motion.p
               variants={reveal}
               className="mt-7 max-w-xl text-sm leading-7 text-white/60 sm:text-base sm:leading-8"
             >
-              From performance marketing to high-quality web experiences,
-              we bring strategy, creativity, and technology together to
-              help your business move forward.
+              From performance marketing to high-quality web experiences, we
+              bring strategy, creativity, and technology together to help your
+              business move forward.
             </motion.p>
 
             <motion.div
@@ -260,7 +249,7 @@ export default function ServicesPage() {
           {/* Hero visual */}
           <motion.div
             variants={reveal}
-            className="relative mx-auto w-full max-w-[500px] lg:ml-auto"
+            className="relative mx-auto mt-14 w-full max-w-[500px] lg:ml-auto lg:mt-0"
           >
             <div className="absolute -inset-5 rounded-[32px] bg-[#D7FF19]/[0.05] blur-2xl" />
 
@@ -312,11 +301,7 @@ export default function ServicesPage() {
                   return (
                     <motion.div
                       key={item.number}
-                      initial={
-                        reduceMotion
-                          ? false
-                          : { opacity: 0, x: 16 }
-                      }
+                      initial={reduceMotion ? false : { opacity: 0, x: 16 }}
                       animate={{ opacity: 1, x: 0 }}
                       transition={{
                         duration: reduceMotion ? 0 : 0.55,
@@ -371,7 +356,8 @@ export default function ServicesPage() {
           </motion.div>
         </motion.div>
 
-        <div className="container relative pb-6">
+        {/* Bottom strip */}
+        <div className="relative mx-auto w-full max-w-[1500px] px-5 pb-6 sm:px-8 lg:px-14 xl:px-20">
           <div className="flex items-center justify-between border-t border-white/10 pt-5">
             <span className="text-[10px] font-medium uppercase tracking-[0.2em] text-white/30">
               Strategy / Creative / Technology
@@ -384,206 +370,194 @@ export default function ServicesPage() {
         </div>
       </section>
 
-      {/* SERVICES */}
+      {/* ===================== SERVICES LIST ===================== */}
       <section
         id="services-list"
         data-sidebar-theme="light"
-        className="section-with-left-nav container section-padding"
+        className="section-with-left-nav section-padding scroll-mt-24"
       >
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.15 }}
-          className="mb-12 flex flex-col justify-between gap-7 md:mb-14 md:flex-row md:items-end"
-        >
-          <div className="max-w-2xl">
-            <motion.p
-              variants={reveal}
-              className="section-label"
-            >
-              OUR EXPERTISE
-            </motion.p>
+        <div className="mx-auto w-full max-w-[1500px] px-5 sm:px-8 lg:px-14 xl:px-20">
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.15 }}
+            className="mb-12 flex flex-col justify-between gap-7 md:mb-14 md:flex-row md:items-end"
+          >
+            <div className="max-w-2xl">
+              <motion.p variants={reveal} className="section-label">
+                OUR EXPERTISE
+              </motion.p>
 
-            <motion.h2
-              variants={reveal}
-              className="section-title mt-4 max-w-2xl"
-            >
-              The right tools for your next chapter.
-            </motion.h2>
-
-            <motion.p
-              variants={reveal}
-              className="section-description mt-4 max-w-xl"
-            >
-              Focused digital services that work independently or
-              together to support your business goals.
-            </motion.p>
-          </div>
-
-          <motion.div variants={reveal} className="shrink-0">
-            <span className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-medium text-muted">
-              <span className="size-2 rounded-full bg-primary" />
-              05 services · One clear direction
-            </span>
-          </motion.div>
-        </motion.div>
-
-        <motion.div
-          variants={stagger}
-          initial="hidden"
-          whileInView="visible"
-          viewport={{ once: true, amount: 0.06 }}
-          className="grid gap-4 sm:gap-5 lg:grid-cols-6"
-        >
-          {services.map((service, index) => {
-            const Icon = service.icon;
-
-            return (
-              <motion.article
-                key={service.number}
+              <motion.h2
                 variants={reveal}
-                whileHover={
-                  reduceMotion
-                    ? undefined
-                    : {
-                        y: -5,
-                        transition: { duration: 0.25, ease },
-                      }
-                }
-                className={`group relative flex min-w-0 flex-col overflow-hidden rounded-[22px] border border-border bg-background p-6 transition-[background-color,border-color,box-shadow,color] duration-300 hover:border-[#D7FF19] hover:bg-[#D7FF19] hover:text-[#0B0D0A] hover:shadow-xl hover:shadow-black/[0.04] sm:p-7 ${
-                  service.featured
-                    ? "lg:col-span-3"
-                    : "lg:col-span-2"
-                }`}
+                className="section-title mt-4 max-w-2xl"
               >
-                {/* Subtle decorative corner */}
-                <div
-                  aria-hidden="true"
-                  className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full border border-primary/10 transition-all duration-500 group-hover:scale-125 group-hover:border-black/10"
-                />
+                The right tools for your next chapter.
+              </motion.h2>
 
-                <div className="relative flex items-center justify-between gap-4">
-                  <div className="flex size-12 items-center justify-center rounded-2xl border border-border bg-surface text-primary transition-all duration-300 group-hover:border-black/10 group-hover:bg-black/10 group-hover:text-[#0B0D0A]">
-                    <Icon size={22} strokeWidth={1.7} />
+              <motion.p
+                variants={reveal}
+                className="section-description mt-4 max-w-xl"
+              >
+                Focused digital services that work independently or together
+                to support your business goals.
+              </motion.p>
+            </div>
+
+            <motion.div variants={reveal} className="shrink-0">
+              <span className="inline-flex items-center gap-2 rounded-full border border-border px-4 py-2 text-xs font-medium text-muted">
+                <span className="size-2 rounded-full bg-primary" />
+                05 services · One clear direction
+              </span>
+            </motion.div>
+          </motion.div>
+
+          <motion.div
+            variants={stagger}
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.06 }}
+            className="grid gap-4 sm:gap-5 lg:grid-cols-6"
+          >
+            {services.map((service) => {
+              const Icon = service.icon;
+
+              return (
+                <motion.article
+                  key={service.number}
+                  variants={reveal}
+                  whileHover={
+                    reduceMotion
+                      ? undefined
+                      : { y: -5, transition: { duration: 0.25, ease } }
+                  }
+                  className={`group relative flex min-w-0 flex-col overflow-hidden rounded-[22px] border border-border bg-background p-6 transition-[background-color,border-color,box-shadow,color] duration-300 hover:border-[#D7FF19] hover:bg-[#D7FF19] hover:text-[#0B0D0A] hover:shadow-xl hover:shadow-black/[0.04] sm:p-7 ${
+                    service.featured ? "lg:col-span-3" : "lg:col-span-2"
+                  }`}
+                >
+                  {/* Decorative corner */}
+                  <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -right-12 -top-12 size-36 rounded-full border border-primary/10 transition-all duration-500 group-hover:scale-125 group-hover:border-black/10"
+                  />
+
+                  <div className="relative flex items-center justify-between gap-4">
+                    <div className="flex size-12 items-center justify-center rounded-2xl border border-border bg-surface text-primary transition-all duration-300 group-hover:border-black/10 group-hover:bg-black/10 group-hover:text-[#0B0D0A]">
+                      <Icon size={22} strokeWidth={1.7} />
+                    </div>
+
+                    <span className="text-sm font-semibold tabular-nums text-muted transition-colors duration-300 group-hover:text-black/50">
+                      / {service.number}
+                    </span>
                   </div>
 
-                  <span className="text-sm font-semibold tabular-nums text-muted transition-colors duration-300 group-hover:text-black/50">
-                    / {service.number}
-                  </span>
-                </div>
+                  <div className="relative mt-7">
+                    <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary transition-colors duration-300 group-hover:text-black/55">
+                      {service.eyebrow}
+                    </p>
 
-                <div className="relative mt-7">
-                  <p className="text-[10px] font-semibold uppercase tracking-[0.2em] text-primary transition-colors duration-300 group-hover:text-black/55">
-                    {service.eyebrow}
-                  </p>
+                    <h3 className="mt-3 max-w-md text-xl font-bold leading-snug tracking-tight transition-colors duration-300 group-hover:text-[#0B0D0A] sm:text-2xl">
+                      {service.title}
+                    </h3>
 
-                  <h3 className="mt-3 max-w-md text-xl font-bold leading-snug tracking-tight transition-colors duration-300 group-hover:text-[#0B0D0A] sm:text-2xl">
-                    {service.title}
-                  </h3>
+                    <p className="mt-3 max-w-xl text-sm leading-7 text-muted transition-colors duration-300 group-hover:text-black/70">
+                      {service.description}
+                    </p>
+                  </div>
 
-                  <p className="mt-3 max-w-xl text-sm leading-7 text-muted transition-colors duration-300 group-hover:text-black/70">
-                    {service.description}
-                  </p>
-                </div>
+                  <div className="relative mt-6 border-t border-border/80 pt-5 transition-colors duration-300 group-hover:border-black/15">
+                    <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.17em] text-muted transition-colors duration-300 group-hover:text-black/50">
+                      What&apos;s included
+                    </p>
 
-                <div className="relative mt-6 border-t border-border/80 pt-5 transition-colors duration-300 group-hover:border-black/15">
-                  <p className="mb-4 text-[10px] font-semibold uppercase tracking-[0.17em] text-muted transition-colors duration-300 group-hover:text-black/50">
-                    What&apos;s included
-                  </p>
+                    <ul className="grid gap-3 sm:grid-cols-2">
+                      {service.features.map((feature) => (
+                        <li
+                          key={feature}
+                          className="flex min-w-0 items-start gap-2.5 text-sm text-foreground transition-colors duration-300 group-hover:text-black/80"
+                        >
+                          <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-black/10 group-hover:text-black">
+                            <Check size={10} strokeWidth={2.5} />
+                          </span>
 
-                  <ul className="grid gap-3 sm:grid-cols-2">
-                    {service.features.map((feature) => (
-                      <li
-                        key={feature}
-                        className="flex min-w-0 items-start gap-2.5 text-sm text-foreground transition-colors duration-300 group-hover:text-black/80"
-                      >
-                        <span className="mt-0.5 flex size-4 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary transition-colors duration-300 group-hover:bg-black/10 group-hover:text-black">
-                          <Check size={10} strokeWidth={2.5} />
-                        </span>
+                          <span className="leading-5">{feature}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
 
-                        <span className="leading-5">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
+                  <div className="relative mt-auto flex items-center justify-between gap-3 pt-7">
+                    <span className="text-xs font-medium text-muted transition-colors duration-300 group-hover:text-black/55">
+                      {service.metric}
+                    </span>
 
-                <div className="relative mt-auto flex items-center justify-between gap-3 pt-7">
-                  <span className="text-xs font-medium text-muted transition-colors duration-300 group-hover:text-black/55">
-                    {service.metric}
-                  </span>
+                    <Link
+                      href="/contact"
+                      aria-label={`Discuss ${service.title}`}
+                      className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-all duration-300 group-hover:border-black/15 group-hover:bg-[#0B0D0A] group-hover:text-[#D7FF19]"
+                    >
+                      <ArrowUpRight
+                        size={18}
+                        className="transition-transform duration-300 group-hover:rotate-45"
+                      />
+                    </Link>
+                  </div>
 
-                  <Link
-                    href="/contact"
-                    aria-label={`Discuss ${service.title}`}
-                    className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border text-foreground transition-all duration-300 group-hover:border-black/15 group-hover:bg-[#0B0D0A] group-hover:text-[#D7FF19]"
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute bottom-5 right-16 text-5xl font-bold tracking-tighter text-primary/[0.035] transition-colors duration-300 group-hover:text-black/[0.06]"
                   >
-                    <ArrowUpRight
-                      size={18}
-                      className="transition-transform duration-300 group-hover:rotate-45"
-                    />
-                  </Link>
-                </div>
+                    {service.number}
+                  </span>
+                </motion.article>
+              );
+            })}
+          </motion.div>
 
-                {/* Card index detail */}
-                <span
-                  aria-hidden="true"
-                  className="pointer-events-none absolute bottom-5 right-16 text-5xl font-bold tracking-tighter text-primary/[0.035] transition-colors duration-300 group-hover:text-black/[0.06]"
-                >
-                  {service.number}
-                </span>
-              </motion.article>
-            );
-          })}
-        </motion.div>
-
-        {/* Small note under the grid */}
-        <motion.div
-          initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{
-            duration: reduceMotion ? 0 : 0.5,
-            delay: reduceMotion ? 0 : 0.1,
-          }}
-          className="mt-8 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between"
-        >
-          <p className="max-w-xl text-sm leading-6 text-muted">
-            Not every business needs everything. Start with the service
-            that solves your biggest challenge.
-          </p>
-
-          <Link
-            href="/contact"
-            className="group inline-flex w-fit items-center gap-2 text-sm font-semibold transition-colors hover:text-primary"
+          {/* Note under grid */}
+          <motion.div
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{
+              duration: reduceMotion ? 0 : 0.5,
+              delay: reduceMotion ? 0 : 0.1,
+              ease,
+            }}
+            className="mt-8 flex flex-col gap-3 border-t border-border pt-6 sm:flex-row sm:items-center sm:justify-between"
           >
-            Find your starting point
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </Link>
-        </motion.div>
+            <p className="max-w-xl text-sm leading-6 text-muted">
+              Not every business needs everything. Start with the service that
+              solves your biggest challenge.
+            </p>
+
+            <Link
+              href="/contact"
+              className="group inline-flex w-fit items-center gap-2 text-sm font-semibold transition-colors hover:text-primary"
+            >
+              Find your starting point
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </Link>
+          </motion.div>
+        </div>
       </section>
 
-      {/* CTA */}
+      {/* ===================== CTA ===================== */}
       <section
         id="services-cta"
         data-sidebar-theme="dark"
-        className="section-with-left-nav container pb-20 sm:pb-28"
+        className="section-with-left-nav px-5 pb-20 sm:px-8 sm:pb-28 lg:px-14 lg:pb-32 xl:px-20"
       >
         <motion.div
-          initial={{
-            opacity: 0,
-            y: reduceMotion ? 0 : 24,
-          }}
+          initial={{ opacity: 0, y: reduceMotion ? 0 : 24 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true, amount: 0.2 }}
-          transition={{
-            duration: reduceMotion ? 0 : 0.7,
-            ease,
-          }}
-          className="group relative isolate overflow-hidden rounded-[28px] bg-[#0B0D0A] px-6 py-12 text-white sm:px-10 sm:py-16 lg:px-16 lg:py-20"
+          transition={{ duration: reduceMotion ? 0 : 0.7, ease }}
+          className="group relative isolate mx-auto w-full max-w-[1500px] overflow-hidden rounded-[28px] bg-[#0B0D0A] px-6 py-12 text-white sm:px-10 sm:py-16 lg:px-16 lg:py-20"
         >
           {/* CTA background details */}
           <div
@@ -621,9 +595,8 @@ export default function ServicesPage() {
               </h2>
 
               <p className="mt-5 max-w-xl text-sm leading-7 text-white/55 sm:text-base sm:leading-8">
-                Tell us where you want your business to go. We&apos;ll
-                help you explore the right services and a practical way
-                to get started.
+                Tell us where you want your business to go. We&apos;ll help you
+                explore the right services and a practical way to get started.
               </p>
             </div>
 

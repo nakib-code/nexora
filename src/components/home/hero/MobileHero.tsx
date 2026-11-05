@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from "react";
@@ -8,6 +7,10 @@ import { motion, useReducedMotion } from "framer-motion";
 
 const phrase = "studio";
 const ease = [0.22, 1, 0.36, 1] as const;
+
+/* =========================================================
+   TypingText — accessible typewriter
+========================================================= */
 
 function TypingText({ reduceMotion }: { reduceMotion: boolean }) {
   const [text, setText] = useState("");
@@ -40,7 +43,10 @@ function TypingText({ reduceMotion }: { reduceMotion: boolean }) {
 
   return (
     <span className="inline-flex min-w-0 items-baseline">
-      <span>{text}</span>
+      {/* Screen-reader-only stable label — prevents character-by-character announcement */}
+      <span className="sr-only">{phrase}</span>
+
+      <span aria-hidden="true">{text}</span>
 
       {!reduceMotion && (
         <motion.span
@@ -58,11 +64,11 @@ function TypingText({ reduceMotion }: { reduceMotion: boolean }) {
   );
 }
 
-function CreativeCard({
-  reduceMotion,
-}: {
-  reduceMotion: boolean;
-}) {
+/* =========================================================
+   CreativeCard — orbital graphic + copy
+========================================================= */
+
+function CreativeCard({ reduceMotion }: { reduceMotion: boolean }) {
   return (
     <motion.div
       variants={{
@@ -94,10 +100,12 @@ function CreativeCard({
       />
 
       <div className="relative flex items-center gap-4">
-        {/* Orbital graphic */}
-        <div className="relative flex h-[100px] w-[100px] shrink-0 items-center justify-center">
+        {/* Orbital graphic — decorative */}
+        <div
+          aria-hidden="true"
+          className="relative flex h-[100px] w-[100px] shrink-0 items-center justify-center"
+        >
           <motion.div
-            aria-hidden="true"
             className="absolute inset-1 rounded-full border border-[#d6ff00]/25"
             animate={reduceMotion ? undefined : { rotate: 360 }}
             transition={{
@@ -110,7 +118,6 @@ function CreativeCard({
           </motion.div>
 
           <motion.div
-            aria-hidden="true"
             className="absolute inset-[15px] rounded-full border border-dashed border-white/20"
             animate={reduceMotion ? undefined : { rotate: -360 }}
             transition={{
@@ -149,8 +156,7 @@ function CreativeCard({
         <div className="min-w-0 flex-1">
           <div className="mb-2 flex items-center gap-2">
             <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-[#d6ff00]" />
-
-            <span className="text-[8px] font-medium uppercase tracking-[0.16em] text-white/45 sm:text-[9px]">
+            <span className="text-[9px] font-medium uppercase tracking-[0.16em] text-white/45 sm:text-[10px]">
               The creative process
             </span>
           </div>
@@ -161,7 +167,7 @@ function CreativeCard({
             <span className="text-[#d6ff00]">impact.</span>
           </h3>
 
-          <p className="mt-2 text-[10px] leading-relaxed text-white/45 sm:text-[11px]">
+          <p className="mt-2 text-[11px] leading-relaxed text-white/45 sm:text-[12px]">
             Strategy meets creativity to build digital experiences that matter.
           </p>
         </div>
@@ -169,11 +175,12 @@ function CreativeCard({
 
       {/* Card footer */}
       <div className="relative mt-4 flex items-center justify-between border-t border-white/[0.08] pt-3">
-        <span className="text-[8px] font-medium uppercase tracking-[0.18em] text-white/35">
+        <span className="text-[9px] font-medium uppercase tracking-[0.18em] text-white/35">
           Nexora Digital
         </span>
 
         <div
+          role="img"
           aria-label="Creative process, step one of four"
           className="flex items-center gap-1.5"
         >
@@ -186,6 +193,10 @@ function CreativeCard({
     </motion.div>
   );
 }
+
+/* =========================================================
+   MobileHero
+========================================================= */
 
 export default function MobileHero() {
   const prefersReducedMotion = useReducedMotion();
@@ -223,7 +234,7 @@ export default function MobileHero() {
       data-sidebar-theme="dark"
       className="relative isolate flex min-h-[100svh] w-full flex-col overflow-hidden bg-[#030303] text-white sm:hidden"
     >
-      {/* Animated background */}
+      {/* Background — decorative */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 -z-10 overflow-hidden"
@@ -250,8 +261,9 @@ export default function MobileHero() {
           <img
             src="/world-map-bg-m.png"
             alt=""
-            aria-hidden="true"
             draggable={false}
+            loading="eager"
+            decoding="async"
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
         </motion.div>
@@ -264,10 +276,7 @@ export default function MobileHero() {
           animate={
             reduceMotion
               ? undefined
-              : {
-                  scale: [1, 1.16, 1],
-                  opacity: [0.45, 0.8, 0.45],
-                }
+              : { scale: [1, 1.16, 1], opacity: [0.45, 0.8, 0.45] }
           }
           transition={{
             duration: 10,
@@ -313,27 +322,19 @@ export default function MobileHero() {
 
         {/* Contrast and texture */}
         <div className="absolute inset-0 bg-black/20" />
-
         <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/5 to-[#030303]" />
-
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_18%,rgba(0,0,0,0.58)_100%)]" />
-
         <div className="absolute inset-0 bg-[radial-gradient(rgba(255,255,255,0.18)_0.65px,transparent_0.65px)] [background-size:22px_22px] opacity-[0.06]" />
-
         <div className="absolute inset-x-0 bottom-0 h-[28%] bg-gradient-to-t from-[#030303] via-[#030303]/75 to-transparent" />
       </div>
 
       {/* Main content */}
-      <div className="relative z-10 mx-auto flex min-h-[100svh] w-full max-w-[560px] flex-1 flex-col px-5 pb-5 pt-5 sm:px-7">
+      <div className="relative z-10 mx-auto flex w-full max-w-[560px] flex-1 flex-col px-5 pb-5 pt-5 sm:px-7">
         {/* Top label */}
-        <motion.div
-          variants={reveal}
-          initial="hidden"
-          animate="visible"
-        >
+        <motion.div variants={reveal} initial="hidden" animate="visible">
           <Link
             href="/contact"
-            className="group inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2.5 text-[9px] font-medium uppercase tracking-[0.13em] text-white/70 backdrop-blur-xl transition-colors hover:border-[#d6ff00]/40 hover:text-white"
+            className="group inline-flex max-w-full items-center gap-2 rounded-full border border-white/15 bg-white/[0.04] px-3.5 py-2.5 text-[10px] font-medium uppercase tracking-[0.13em] text-white/70 backdrop-blur-xl transition-colors hover:border-[#d6ff00]/40 hover:text-white"
           >
             <span className="relative flex h-2 w-2 shrink-0">
               {!reduceMotion && (
@@ -353,35 +354,28 @@ export default function MobileHero() {
           </Link>
         </motion.div>
 
-        {/* Headline and message */}
+        {/* Headline block */}
         <motion.div
           variants={stagger}
           initial="hidden"
           animate="visible"
           className="flex flex-1 flex-col pt-12"
         >
-          <motion.div
-            variants={reveal}
-            className="flex items-start justify-between gap-3"
-          >
-            <h1 className="min-w-0 text-[clamp(3.65rem,16.8vw,5.25rem)] font-bold leading-[0.82] tracking-[-0.085em]">
-              Digital
-              <br />
-              agency
-            </h1>
-
-            <span className="mt-1 shrink-0 rounded-lg border border-white/45 px-2.5 py-1.5 text-[10px] font-semibold tracking-wide text-white/80">
-              Pro
-            </span>
+          {/* Eyebrow — real semantic h1 is the typing word below */}
+          <motion.div variants={reveal} className="flex items-start justify-between gap-3">
+            <p className="min-w-0 text-4xl font-bold leading-[0.9] text-white/85">
+              Digital agency
+            </p>
           </motion.div>
 
-          <motion.div
-            variants={reveal}
-            className="mt-6 overflow-hidden"
-          >
-            <h2 className="whitespace-nowrap text-[clamp(4.15rem,18.8vw,6.7rem)] font-bold leading-[0.82] tracking-[-0.09em] text-[#d6ff00]">
-              <TypingText reduceMotion={reduceMotion} />
-            </h2>
+          {/* Main headline — screen reader gets a clean sentence */}
+          <motion.div variants={reveal} className="mt-6 overflow-hidden">
+            <h1 className="whitespace-nowrap text-[clamp(4.15rem,18.8vw,6.7rem)] font-bold leading-[0.82] text-[#d6ff00]">
+              <span className="sr-only">Digital agency studio</span>
+              <span aria-hidden="true">
+                <TypingText reduceMotion={reduceMotion} />
+              </span>
+            </h1>
           </motion.div>
 
           <motion.div variants={reveal} className="mt-7">
@@ -411,31 +405,21 @@ export default function MobileHero() {
             </Link>
           </motion.div>
 
-          {/* Supporting brand statement */}
-          <motion.div
-            variants={reveal}
-            className="mt-8 flex items-center gap-3"
-          >
+          {/* Brand statement */}
+          <motion.div variants={reveal} className="mt-8 flex items-center gap-3">
             <span className="h-px w-8 shrink-0 bg-[#d6ff00]/70" />
-
-            <p className="text-[9px] font-medium uppercase tracking-[0.15em] text-white/45">
+            <p className="text-[10px] font-medium uppercase tracking-[0.15em] text-white/45">
               Thoughtful ideas. Meaningful digital experiences.
             </p>
           </motion.div>
 
-          {/* Creative card replaces the empty hello area */}
+          {/* Creative card */}
           <CreativeCard reduceMotion={reduceMotion} />
 
           {/* Explore footer */}
           <motion.div
-            initial={{
-              opacity: 0,
-              y: reduceMotion ? 0 : 12,
-            }}
-            animate={{
-              opacity: 1,
-              y: 0,
-            }}
+            initial={{ opacity: 0, y: reduceMotion ? 0 : 12 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{
               duration: reduceMotion ? 0 : 0.7,
               delay: reduceMotion ? 0 : 0.35,
@@ -445,7 +429,7 @@ export default function MobileHero() {
           >
             <a
               href="#about"
-              className="group inline-flex min-h-10 items-center gap-2.5 text-[10px] font-medium uppercase tracking-[0.15em] text-white/55 transition-colors hover:text-[#d6ff00]"
+              className="group inline-flex min-h-11 items-center gap-2.5 text-[10px] font-medium uppercase tracking-[0.15em] text-white/55 transition-colors hover:text-[#d6ff00]"
             >
               <span className="flex h-9 w-9 items-center justify-center rounded-full border border-white/20 transition-all duration-300 group-hover:border-[#d6ff00]/60 group-hover:bg-[#d6ff00]/10">
                 <ArrowDown
@@ -453,11 +437,10 @@ export default function MobileHero() {
                   className="transition-transform duration-300 group-hover:translate-y-1"
                 />
               </span>
-
               Explore
             </a>
 
-            <span className="pb-3 text-[9px] uppercase tracking-[0.18em] text-white/30">
+            <span className="pb-3 text-[10px] uppercase tracking-[0.18em] text-white/30">
               Scroll to discover
             </span>
           </motion.div>
@@ -467,11 +450,7 @@ export default function MobileHero() {
         <div className="relative mt-5 h-px w-full overflow-hidden bg-white/10">
           <motion.div
             className="absolute inset-y-0 left-0 w-1/3 bg-gradient-to-r from-transparent via-[#d6ff00] to-transparent"
-            animate={
-              reduceMotion
-                ? undefined
-                : { x: ["-100%", "400%"] }
-            }
+            animate={reduceMotion ? undefined : { x: ["-100%", "400%"] }}
             transition={{
               duration: 4.5,
               repeat: Infinity,

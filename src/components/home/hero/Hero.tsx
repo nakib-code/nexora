@@ -306,7 +306,7 @@ export default function Hero() {
               data-hero-reveal
               className="flex min-w-0 flex-wrap items-center gap-x-3 gap-y-3 sm:flex-nowrap sm:gap-x-4 lg:gap-x-6"
             >
-              <h1 className="min-w-0 text-[clamp(2.9rem,7.7vw,8.5rem)] font-bold leading-[0.9] tracking-[-0.075em]">
+              <h1 className="min-w-0 text-[clamp(2.9rem,7.7vw,8.5rem)] font-bold leading-[0.9]  tracking-[5px]">
                 Digital agency
               </h1>
 
@@ -318,7 +318,7 @@ export default function Hero() {
             <div className="mt-7 grid min-w-0 grid-cols-1 items-start gap-7 sm:mt-8 lg:mt-6 lg:grid-cols-[1.15fr_0.85fr] lg:items-center lg:gap-5 xl:gap-8">
               <h2
                 data-hero-reveal
-                className="min-w-0 max-w-full whitespace-nowrap text-[clamp(4.25rem,9.5vw,10rem)] font-bold leading-[0.85] tracking-[-0.085em] text-[#d6ff00]"
+                className="min-w-0 max-w-full whitespace-nowrap text-[clamp(4.25rem,9.5vw,10rem)] font-bold leading-[0.85] tracking-[5px] text-[#d6ff00]"
               >
                 <TypingText reduceMotion={reduceMotion} />
               </h2>
